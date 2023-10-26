@@ -42,6 +42,10 @@ const Header = () => {
     navigation.navigate("CreatePost");
   };
 
+  const onNavigateSearch = () => {
+    navigation.navigate("Search");
+  };
+
   return (
     <View style={styles.container}>
       <Image source={FacebookLogo} style={styles.fbLogoStyle} />
@@ -54,14 +58,14 @@ const Header = () => {
             color="#3A3A3A"
           />
         </TouchableOpacity>
-        <View style={styles.searchBg}>
+        <TouchableOpacity onPress={onNavigateSearch} style={styles.searchBg}>
           <VectorIcon
             name="search"
             type="FontAwesome5"
             size={19}
             color="#3A3A3A"
           />
-        </View>
+        </TouchableOpacity>
         <View style={styles.searchBg}>
           <VectorIcon
             name="messenger"

@@ -6,8 +6,6 @@ node_modules/
 # MockDB
 .mock-db/
 
-constants/
-
 # Expo
 .expo/
 dist/

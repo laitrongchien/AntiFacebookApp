@@ -9,7 +9,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import MainScreen from "./screens/MainScreen";
 import CreatePost from "./screens/CreatePost";
-import { Colors } from "./utils/Colors";
+import Search from "./screens/Search";
 
 const Stack = createStackNavigator();
 
@@ -26,12 +26,13 @@ export default function App() {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <StatusBar backgroundColor={Colors.white} barStyle="dark-content" />
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       <Stack.Navigator screenOptions={navigationOptions}>
         {user ? (
           <>
             <Stack.Screen name="MainScreen" component={MainScreen} />
             <Stack.Screen name="CreatePost" component={CreatePost} />
+            <Stack.Screen name="Search" component={Search} />
           </>
         ) : (
           <>
