@@ -4,8 +4,7 @@ import HomeScreen from "../screens/HomeScreen";
 import FriendScreen from "../screens/FriendTab";
 import WatchScreen from "../screens/WatchTab";
 import NotificationScreen from "../screens/NotificationTab";
-import ProfileScreen from "../screens/ProfileTab";
-import MarketPlaceScreen from "../screens/MarketPlaceTab";
+import MenuScreen from "../screens/MenuTab";
 import VectorIcon from "../utils/VectorIcon";
 
 const Tab = createMaterialTopTabNavigator();
@@ -25,7 +24,7 @@ const TabData = [
   {
     id: 2,
     route: FriendScreen,
-    name: "Friends",
+    name: "Friend",
     activeIconName: "account-multiple",
     activeIconType: "MaterialCommunityIcons",
     inactiveIconName: "account-multiple-outline",
@@ -44,19 +43,19 @@ const TabData = [
     size: 25,
     unFocusSize: 25,
   },
+  // {
+  //   id: 4,
+  //   route: MarketPlaceScreen,
+  //   name: "MarketPlace",
+  //   activeIconName: "storefront",
+  //   activeIconType: "MaterialCommunityIcons",
+  //   inactiveIconName: "storefront-outline",
+  //   inactiveIconType: "MaterialCommunityIcons",
+  //   size: 25,
+  //   unFocusSize: 25,
+  // },
   {
     id: 4,
-    route: MarketPlaceScreen,
-    name: "MarketPlace",
-    activeIconName: "storefront",
-    activeIconType: "MaterialCommunityIcons",
-    inactiveIconName: "storefront-outline",
-    inactiveIconType: "MaterialCommunityIcons",
-    size: 25,
-    unFocusSize: 25,
-  },
-  {
-    id: 5,
     route: NotificationScreen,
     name: "Notification",
     activeIconName: "bell",
@@ -67,9 +66,9 @@ const TabData = [
     unFocusSize: 25,
   },
   {
-    id: 6,
-    route: ProfileScreen,
-    name: "Profile",
+    id: 5,
+    route: MenuScreen,
+    name: "Menu",
     activeIconName: "menu",
     activeIconType: "MaterialCommunityIcons",
     inactiveIconName: "menu",

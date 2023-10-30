@@ -1,17 +1,27 @@
 import { StyleSheet, ScrollView } from "react-native";
 import PostTool from "../components/PostTool";
+import Stories from "../components/Stories";
+import PostItem from "../components/PostItem";
 
 const HomeScreen = () => {
   return (
-    <ScrollView bounces={false} style={styles.container}>
+    <ScrollView
+      bounces={false}
+      showsVerticalScrollIndicator={false}
+      style={styles.container}
+    >
       <PostTool />
+      <Stories />
+      <PostItem />
+      <PostItem />
+      <PostItem />
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(0,0,0,0.1)",
   },
 });
 
