@@ -33,7 +33,10 @@ const MenuScreen = () => {
           </ExTouchableOpacity>
         </View>
       </View>
-      <ExTouchableOpacity style={styles.userWrapper}>
+      <ExTouchableOpacity
+        style={styles.userWrapper}
+        onPress={() => navigation.navigate("ProfileScreen")}
+      >
         <Image
           source={require("../../assets/images/default-img.png")}
           style={styles.userAvatar}
@@ -57,11 +60,9 @@ const MenuScreen = () => {
           onPress={() => navigation.navigate("Watch")}
           style={styles.shortcut}
         >
-          <VectorIcon
-            name="youtube-tv"
-            type="MaterialCommunityIcons"
-            size={24}
-            color="#666"
+          <Image
+            source={require("../../assets/images/video.png")}
+            style={styles.iconImage}
           />
           <Text style={{ fontWeight: "500", fontSize: 16 }}>Video</Text>
         </ExTouchableOpacity>
@@ -69,13 +70,39 @@ const MenuScreen = () => {
           onPress={() => navigation.navigate("Friend")}
           style={styles.shortcut}
         >
-          <VectorIcon
-            name="account-multiple"
-            type="MaterialCommunityIcons"
-            size={24}
-            color="#666"
+          <Image
+            source={require("../../assets/images/friend.png")}
+            style={styles.iconImage}
           />
           <Text style={{ fontWeight: "500", fontSize: 16 }}>Bạn bè</Text>
+        </ExTouchableOpacity>
+        <ExTouchableOpacity style={styles.shortcut}>
+          <Image
+            source={require("../../assets/images/bookmark.png")}
+            style={styles.iconImage}
+          />
+          <Text style={{ fontWeight: "500", fontSize: 16 }}>Đã lưu</Text>
+        </ExTouchableOpacity>
+        <ExTouchableOpacity style={styles.shortcut}>
+          <Image
+            source={require("../../assets/images/memories.png")}
+            style={styles.iconImage}
+          />
+          <Text style={{ fontWeight: "500", fontSize: 16 }}>Kỷ niệm</Text>
+        </ExTouchableOpacity>
+        <ExTouchableOpacity style={styles.shortcut}>
+          <Image
+            source={require("../../assets/images/video-game.png")}
+            style={styles.iconImage}
+          />
+          <Text style={{ fontWeight: "500", fontSize: 16 }}>Trò chơi</Text>
+        </ExTouchableOpacity>
+        <ExTouchableOpacity style={styles.shortcut}>
+          <Image
+            source={require("../../assets/images/messenger.png")}
+            style={{ width: 24, height: 24 }}
+          />
+          <Text style={{ fontWeight: "500", fontSize: 16 }}>Messenger</Text>
         </ExTouchableOpacity>
       </View>
       <ExTouchableOpacity style={styles.btnOption}>
@@ -153,6 +180,7 @@ const styles = StyleSheet.create({
   },
   allShortcut: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
@@ -166,6 +194,11 @@ const styles = StyleSheet.create({
     flexBasis: "48%",
     justifyContent: "center",
     borderRadius: 12,
+    marginBottom: 16,
+  },
+  iconImage: {
+    width: 28,
+    height: 28,
   },
   userAvatar: {
     width: 40,

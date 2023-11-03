@@ -1,10 +1,15 @@
 import { Text, StyleSheet, View, Image, ImageBackground } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
 import ExTouchableOpacity from "../ExTouchableOpacity";
-import { navigation } from "../../rootNavigation";
 import { SCREEN_WIDTH } from "../../constants";
+import NotificationOption from "./NotificationOption";
+import BottomModal from "../BottomModal";
+import { useState } from "react";
+import { navigation } from "../../rootNavigation";
 
 const NotificationItem = () => {
+  const [notificationOptionVisible, setNotificationOptionVisible] =
+    useState("false");
   return (
     <View>
       <ExTouchableOpacity style={{ ...styles.container }}>
@@ -23,10 +28,15 @@ const NotificationItem = () => {
           </View>
         </ImageBackground>
         <View style={styles.contentWrapper}>
-          <Text>A vừa tải lên một tin mới, khám phá ngay</Text>
+          <Text style={{ fontSize: 14, fontWeight: "400" }}>
+            A vừa tải lên một tin mới, khám phá ngay
+          </Text>
           <Text style={{ color: "#333" }}>26/10</Text>
         </View>
-        <ExTouchableOpacity style={styles.btnOptions}>
+        <ExTouchableOpacity
+          style={styles.btnOptions}
+          onPress={() => setNotificationOptionVisible(true)}
+        >
           <VectorIcon
             name="dots-horizontal"
             type="MaterialCommunityIcons"
@@ -35,6 +45,12 @@ const NotificationItem = () => {
           />
         </ExTouchableOpacity>
       </ExTouchableOpacity>
+      <BottomModal
+        isVisible={notificationOptionVisible}
+        closeModal={() => setNotificationOptionVisible(false)}
+      >
+        <NotificationOption />
+      </BottomModal>
     </View>
   );
 };

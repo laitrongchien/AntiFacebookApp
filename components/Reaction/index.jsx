@@ -71,6 +71,7 @@ const Reaction = () => {
             paddingHorizontal: 12,
             paddingVertical: 24,
             height: SCREEN_HEIGHT - 64,
+            backgroundColor: "#fff",
           }}
         >
           <Comment />

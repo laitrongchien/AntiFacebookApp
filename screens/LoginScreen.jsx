@@ -12,48 +12,60 @@ import Logo from "../assets/images/logo.png";
 import MetaLogo from "../assets/images/meta-logo.png";
 import VectorIcon from "../utils/VectorIcon";
 import { navigation } from "../rootNavigation";
+import { SCREEN_HEIGHT } from "../constants";
 
 const LoginScreen = () => {
+  console.log(SCREEN_HEIGHT);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const onCreateAccount = () => {
-    navigation.navigate("RegisterScreen");
+    navigation.navigate("StartRegisterScreen");
   };
 
   return (
     <View style={styles.container}>
-      <VectorIcon
+      {/* <VectorIcon
         name="arrow-back"
         type="Ionicons"
         color="#000"
         size={20}
         onPress={() => navigation.navigate("RegisterScreen")}
-      />
+      /> */}
       <View style={styles.subContainer}>
         {/* <View style={styles.language}>
           <Text>Tiếng Việt</Text>
           <Image source={ArrowDown} style={styles.arrowDown} />
         </View> */}
         <Image source={Logo} style={styles.logoStyle} />
-        <TextInput
-          placeholder="Số di động hoặc email"
-          value={email}
-          onChangeText={(value) => setEmail(value)}
-          style={styles.inputBox}
-          selectionColor={"gray"}
-        />
-        <TextInput
-          placeholder="Mật khẩu"
-          value={password}
-          onChangeText={(value) => setPassword(value)}
-          style={styles.inputBox}
-          selectionColor={"gray"}
-        />
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.login}>Đăng nhập</Text>
-        </TouchableOpacity>
-        <Text style={styles.forgotPass}>Bạn quên mật khẩu ư?</Text>
+        <View
+          style={{
+            width: "100%",
+            height: SCREEN_HEIGHT - 340,
+            alignItems: "center",
+          }}
+        >
+          <TextInput
+            placeholder="Số di động hoặc email"
+            value={email}
+            onChangeText={(value) => setEmail(value)}
+            style={styles.inputBox}
+            selectionColor={"gray"}
+          />
+          <TextInput
+            placeholder="Mật khẩu"
+            value={password}
+            onChangeText={(value) => setPassword(value)}
+            style={styles.inputBox}
+            selectionColor={"gray"}
+          />
+          <TouchableOpacity style={styles.loginButton}>
+            <Text style={styles.login}>Đăng nhập</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ alignItems: "center" }}>
+            <Text style={styles.forgotPass}>Bạn quên mật khẩu ư?</Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity style={styles.newAccount} onPress={onCreateAccount}>
           <Text style={styles.newAccountText}>Tạo tài khoản mới</Text>
         </TouchableOpacity>
@@ -67,12 +79,14 @@ const styles = StyleSheet.create({
   logoStyle: {
     height: 60,
     width: 60,
-    marginVertical: "20%",
+    marginVertical: 80,
   },
   container: {
     paddingHorizontal: 12,
     paddingVertical: 16,
     width: "100%",
+    height: "100%",
+    backgroundColor: "#fff",
   },
   subContainer: {
     alignItems: "center",
@@ -119,7 +133,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "500",
     marginTop: 15,
-    marginBottom: "54%",
   },
   newAccount: {
     borderWidth: 2,

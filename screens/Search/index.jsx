@@ -135,7 +135,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 60,
     alignItems: "center",
-    // justifyContent: "space-between"
   },
   avatar: {
     width: 40,
@@ -148,6 +147,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 10,
     fontWeight: "bold",
-    width: 300,
+    width: SCREEN_WIDTH - 108,
   },
 });

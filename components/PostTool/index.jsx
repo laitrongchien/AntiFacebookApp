@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SCREEN_WIDTH } from "../../constants";
 import {
   Text,
   StyleSheet,
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 8,
-    width: 294,
+    width: SCREEN_WIDTH - 120,
     marginLeft: 8,
     marginRight: 8,
   },

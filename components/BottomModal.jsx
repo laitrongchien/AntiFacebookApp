@@ -8,12 +8,7 @@ import {
 
 const BottomModal = ({ isVisible, closeModal, children }) => {
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={isVisible}
-      onRequestClose={closeModal}
-    >
+    <Modal transparent={true} visible={isVisible} onRequestClose={closeModal}>
       <TouchableWithoutFeedback onPress={closeModal}>
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
@@ -32,7 +27,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
   modalContent: {
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
   },
 });
 

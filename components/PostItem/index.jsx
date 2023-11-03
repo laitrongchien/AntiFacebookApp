@@ -4,8 +4,12 @@ import ExTouchableOpacity from "../ExTouchableOpacity";
 import ScaleImage from "../ScaleImage";
 import Reaction from "../Reaction";
 import { SCREEN_WIDTH } from "../../constants";
+import { useState } from "react";
+import BottomModal from "../BottomModal";
+import PostOptions from "./PostOption";
 
 const PostItem = () => {
+  const [postOptionVisible, setPostOptionVisible] = useState("false");
   return (
     <View style={styles.item}>
       <View
@@ -43,7 +47,10 @@ const PostItem = () => {
           </View>
         </View>
         <View style={styles.iconWrapper}>
-          <ExTouchableOpacity style={{ marginRight: 16 }}>
+          <ExTouchableOpacity
+            style={{ marginRight: 16 }}
+            onPress={() => setPostOptionVisible(true)}
+          >
             <VectorIcon
               name="dots-horizontal"
               type="MaterialCommunityIcons"
@@ -78,6 +85,12 @@ const PostItem = () => {
         </View>
       </ExTouchableOpacity>
       <Reaction />
+      <BottomModal
+        isVisible={postOptionVisible}
+        closeModal={() => setPostOptionVisible(false)}
+      >
+        <PostOptions />
+      </BottomModal>
     </View>
   );
 };

@@ -6,6 +6,8 @@ node_modules/
 # MockDB
 .mock-db/
 
+.VSCodeCounter/
+
 # Expo
 .expo/
 dist/
