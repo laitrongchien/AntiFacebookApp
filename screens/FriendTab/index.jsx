@@ -38,7 +38,7 @@ const FriendScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "fff",
+    backgroundColor: "white",
     width: "100%",
   },
   titleWrapper: {

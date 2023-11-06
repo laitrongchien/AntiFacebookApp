@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import ExTouchableOpacity from "../ExTouchableOpacity";
 
-const FriendRequestItem = () => {
+const RecommendFriendItem = () => {
   return (
     <View>
       <ExTouchableOpacity style={styles.container}>
@@ -21,9 +21,6 @@ const FriendRequestItem = () => {
           <View style={styles.optionView_name}>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               Nguyễn Thế Duyệt
-            </Text>
-            <Text style={{ opacity: 0.4, right: -10, fontSize: 12 }}>
-              1 ngày
             </Text>
           </View>
           <View style={styles.optionView_coFriend}>
@@ -38,12 +35,12 @@ const FriendRequestItem = () => {
             <TouchableOpacity
               style={{ ...styles.button, backgroundColor: "#1877f2" }}
             >
-              <Text style={styles.buttonText}>Chấp nhận</Text>
+              <Text style={styles.buttonText}>Thêm bạn bè</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{ ...styles.button, backgroundColor: "#e8e8e8" }}
             >
-              <Text style={{ ...styles.buttonText, color: "black" }}>Xóa</Text>
+              <Text style={{ ...styles.buttonText, color: "black" }}>Gỡ</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -57,6 +54,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     justifyContent: "space-between",
+    marginTop: 5,
   },
   avatarView: {
     flex: 3,
@@ -64,8 +62,9 @@ const styles = StyleSheet.create({
     width: 84,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 6,
     marginLeft: -8,
-    marginRight: 5,
+    marginRight: -5,
   },
 
   optionView: {
@@ -104,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendRequestItem;
+export default RecommendFriendItem;

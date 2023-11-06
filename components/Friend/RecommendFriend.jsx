@@ -1,12 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import FriendRequestItem from "./FriendRequestItem";
+import RecommendFriendItem from "./RecommendFriendItem";
 
 const RecommendFriend = () => {
   return (
     <View style={styles.wrapper}>
       <Text style={styles.titleText}>Những người bạn có thể biết</Text>
-      <FriendRequestItem />
+      <RecommendFriendItem />
+      <RecommendFriendItem />
+      <RecommendFriendItem />
+      <RecommendFriendItem />
+      <RecommendFriendItem />
+      <RecommendFriendItem />
     </View>
   );
 };
