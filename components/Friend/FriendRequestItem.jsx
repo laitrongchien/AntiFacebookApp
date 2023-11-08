@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     justifyContent: "space-between",
+    marginTop: 8,
   },
   avatarView: {
     flex: 3,

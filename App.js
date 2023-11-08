@@ -18,6 +18,8 @@ import EmailScreen from "./screens/Register/EmailScreen";
 import PasswordScreen from "./screens/Register/PasswordScreen";
 import PolicyScreen from "./screens/Register/PolicyScreen";
 import AvatarOptions from "./screens/ProfileTab/AvartarOptions";
+import AllRequest from "./screens/FriendTab/AllRequest";
+import AddFriendRequest from "./components/Friend/AddFriendRequest";
 
 const Stack = createStackNavigator();
 
@@ -48,6 +50,11 @@ export default function App() {
               name="AvatarOptions"
               component={AvatarOptions}
             />
+            <Stack.Screen
+              name="AddFriendRequest"
+              component={AddFriendRequest}
+            />
+            <Stack.Screen name="AllRequest" component={AllRequest} />
           </>
         ) : (
           <>

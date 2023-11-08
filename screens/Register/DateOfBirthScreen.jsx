@@ -95,6 +95,7 @@ const DateOfBirthScreen = () => {
         onConfirm={handleDateConfirm}
         onCancel={hideDatePicker}
         display="spinner"
+        maximumDate={new Date(2023, 12, 31)}
       />
 
       {error && <Text style={{ marginTop: 8, color: "#a81414" }}>{error}</Text>}
