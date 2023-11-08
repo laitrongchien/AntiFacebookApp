@@ -15,7 +15,8 @@ import { navigation } from "../rootNavigation";
 import { SCREEN_HEIGHT } from "../constants";
 
 const LoginScreen = () => {
-  console.log(SCREEN_HEIGHT);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -49,15 +50,25 @@ const LoginScreen = () => {
             placeholder="Số di động hoặc email"
             value={email}
             onChangeText={(value) => setEmail(value)}
-            style={styles.inputBox}
-            selectionColor={"gray"}
+            style={{
+              ...styles.inputBox,
+              borderColor: isEmailFocused ? "#000" : "#bebebe",
+            }}
+            selectionColor="#666"
+            onFocus={() => setIsEmailFocused(true)}
+            onBlur={() => setIsEmailFocused(false)}
           />
           <TextInput
             placeholder="Mật khẩu"
             value={password}
             onChangeText={(value) => setPassword(value)}
-            style={styles.inputBox}
-            selectionColor={"gray"}
+            style={{
+              ...styles.inputBox,
+              borderColor: isPasswordFocused ? "#000" : "#bebebe",
+            }}
+            selectionColor="#666"
+            onFocus={() => setIsPasswordFocused(true)}
+            onBlur={() => setIsPasswordFocused(false)}
           />
           <TouchableOpacity style={styles.loginButton}>
             <Text style={styles.login}>Đăng nhập</Text>
@@ -108,7 +119,6 @@ const styles = StyleSheet.create({
   },
   inputBox: {
     color: "black",
-    borderColor: "#bebebe",
     fontSize: 15,
     borderWidth: 1,
     padding: 12,

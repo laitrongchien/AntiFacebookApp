@@ -40,7 +40,12 @@ const PreviewImage = ({ images, setImages }) => {
           height={imageHeight}
         >
           <TouchableOpacity
-            style={{ position: "absolute", top: 8, right: 8 }}
+            style={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
+            }}
             onPress={() => handleRemoveImage(index)}
           >
             <VectorIcon

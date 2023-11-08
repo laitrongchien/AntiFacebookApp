@@ -11,6 +11,8 @@ import MainScreen from "./screens/MainScreen";
 import CreatePost from "./screens/CreatePost";
 import Search from "./screens/Search";
 import ProfileScreen from "./screens/ProfileTab";
+import ProfileSetting from "./screens/ProfileTab/ProfileSetting";
+import EditProfile from "./screens/ProfileTab/EditProfile";
 import FullNameScreen from "./screens/Register/FullNameScreen";
 import DateOfBirthScreen from "./screens/Register/DateOfBirthScreen";
 import GenderScreen from "./screens/Register/GenderScreen";
@@ -45,6 +47,8 @@ export default function App() {
             <Stack.Screen name="CreatePost" component={CreatePost} />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+            <Stack.Screen name="ProfileSetting" component={ProfileSetting} />
+            <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen
               options={{ cardStyle: { backgroundColor: "transparent" } }}
               name="AvatarOptions"

@@ -2,6 +2,7 @@ import { StyleSheet, ScrollView } from "react-native";
 import PostTool from "../components/PostTool";
 import Stories from "../components/Stories";
 import PostItem from "../components/PostItem";
+import HorizontalRecommendFriends from "../components/HorizontalRecommendFriends";
 
 const HomeScreen = () => {
   return (
@@ -13,6 +14,7 @@ const HomeScreen = () => {
       <PostTool />
       <Stories />
       <PostItem />
+      <HorizontalRecommendFriends />
       <PostItem />
       <PostItem />
     </ScrollView>

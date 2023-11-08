@@ -12,6 +12,7 @@ const DiscardPostOption = ({ setShowModal }) => {
     <View
       style={{
         padding: 12,
+        backgroundColor: "#fff",
       }}
     >
       <View>

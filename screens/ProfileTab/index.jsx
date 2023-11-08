@@ -14,6 +14,8 @@ import { useState } from "react";
 import AvatarOptions from "./AvartarOptions";
 import CoverOptions from "./CoverOptions";
 import BottomModal from "../../components/BottomModal";
+import PostTool from "../../components/PostTool";
+import PostItem from "../../components/PostItem";
 
 const ProfileScreen = () => {
   const [isAvatarOptionsVisible, setIsAvatarOptionsVisible] = useState("false");
@@ -121,6 +123,7 @@ const ProfileScreen = () => {
                     width: SCREEN_WIDTH - 90,
                     backgroundColor: "#ddd",
                   }}
+                  onPress={() => navigation.navigate("EditProfile")}
                 >
                   <VectorIcon
                     name="pencil"
@@ -139,7 +142,11 @@ const ProfileScreen = () => {
                     Chỉnh sửa trang cá nhân
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.8} style={styles.btnOption}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.btnOption}
+                  onPress={() => navigation.navigate("ProfileSetting")}
+                >
                   <VectorIcon
                     name="dots-horizontal"
                     type="MaterialCommunityIcons"
@@ -184,14 +191,17 @@ const ProfileScreen = () => {
               color="#333"
               size={28}
             />
-            <Text style={styles.introLineText}>
-              Xem thông tin giới thiệu của bạn
-            </Text>
+            <TouchableOpacity>
+              <Text style={styles.introLineText}>
+                Xem thông tin giới thiệu của bạn
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={{ paddingVertical: 20 }}>
             <TouchableOpacity
               activeOpacity={0.8}
               style={styles.btnEditPublicInfo}
+              onPress={() => navigation.navigate("EditProfile")}
             >
               <Text
                 style={{ color: "#1877f2", fontSize: 16, fontWeight: "500" }}
@@ -202,6 +212,22 @@ const ProfileScreen = () => {
           </View>
           <FriendGallery />
         </View>
+        <View style={{ backgroundColor: "#fff", marginVertical: 10 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "500",
+              paddingLeft: 15,
+              paddingVertical: 8,
+            }}
+          >
+            Bài viết
+          </Text>
+          <PostTool />
+        </View>
+        <PostItem />
+        <PostItem />
+        <PostItem />
       </ScrollView>
       <BottomModal
         isVisible={isCoverOptionsVisible}
@@ -354,7 +380,7 @@ const styles = StyleSheet.create({
   btnEditPublicInfo: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#cce3f0",
+    backgroundColor: "#d0f5f5",
     width: "100%",
     height: 40,
     borderRadius: 5,

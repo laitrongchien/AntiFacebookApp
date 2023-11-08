@@ -256,6 +256,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.1)",
     paddingVertical: 6,
     paddingHorizontal: 12,
+    borderRadius: 6,
   },
   infoWrapper: {
     padding: 12,
