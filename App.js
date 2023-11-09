@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect, useState, useRef } from "react";
 import { StatusBar, SafeAreaView } from "react-native";
 // import { Provider } from "react-redux";
 // import store from "./redux/store";
@@ -20,19 +20,31 @@ import EmailScreen from "./screens/Register/EmailScreen";
 import PasswordScreen from "./screens/Register/PasswordScreen";
 import PolicyScreen from "./screens/Register/PolicyScreen";
 import AvatarOptions from "./screens/ProfileTab/AvartarOptions";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/config";
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [user, setUser] = useState(null);
+
   const navigationOptions = {
     headerShown: false,
     gestureResponseDistance: 800,
   };
 
-  const user = {
-    email: "laichien2002@gmail.com",
-    password: "jfdfdjfdjf",
-  };
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setUser(user);
+    } else {
+      setUser(null);
+    }
+  });
+
+  // const user = {
+  //   email: "laichien2002@gmail.com",
+  //   password: "jfdfdjfdjf",
+  // };
   // const user = null;
 
   return (
@@ -42,6 +54,9 @@ export default function App() {
         {user ? (
           <>
             <Stack.Screen name="MainScreen" component={MainScreen} />
+            {/* <Stack.Screen name="MainScreen">
+              {(props) => <MainScreen {...props} extraData={user} />}
+            </Stack.Screen> */}
             <Stack.Screen name="CreatePost" component={CreatePost} />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />

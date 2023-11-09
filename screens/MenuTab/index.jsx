@@ -3,8 +3,18 @@ import React from "react";
 import ExTouchableOpacity from "../../components/ExTouchableOpacity";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
+import { auth } from "../../firebase/config";
+import { signOut } from "firebase/auth";
 
 const MenuScreen = () => {
+  const onLogoutPress = async () => {
+    try {
+      console.log("ffd");
+      await signOut(auth);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <ScrollView
       bounces={false}
@@ -133,6 +143,7 @@ const MenuScreen = () => {
           justifyContent: "center",
           backgroundColor: "rgba(0,0,0,0.05)",
         }}
+        onPress={onLogoutPress}
       >
         <Text style={{ fontWeight: "500", fontSize: 16 }}>Đăng xuất</Text>
       </ExTouchableOpacity>
