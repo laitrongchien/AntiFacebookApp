@@ -1,8 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import FriendRequestItem from "./FriendRequestItem";
+import { useNavigation } from "@react-navigation/native";
+import { navigation } from "../../rootNavigation";
 
 const AddFriendRequest = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.wrapper}>
       <View style={styles.infoWrapper}>
@@ -11,7 +14,14 @@ const AddFriendRequest = () => {
           <Text style={styles.number}>3</Text>
         </View>
         <TouchableOpacity>
-          <Text style={styles.viewAllText}>Xem tất cả</Text>
+          <Text
+            style={styles.viewAllText}
+            onPress={() => {
+              navigation.navigate("AllRequest");
+            }}
+          >
+            Xem tất cả
+          </Text>
         </TouchableOpacity>
       </View>
       <FriendRequestItem />
