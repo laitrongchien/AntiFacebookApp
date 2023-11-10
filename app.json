@@ -32,7 +32,19 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to open the camera",
           "microphonePermission": false
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/logo.png"
+        }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e6069da3-f3d1-4e62-852e-4f74d1bad404"
+      }
+    },
+    "owner": "laichienbk0810"
   }
 }

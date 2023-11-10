@@ -15,39 +15,22 @@ import { navigation } from "../rootNavigation";
 import { SCREEN_HEIGHT } from "../constants";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/config";
-// import {
-//   registerForPushNotificationsAsync,
-//   sendPushNotification,
-// } from "../firebase/notification";
-// import * as Notifications from "expo-notifications";
+import { db } from "../firebase/config";
+import { doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
 
-// getToken(messaging, {
-//   vapidKey:
-//     "BGPK8nt44TNJVmIKeRS6tIBOYVxEuWDQdTf1PvoJzQUhWOIt712Oudyy37IJ0uCGcOBD1t9jf5IiMUklUJR5q4c",
-// })
-//   .then((currentToken) => {
-//     if (currentToken) {
-//       console.log(currentToken);
-//     } else {
-//       // Show permission request UI
-//       console.log(
-//         "No registration token available. Request permission to generate one."
-//       );
-//       // ...
-//     }
-//   })
-//   .catch((err) => {
-//     console.log("An error occurred while retrieving token. ", err);
-//     // ...
-//   });
+import {
+  registerForPushNotificationsAsync,
+  sendPushNotification,
+} from "../firebase/notification";
+import * as Notifications from "expo-notifications";
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: false,
-//     shouldSetBadge: false,
-//   }),
-// });
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const LoginScreen = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -57,81 +40,67 @@ const LoginScreen = () => {
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
-  const responseListener = useRef();
 
   const onCreateAccount = () => {
     navigation.navigate("StartRegisterScreen");
   };
 
+  const associateDeviceTokenWithUser = async (user, deviceToken) => {
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+
+      await setDoc(
+        userDocRef,
+        { deviceTokens: arrayUnion(deviceToken) },
+        { merge: true }
+      );
+
+      const userDocSnapshot = await getDoc(userDocRef);
+      const devices = userDocSnapshot.data().deviceTokens;
+
+      return devices;
+    } catch (error) {
+      console.error("Error associating device token:", error);
+    }
+  };
+
   const onLoginPress = async () => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
-      // const expoPushToken = await registerForPushNotificationsAsync();
-      // console.log(expoPushToken);
+      const user = response.user;
+      const devices = await associateDeviceTokenWithUser(user, expoPushToken);
+      if (devices.length > 1) {
+        devices
+          .slice(0, devices.length - 1)
+          .forEach((device) => sendPushNotification(device));
+      }
     } catch (err) {
       console.error(err);
     }
   };
 
-  // useEffect(async () => {
-  //   const token = await registerForPushNotificationsAsync();
-  //   setExpoPushToken(token);
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
 
-  //   notificationListener.current =
-  //     Notifications.addNotificationReceivedListener((notification) => {
-  //       setNotification(notification);
-  //     });
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
 
-  //   responseListener.current =
-  //     Notifications.addNotificationResponseReceivedListener((response) => {
-  //       console.log(response);
-  //     });
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    // responseListener.current =
+    //   Notifications.addNotificationResponseReceivedListener((response) => {
+    //     console.log(response);
+    //   });
 
-  //   return () => {
-  //     Notifications.removeNotificationSubscription(
-  //       notificationListener.current
-  //     );
-  //     Notifications.removeNotificationSubscription(responseListener.current);
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   const subscription1 = Notifications.addNotificationReceivedListener(
-  //     (notification) => {
-  //       console.log("NOTIFICATION RECEIVED");
-  //       console.log(notification);
-  //       const userName = notification.request.content.data.userName;
-  //       console.log(userName);
-  //     }
-  //   );
-
-  //   const subscription2 = Notifications.addNotificationResponseReceivedListener(
-  //     (response) => {
-  //       console.log("NOTIFICATION RESPONSE RECEIVED");
-  //       console.log(response);
-  //       const userName = response.notification.request.content.data.userName;
-  //       console.log(userName);
-  //     }
-  //   );
-
-  //   return () => {
-  //     subscription1.remove();
-  //     subscription2.remove();
-  //   };
-  // }, []);
-
-  function scheduleNotificationHandler() {
-    Notifications.scheduleNotificationAsync({
-      content: {
-        title: "My first local notification",
-        body: "This is the body of the notification.",
-        data: { userName: "Max" },
-      },
-      trigger: {
-        seconds: 5,
-      },
-    });
-  }
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
+      // Notifications.removeNotificationSubscription(responseListener);
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -143,10 +112,6 @@ const LoginScreen = () => {
         onPress={() => navigation.navigate("RegisterScreen")}
       /> */}
       <View style={styles.subContainer}>
-        {/* <View style={styles.language}>
-          <Text>Tiếng Việt</Text>
-          <Image source={ArrowDown} style={styles.arrowDown} />
-        </View> */}
         <Image source={Logo} style={styles.logoStyle} />
         <View
           style={{

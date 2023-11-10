@@ -1,20 +1,44 @@
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
-import React from "react";
+import { useEffect, useState } from "react";
 import ExTouchableOpacity from "../../components/ExTouchableOpacity";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
 import { auth } from "../../firebase/config";
 import { signOut } from "firebase/auth";
+import { registerForPushNotificationsAsync } from "../../firebase/notification";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 const MenuScreen = () => {
+  const [expoPushToken, setExpoPushToken] = useState("");
+
   const onLogoutPress = async () => {
     try {
-      console.log("ffd");
+      const user = auth.currentUser;
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      // Get the current device tokens from the user document
+      const currentDeviceTokens = userDocSnapshot.data().deviceTokens || [];
+      const index = currentDeviceTokens.indexOf(expoPushToken);
+
+      if (index !== -1) {
+        currentDeviceTokens.splice(index, 1);
+
+        await setDoc(userDocRef, { deviceTokens: currentDeviceTokens });
+      }
       await signOut(auth);
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+  }, []);
+
   return (
     <ScrollView
       bounces={false}

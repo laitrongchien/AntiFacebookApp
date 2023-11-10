@@ -38,6 +38,7 @@ export default function App() {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setUser(user);
+      // console.log(user);
     } else {
       setUser(null);
     }
