@@ -34,7 +34,7 @@ const StartRegisterScreen = () => {
         Tham gia Facebook
       </Text>
       <Image
-        source={require("../../assets/images/start-image.jpg")}
+        source={require("../../assets/images/join_facebook.jpg")}
         style={styles.image}
       />
       <Text style={{ paddingVertical: 12, fontSize: 15 }}>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.3)",
   },
   modalContent: {
-    backgroundColor: "#cdcdcd",
+    backgroundColor: "#fff",
     width: SCREEN_WIDTH - 80,
     borderRadius: 12,
     padding: 16,

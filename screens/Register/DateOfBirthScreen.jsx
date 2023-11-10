@@ -49,7 +49,7 @@ const DateOfBirthScreen = () => {
   }, [dateOfBirth]);
 
   const handleValidate = () => {
-    if (age < 10 && age > 0) {
+    if (age < 10) {
       setError(
         "Hình như bạn đang nhập sai thông tin về tuổi. Tuổi của bạn còn nhỏ để sử dụng Facebook"
       );
@@ -95,6 +95,7 @@ const DateOfBirthScreen = () => {
         onConfirm={handleDateConfirm}
         onCancel={hideDatePicker}
         display="spinner"
+        maximumDate={new Date(Date.now())}
       />
 
       {error && <Text style={{ marginTop: 8, color: "#a81414" }}>{error}</Text>}

@@ -27,8 +27,12 @@ const FullNameScreen = () => {
   };
 
   const handleValidate = () => {
+    const hasNumber = /[0-9]/.test(firstName + lastName);
+
     if (!firstName && !lastName) {
       setError("Vui lòng nhập họ và tên của bạn");
+    } else if (hasNumber) {
+      setError("Tên không được chứa chữ số");
     } else if (firstName.length < 2 || lastName.length < 2) {
       setError(
         "Tên trên Facebook không thể quá ngắn. Hãy nhập họ tên có ít nhất 2 chữ cái"

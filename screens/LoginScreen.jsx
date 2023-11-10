@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -13,15 +13,94 @@ import MetaLogo from "../assets/images/meta-logo.png";
 import VectorIcon from "../utils/VectorIcon";
 import { navigation } from "../rootNavigation";
 import { SCREEN_HEIGHT } from "../constants";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase/config";
+import { db } from "../firebase/config";
+import { doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
+
+import {
+  registerForPushNotificationsAsync,
+  sendPushNotification,
+} from "../firebase/notification";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const LoginScreen = () => {
-  console.log(SCREEN_HEIGHT);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
 
   const onCreateAccount = () => {
     navigation.navigate("StartRegisterScreen");
   };
+
+  const associateDeviceTokenWithUser = async (user, deviceToken) => {
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+
+      await setDoc(
+        userDocRef,
+        { deviceTokens: arrayUnion(deviceToken) },
+        { merge: true }
+      );
+
+      const userDocSnapshot = await getDoc(userDocRef);
+      const devices = userDocSnapshot.data().deviceTokens;
+
+      return devices;
+    } catch (error) {
+      console.error("Error associating device token:", error);
+    }
+  };
+
+  const onLoginPress = async () => {
+    try {
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      const user = response.user;
+      const devices = await associateDeviceTokenWithUser(user, expoPushToken);
+      if (devices.length > 1) {
+        devices
+          .slice(0, devices.length - 1)
+          .forEach((device) => sendPushNotification(device));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    // responseListener.current =
+    //   Notifications.addNotificationResponseReceivedListener((response) => {
+    //     console.log(response);
+    //   });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
+      // Notifications.removeNotificationSubscription(responseListener);
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -33,10 +112,6 @@ const LoginScreen = () => {
         onPress={() => navigation.navigate("RegisterScreen")}
       /> */}
       <View style={styles.subContainer}>
-        {/* <View style={styles.language}>
-          <Text>Tiếng Việt</Text>
-          <Image source={ArrowDown} style={styles.arrowDown} />
-        </View> */}
         <Image source={Logo} style={styles.logoStyle} />
         <View
           style={{
@@ -49,17 +124,27 @@ const LoginScreen = () => {
             placeholder="Số di động hoặc email"
             value={email}
             onChangeText={(value) => setEmail(value)}
-            style={styles.inputBox}
-            selectionColor={"gray"}
+            style={{
+              ...styles.inputBox,
+              borderColor: isEmailFocused ? "#000" : "#bebebe",
+            }}
+            selectionColor="#666"
+            onFocus={() => setIsEmailFocused(true)}
+            onBlur={() => setIsEmailFocused(false)}
           />
           <TextInput
             placeholder="Mật khẩu"
             value={password}
             onChangeText={(value) => setPassword(value)}
-            style={styles.inputBox}
-            selectionColor={"gray"}
+            style={{
+              ...styles.inputBox,
+              borderColor: isPasswordFocused ? "#000" : "#bebebe",
+            }}
+            selectionColor="#666"
+            onFocus={() => setIsPasswordFocused(true)}
+            onBlur={() => setIsPasswordFocused(false)}
           />
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity style={styles.loginButton} onPress={onLoginPress}>
             <Text style={styles.login}>Đăng nhập</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: "center" }}>
@@ -108,7 +193,6 @@ const styles = StyleSheet.create({
   },
   inputBox: {
     color: "black",
-    borderColor: "#bebebe",
     fontSize: 15,
     borderWidth: 1,
     padding: 12,

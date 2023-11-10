@@ -10,6 +10,19 @@ import PostOptions from "./PostOption";
 
 const PostItem = () => {
   const [postOptionVisible, setPostOptionVisible] = useState("false");
+  const [showFullParagraph, setShowFullParagraph] = useState(false);
+
+  const paragraph =
+    'Quên giai thoại "Ông Anh Sinh Năm 96" đi, bây giờ "Ông em Sinh năm 2k1" mới là văn mẫu! Ngành IT Việt Nam hiện nay ở đầu của sự phát triển. Có thể nói IT là vua của các nghề. Vừa có tiền, có quyền. Vừa kiếm được nhiều $ lại được xã hội trọng vọng.';
+
+  const truncatedParagraph = showFullParagraph
+    ? paragraph
+    : paragraph.slice(0, 100) + (paragraph.length > 100 ? "... " : "");
+
+  const toggleParagraph = () => {
+    setShowFullParagraph(!showFullParagraph);
+  };
+
   return (
     <View style={styles.item}>
       <View
@@ -69,12 +82,14 @@ const PostItem = () => {
         </View>
       </View>
       <View style={styles.postContent}>
-        <Text style={styles.paragraph}>
-          Quên giai thoại “Ông Anh Sinh Năm 96” đi, bây giờ “Ông em Sinh năm
-          2k1” mới là văn mẫu! Ngành IT Việt Nam hiện nay ở đầu của sự phát
-          triển. Có thể nói IT là vua của các nghề. Vừa có tiền, có quyền. Vừa
-          kiếm được nhiều $ lại được xã hội trọng vọng.
-        </Text>
+        <TouchableOpacity onPress={toggleParagraph} activeOpacity={0.8}>
+          <Text style={styles.paragraph}>
+            {showFullParagraph ? paragraph : truncatedParagraph}
+            {paragraph.length > 100 && !showFullParagraph && (
+              <Text style={{ fontSize: 16, color: "#666" }}>Xem thêm</Text>
+            )}
+          </Text>
+        </TouchableOpacity>
       </View>
       <ExTouchableOpacity>
         <View style={styles.imageContainer}>
