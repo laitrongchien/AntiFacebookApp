@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { useEffect, useState } from "react";
 import ExTouchableOpacity from "../../components/ExTouchableOpacity";
 import VectorIcon from "../../utils/VectorIcon";
@@ -11,9 +18,11 @@ import { db } from "../../firebase/config";
 
 const MenuScreen = () => {
   const [expoPushToken, setExpoPushToken] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const onLogoutPress = async () => {
     try {
+      setLoading(true);
       const user = auth.currentUser;
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnapshot = await getDoc(userDocRef);
@@ -28,7 +37,9 @@ const MenuScreen = () => {
         await setDoc(userDocRef, { deviceTokens: currentDeviceTokens });
       }
       await signOut(auth);
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.error(err);
     }
   };
@@ -169,7 +180,11 @@ const MenuScreen = () => {
         }}
         onPress={onLogoutPress}
       >
-        <Text style={{ fontWeight: "500", fontSize: 16 }}>Đăng xuất</Text>
+        {loading ? (
+          <ActivityIndicator color="#000" />
+        ) : (
+          <Text style={{ fontWeight: "500", fontSize: 16 }}>Đăng xuất</Text>
+        )}
       </ExTouchableOpacity>
     </ScrollView>
   );

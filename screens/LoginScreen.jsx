@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 
 import Logo from "../assets/images/logo.png";
@@ -40,6 +41,7 @@ const LoginScreen = () => {
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
+  const [loading, setLoading] = useState(false);
 
   const onCreateAccount = () => {
     navigation.navigate("StartRegisterScreen");
@@ -66,6 +68,7 @@ const LoginScreen = () => {
 
   const onLoginPress = async () => {
     try {
+      setLoading(true);
       const response = await signInWithEmailAndPassword(auth, email, password);
       const user = response.user;
       const devices = await associateDeviceTokenWithUser(user, expoPushToken);
@@ -74,7 +77,9 @@ const LoginScreen = () => {
           .slice(0, devices.length - 1)
           .forEach((device) => sendPushNotification(device));
       }
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.error(err);
     }
   };
@@ -145,7 +150,11 @@ const LoginScreen = () => {
             onBlur={() => setIsPasswordFocused(false)}
           />
           <TouchableOpacity style={styles.loginButton} onPress={onLoginPress}>
-            <Text style={styles.login}>Đăng nhập</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.login}>Đăng nhập</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={{ alignItems: "center" }}>
             <Text style={styles.forgotPass}>Bạn quên mật khẩu ư?</Text>

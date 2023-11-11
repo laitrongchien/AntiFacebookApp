@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { StatusBar, SafeAreaView } from "react-native";
 // import { Provider } from "react-redux";
 // import store from "./redux/store";
@@ -38,17 +38,10 @@ export default function App() {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setUser(user);
-      // console.log(user);
     } else {
       setUser(null);
     }
   });
-
-  // const user = {
-  //   email: "laichien2002@gmail.com",
-  //   password: "jfdfdjfdjf",
-  // };
-  // const user = null;
 
   return (
     <NavigationContainer ref={navigationRef}>
