@@ -3,7 +3,8 @@ import WatchItem from "./WatchItem";
 
 const WatchList = () => {
   return (
-    <View>
+    <View style={{ backgroundColor: "rgba(0,0,0,0.1)" }}>
+      <WatchItem />
       <WatchItem />
     </View>
   );

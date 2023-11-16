@@ -24,6 +24,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/config";
 import AllRequest from "./screens/FriendTab/AllRequest";
 import AddFriendRequest from "./components/Friend/AddFriendRequest";
+import WatchDetailList from "./screens/WatchTab/WatchDetailList";
 
 const Stack = createStackNavigator();
 
@@ -68,6 +69,7 @@ export default function App() {
               component={AddFriendRequest}
             />
             <Stack.Screen name="AllRequest" component={AllRequest} />
+            <Stack.Screen name="WatchDetailList" component={WatchDetailList} />
           </>
         ) : (
           <>
