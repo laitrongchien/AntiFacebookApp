@@ -7,15 +7,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 import VectorIcon from "../../../utils/VectorIcon";
+import { useSelector } from "react-redux";
 
 const CreateStory = () => {
+  const { avatar } = useSelector((state) => state.auth);
   return (
     <View style={styles.container}>
       <TouchableOpacity activeOpacity={0.8}>
         <ImageBackground
           imageStyle={{ resizeMode: "cover" }}
           style={styles.imageBackground}
-          source={require("../../../assets/images/default-img.png")}
+          source={{ uri: avatar }}
         >
           <View style={styles.iconWrapper}>
             <VectorIcon

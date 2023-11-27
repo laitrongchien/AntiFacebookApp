@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import ExTouchableOpacity from "../../components/ExTouchableOpacity";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
@@ -15,28 +16,34 @@ import { signOut } from "firebase/auth";
 import { registerForPushNotificationsAsync } from "../../firebase/notification";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { logout } from "../../redux/actions/authAction";
+import { useSelector } from "react-redux";
 
 const MenuScreen = () => {
   const [expoPushToken, setExpoPushToken] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { username, avatar } = useSelector((state) => state.auth);
 
   const onLogoutPress = async () => {
     try {
       setLoading(true);
-      const user = auth.currentUser;
-      const userDocRef = doc(db, "users", user.uid);
-      const userDocSnapshot = await getDoc(userDocRef);
+      // const user = auth.currentUser;
+      // const userDocRef = doc(db, "users", user.uid);
+      // const userDocSnapshot = await getDoc(userDocRef);
 
-      // Get the current device tokens from the user document
-      const currentDeviceTokens = userDocSnapshot.data().deviceTokens || [];
-      const index = currentDeviceTokens.indexOf(expoPushToken);
+      // // Get the current device tokens from the user document
+      // const currentDeviceTokens = userDocSnapshot.data().deviceTokens || [];
+      // const index = currentDeviceTokens.indexOf(expoPushToken);
 
-      if (index !== -1) {
-        currentDeviceTokens.splice(index, 1);
+      // if (index !== -1) {
+      //   currentDeviceTokens.splice(index, 1);
 
-        await setDoc(userDocRef, { deviceTokens: currentDeviceTokens });
-      }
-      await signOut(auth);
+      //   await setDoc(userDocRef, { deviceTokens: currentDeviceTokens });
+      // }
+      // await signOut(auth);
+      dispatch(logout());
+      // console.log("Logout");
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -82,12 +89,9 @@ const MenuScreen = () => {
         style={styles.userWrapper}
         onPress={() => navigation.navigate("ProfileScreen")}
       >
-        <Image
-          source={require("../../assets/images/default-img.png")}
-          style={styles.userAvatar}
-        />
+        <Image source={{ uri: avatar }} style={styles.userAvatar} />
         <Text style={{ fontWeight: "500", fontSize: 16, marginLeft: 12 }}>
-          Lại Chiến
+          {username}
         </Text>
       </ExTouchableOpacity>
       <Text

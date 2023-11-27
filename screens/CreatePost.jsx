@@ -12,10 +12,10 @@ import {
   Animated,
   ScrollView,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import VectorIcon from "../utils/VectorIcon";
 import { pickImage } from "../utils/PickImage";
-import DefaultImage from "../assets/images/default-img.png";
 import * as navigation from "../rootNavigation";
 import BottomModal from "../components/BottomModal";
 import DiscardPostOption from "../components/DiscardPostOption";
@@ -27,6 +27,7 @@ const CreatePost = () => {
   const [text, setText] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [images, setImages] = useState([]);
+  const { username, avatar } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -103,9 +104,9 @@ const CreatePost = () => {
         </View>
         <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
           <View style={styles.infoWrapper}>
-            <Image style={styles.avatar} source={DefaultImage}></Image>
+            <Image style={styles.avatar} source={{ uri: avatar }}></Image>
             <View>
-              <Text style={styles.name}>Lại Chiến</Text>
+              <Text style={styles.name}>{username}</Text>
               <View style={styles.postOption}>
                 <TouchableOpacity style={styles.statusOption}>
                   <VectorIcon

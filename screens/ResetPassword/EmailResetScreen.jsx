@@ -4,15 +4,18 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useState } from "react";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
+import { auth } from "../../api/auth";
 
-const EmailScreen = () => {
+const EmailResetScreen = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChangeEmail = (value) => {
     setEmail(value);
@@ -24,13 +27,20 @@ const EmailScreen = () => {
     return emailPattern.test(email);
   };
 
-  const handleValidate = () => {
+  const handleValidate = async () => {
     if (!email) {
       setError("Phải có email");
     } else if (!isEmailValid(email)) {
       setError("Nhập địa chỉ email hợp lệ");
     } else {
-      navigation.navigate("PasswordScreen", { email });
+      setLoading(true);
+      const res = await auth.getVerifyCode(email);
+      setLoading(false);
+      console.log(res.data.data.verify_code);
+      const verifyCode = res.data.data.verify_code;
+      if (res.data.code === "1000") {
+        navigation.navigate("VerifyCodeResetScreen", { email, verifyCode });
+      }
     }
   };
 
@@ -44,11 +54,10 @@ const EmailScreen = () => {
         onPress={() => navigation.goBack()}
       />
       <Text style={{ paddingTop: 12, fontSize: 22, fontWeight: "500" }}>
-        Email của bạn là gì?
+        Lấy lại mật khẩu
       </Text>
       <Text style={{ paddingVertical: 12, fontSize: 16, fontWeight: "400" }}>
-        Nhập email có thể dùng để liên hệ với bạn. Thông tin này sẽ không hiển
-        thị với ai khác trên trang cá nhân của bạn.
+        Nhập email để lấy lại mật khẩu
       </Text>
       <View style={{ position: "relative" }}>
         <TextInput
@@ -82,7 +91,11 @@ const EmailScreen = () => {
       </View>
       {error && <Text style={{ marginTop: 8, color: "#a81414" }}>{error}</Text>}
       <TouchableOpacity style={styles.btn} onPress={handleValidate}>
-        <Text style={{ color: "#fff", fontSize: 16 }}>Tiếp</Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={{ color: "#fff", fontSize: 16 }}>Tiếp</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -118,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EmailScreen;
+export default EmailResetScreen;

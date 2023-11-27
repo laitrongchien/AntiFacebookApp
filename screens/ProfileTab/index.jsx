@@ -16,10 +16,13 @@ import CoverOptions from "./CoverOptions";
 import BottomModal from "../../components/BottomModal";
 import PostTool from "../../components/PostTool";
 import PostItem from "../../components/PostItem";
+import { useSelector } from "react-redux";
 
 const ProfileScreen = () => {
   const [isAvatarOptionsVisible, setIsAvatarOptionsVisible] = useState("false");
   const [isCoverOptionsVisible, setIsCoverOptionsVisible] = useState("false");
+  const { username, avatar } = useSelector((state) => state.auth);
+  const { cover_image, city, country } = useSelector((state) => state.user);
 
   return (
     <View style={{ position: "relative" }}>
@@ -32,7 +35,7 @@ const ProfileScreen = () => {
             size={32}
           />
         </TouchableOpacity>
-        <Text style={{ fontSize: 16, fontWeight: "500" }}>Lại Chiến</Text>
+        <Text style={{ fontSize: 16, fontWeight: "500" }}>{username}</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Search")}>
           <VectorIcon
             name="magnify"
@@ -76,10 +79,7 @@ const ProfileScreen = () => {
                 activeOpacity={0.9}
                 onPress={() => setIsAvatarOptionsVisible(true)}
               >
-                <Image
-                  style={styles.avatar}
-                  source={require("../../assets/images/default-img.png")}
-                />
+                <Image style={styles.avatar} source={{ uri: avatar }} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.btnChangeAvatar}
@@ -95,7 +95,7 @@ const ProfileScreen = () => {
             </View>
           </View>
           <View>
-            <Text style={styles.name}>Lại Chiến</Text>
+            <Text style={styles.name}>{username}</Text>
             <View style={styles.buttonWrapper}>
               <TouchableOpacity activeOpacity={0.8} style={styles.btnAddStory}>
                 <VectorIcon
@@ -169,9 +169,15 @@ const ProfileScreen = () => {
               color="#333"
               size={28}
             />
-            <Text style={styles.introLineText}>
-              Sống tại <Text style={styles.introHightLight}>Thái Bình</Text>
-            </Text>
+            {city ? (
+              <Text style={styles.introLineText}>
+                Đến từ <Text style={styles.introHightLight}>{city}</Text>
+              </Text>
+            ) : (
+              <Text style={styles.introLineText}>
+                Thêm thông tin nơi ở/ thành phố
+              </Text>
+            )}
           </View>
           <View style={styles.introLine}>
             <VectorIcon
@@ -180,9 +186,13 @@ const ProfileScreen = () => {
               color="#333"
               size={28}
             />
-            <Text style={styles.introLineText}>
-              Đến từ <Text style={styles.introHightLight}>Thái Bình</Text>
-            </Text>
+            {country ? (
+              <Text style={styles.introLineText}>
+                Quốc gia <Text style={styles.introHightLight}>{country}</Text>
+              </Text>
+            ) : (
+              <Text style={styles.introLineText}>Thêm thông tin quốc gia</Text>
+            )}
           </View>
           <View style={styles.introLine}>
             <VectorIcon
@@ -203,9 +213,7 @@ const ProfileScreen = () => {
               style={styles.btnEditPublicInfo}
               onPress={() => navigation.navigate("EditProfile")}
             >
-              <Text
-                style={{ color: "#1877f2", fontSize: 16, fontWeight: "500" }}
-              >
+              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
                 Chỉnh sửa chi tiết công khai
               </Text>
             </TouchableOpacity>
@@ -380,7 +388,7 @@ const styles = StyleSheet.create({
   btnEditPublicInfo: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#d0f5f5",
+    backgroundColor: "#1877f2",
     width: "100%",
     height: 40,
     borderRadius: 5,

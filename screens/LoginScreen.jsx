@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-
+import { useDispatch } from "react-redux";
+import { login } from "../redux/actions/authAction";
 import Logo from "../assets/images/logo.png";
 import MetaLogo from "../assets/images/meta-logo.png";
 import VectorIcon from "../utils/VectorIcon";
@@ -42,6 +43,8 @@ const LoginScreen = () => {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const [loading, setLoading] = useState(false);
+  const device_id = "string";
+  const dispatch = useDispatch();
 
   const onCreateAccount = () => {
     navigation.navigate("StartRegisterScreen");
@@ -69,14 +72,15 @@ const LoginScreen = () => {
   const onLoginPress = async () => {
     try {
       setLoading(true);
-      const response = await signInWithEmailAndPassword(auth, email, password);
-      const user = response.user;
-      const devices = await associateDeviceTokenWithUser(user, expoPushToken);
-      if (devices.length > 1) {
-        devices
-          .slice(0, devices.length - 1)
-          .forEach((device) => sendPushNotification(device));
-      }
+      // const response = await signInWithEmailAndPassword(auth, email, password);
+      // const user = response.user;
+      // const devices = await associateDeviceTokenWithUser(user, expoPushToken);
+      // if (devices.length > 1) {
+      //   devices
+      //     .slice(0, devices.length - 1)
+      //     .forEach((device) => sendPushNotification(device));
+      // }
+      await dispatch(login(email, password, device_id));
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -156,7 +160,10 @@ const LoginScreen = () => {
               <Text style={styles.login}>Đăng nhập</Text>
             )}
           </TouchableOpacity>
-          <TouchableOpacity style={{ alignItems: "center" }}>
+          <TouchableOpacity
+            style={{ alignItems: "center" }}
+            onPress={() => navigation.navigate("EmailResetScreen")}
+          >
             <Text style={styles.forgotPass}>Bạn quên mật khẩu ư?</Text>
           </TouchableOpacity>
         </View>
