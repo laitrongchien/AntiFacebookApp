@@ -23,7 +23,7 @@ const MenuScreen = () => {
   const [expoPushToken, setExpoPushToken] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const { username, avatar } = useSelector((state) => state.auth);
+  const { username, avatar, coins } = useSelector((state) => state.auth);
 
   const onLogoutPress = async () => {
     try {
@@ -86,13 +86,24 @@ const MenuScreen = () => {
         </View>
       </View>
       <ExTouchableOpacity
-        style={styles.userWrapper}
+        style={{ ...styles.userWrapper, justifyContent: "space-between" }}
         onPress={() => navigation.navigate("ProfileScreen")}
       >
-        <Image source={{ uri: avatar }} style={styles.userAvatar} />
-        <Text style={{ fontWeight: "500", fontSize: 16, marginLeft: 12 }}>
-          {username}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Image source={{ uri: avatar }} style={styles.userAvatar} />
+          <Text style={{ fontWeight: "500", fontSize: 16, marginLeft: 12 }}>
+            {username}
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={{ fontWeight: "500", fontSize: 16, marginRight: 4 }}>
+            Số xu: {coins}
+          </Text>
+          <Image
+            source={require("../../assets/images/coin.png")}
+            style={styles.coin}
+          />
+        </View>
       </ExTouchableOpacity>
       <Text
         style={{
@@ -257,6 +268,11 @@ const styles = StyleSheet.create({
   userAvatar: {
     width: 40,
     height: 40,
+    borderRadius: 50,
+  },
+  coin: {
+    width: 20,
+    height: 20,
     borderRadius: 50,
   },
   btnOption: {

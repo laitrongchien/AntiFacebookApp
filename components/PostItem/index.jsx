@@ -1,19 +1,21 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import LoadingSkeleton from "../Loading/Skeleton";
 import VectorIcon from "../../utils/VectorIcon";
 import ExTouchableOpacity from "../ExTouchableOpacity";
-import ScaleImage from "../ScaleImage";
 import Reaction from "../Reaction";
-import { SCREEN_WIDTH } from "../../constants";
-import { useState } from "react";
+import { useState, memo } from "react";
 import BottomModal from "../BottomModal";
 import PostOptions from "./PostOption";
+import PostImage from "../PostImage";
+import { getTimeFromCreatePost } from "../../utils/helper";
 
-const PostItem = () => {
+const PostItem = ({ postData }) => {
   const [postOptionVisible, setPostOptionVisible] = useState(false);
   const [showFullParagraph, setShowFullParagraph] = useState(false);
 
-  const paragraph =
-    'Quên giai thoại "Ông Anh Sinh Năm 96" đi, bây giờ "Ông em Sinh năm 2k1" mới là văn mẫu! Ngành IT Việt Nam hiện nay ở đầu của sự phát triển. Có thể nói IT là vua của các nghề. Vừa có tiền, có quyền. Vừa kiếm được nhiều $ lại được xã hội trọng vọng.';
+  const { name, image, described, created, feel, author } = postData;
+
+  const paragraph = described;
 
   const truncatedParagraph = showFullParagraph
     ? paragraph
@@ -37,18 +39,24 @@ const PostItem = () => {
         <View style={styles.postHeaderInfo}>
           <Image
             style={styles.avatar}
-            source={require("../../assets/images/default-img.png")}
+            source={{
+              uri: author.avatar
+                ? author.avatar
+                : "https://t4.ftcdn.net/jpg/05/49/98/39/240_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg",
+            }}
           />
           <View style={styles.infoWrapper}>
             <View style={styles.nameWrapper}>
               <TouchableOpacity>
                 <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                  HUST Confessions
+                  {author.name}
                 </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.extraInfoWrapper}>
-              <Text style={{ color: "#333", fontSize: 12 }}>37p</Text>
+              <Text style={{ color: "#333", fontSize: 12 }}>
+                {getTimeFromCreatePost(created)}
+              </Text>
               <Text style={{ fontSize: 16, marginHorizontal: 5 }}>·</Text>
               <VectorIcon
                 name="earth"
@@ -91,14 +99,7 @@ const PostItem = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <ExTouchableOpacity>
-        <View style={styles.imageContainer}>
-          <ScaleImage
-            source="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
-            width={SCREEN_WIDTH}
-          />
-        </View>
-      </ExTouchableOpacity>
+      {image.length !== 0 && <PostImage images={image} />}
       <Reaction />
       <BottomModal
         isVisible={postOptionVisible}
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowOffset: { height: 0, width: 0 },
-    marginBottom: 10,
+    marginTop: 8,
   },
   postHeaderInfo: {
     flexDirection: "row",
@@ -163,4 +164,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PostItem;
+export default memo(PostItem);
