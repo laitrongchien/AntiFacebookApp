@@ -9,7 +9,7 @@ import BottomModal from "../BottomModal";
 import PostOptions from "./PostOption";
 
 const PostItem = () => {
-  const [postOptionVisible, setPostOptionVisible] = useState("false");
+  const [postOptionVisible, setPostOptionVisible] = useState(false);
   const [showFullParagraph, setShowFullParagraph] = useState(false);
 
   const paragraph =

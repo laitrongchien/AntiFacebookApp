@@ -8,7 +8,12 @@ import {
 
 const BottomModal = ({ isVisible, closeModal, children }) => {
   return (
-    <Modal transparent={true} visible={isVisible} onRequestClose={closeModal}>
+    <Modal
+      transparent={true}
+      visible={isVisible}
+      onRequestClose={closeModal}
+      statusBarTranslucent={false}
+    >
       <TouchableWithoutFeedback onPress={closeModal}>
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>

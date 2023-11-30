@@ -8,7 +8,7 @@ import BottomModal from "../BottomModal";
 import WatchOptions from "./WatchOption";
 import { navigation } from "../../rootNavigation";
 
-const WatchItem = () => {
+const DarkBackgroundVideoItem = () => {
   const [watchOptionVisible, setWatchOptionVisible] = useState(false);
   return (
     <View style={styles.item}>
@@ -21,19 +21,25 @@ const WatchItem = () => {
           <View style={styles.infoWrapper}>
             <View style={styles.nameWrapper}>
               <TouchableOpacity>
-                <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                <Text
+                  style={{ fontSize: 16, fontWeight: "500", color: "#fff" }}
+                >
                   GTV Plus
                 </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.extraInfoWrapper}>
-              <Text style={{ color: "#333", fontSize: 12 }}>28 Th7</Text>
-              <Text style={{ fontSize: 16, marginHorizontal: 5 }}>·</Text>
+              <Text style={{ color: "#fff", fontSize: 12 }}>28 Th7</Text>
+              <Text
+                style={{ fontSize: 16, marginHorizontal: 5, color: "#fff" }}
+              >
+                ·
+              </Text>
               <VectorIcon
                 name="earth"
                 type="MaterialCommunityIcons"
                 size={19}
-                color="#666"
+                color="#fff"
               />
             </View>
           </View>
@@ -46,7 +52,7 @@ const WatchItem = () => {
             name="dots-horizontal"
             type="MaterialCommunityIcons"
             size={30}
-            color="#666"
+            color="#fff"
           />
         </TouchableOpacity>
       </View>
@@ -61,7 +67,7 @@ const WatchItem = () => {
           <VideoControl />
         </View>
       </TouchableOpacity>
-      <Reaction />
+      <Reaction isDark={true} />
       <BottomModal
         isVisible={watchOptionVisible}
         closeModal={() => setWatchOptionVisible(false)}
@@ -95,15 +101,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   item: {
-    backgroundColor: "#fff",
+    backgroundColor: "#5a5a5c",
     shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowOffset: { height: 0, width: 0 },
-    marginTop: 6,
+    marginBottom: 6,
   },
   paragraph: {
     marginBottom: 8,
     fontSize: 16,
+    color: "#fff",
   },
   watchContent: {
     paddingHorizontal: 16,
@@ -117,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WatchItem;
+export default DarkBackgroundVideoItem;

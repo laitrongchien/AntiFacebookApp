@@ -8,12 +8,15 @@ import {
 import { useState } from "react";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
+import { useRoute } from "@react-navigation/native";
 
 const PasswordScreen = () => {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordShown, setPasswordShown] = useState(false);
   const [error, setError] = useState("");
+  const route = useRoute();
+  const { email } = route.params;
 
   const handleChangePassword = (value) => {
     setPassword(value);
@@ -26,7 +29,7 @@ const PasswordScreen = () => {
     } else if (password.length < 6) {
       setError("Mật khẩu phải gồm ít nhất 6 ký tự");
     } else {
-      navigation.navigate("PolicyScreen");
+      navigation.navigate("PolicyScreen", { email, password });
     }
   };
 

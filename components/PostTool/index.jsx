@@ -1,21 +1,12 @@
 import { useState } from "react";
 import { SCREEN_WIDTH } from "../../constants";
-import {
-  Text,
-  StyleSheet,
-  View,
-  Image,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 import * as navigation from "../../rootNavigation";
-import defaultImage from "../../assets/images/default-img.png";
 import CameraRoll from "../../assets/images/cameraroll.png";
 
 const PostTool = () => {
-  // const user = useSelector((state) => state.user.user);
-  // const dispatch = useDispatch();
+  const { avatar } = useSelector((state) => state.auth);
 
   const [inputBgColor, setInputBgColor] = useState("#fff");
 
@@ -26,8 +17,7 @@ const PostTool = () => {
   return (
     <View style={styles.postToolWrapper}>
       <TouchableOpacity activeOpacity={0.5} style={styles.userAvatarWrapper}>
-        {/* <Image source={{ uri: user.avatar_url }} style={styles.userAvatar} /> */}
-        <Image source={defaultImage} style={styles.userAvatar} />
+        <Image source={{ uri: avatar }} style={styles.userAvatar} />
       </TouchableOpacity>
       <TouchableOpacity onPress={onNavigateCreatePost}>
         <View style={{ ...styles.postInput, backgroundColor: inputBgColor }}>

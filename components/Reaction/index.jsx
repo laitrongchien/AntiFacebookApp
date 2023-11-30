@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   View,
   Image,
@@ -6,14 +7,14 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
+import { Audio } from "expo-av";
 import ExTouchableOpacity from "../ExTouchableOpacity";
 import VectorIcon from "../../utils/VectorIcon";
-import { useState } from "react";
 import BottomModal from "../BottomModal";
 import Comment from "../Comment";
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from "../../constants";
 
-const Reaction = () => {
+const Reaction = ({ isDark }) => {
   const [liked, setLiked] = useState(false);
   const [commentVisible, setCommentVisible] = useState(false);
 
@@ -25,31 +26,56 @@ const Reaction = () => {
     setCommentVisible(false);
   };
 
+  useEffect(() => {
+    Audio.Sound.createAsync(require("../../assets/sounds/like_sound.mp3"), {
+      shouldPlay: false,
+    });
+  }, []);
+
+  const playLikeSound = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../assets/sounds/like_sound.mp3"),
+      { shouldPlay: true }
+    );
+  };
+
+  const handleLikeButtonClick = () => {
+    setLiked(!liked);
+    if (!liked) {
+      playLikeSound();
+    }
+  };
+
   return (
     <View>
       <ExTouchableOpacity style={styles.reactStatis} onPress={openComment}>
         <View style={{ flexDirection: "row" }}>
           <Image
-            source={require("../../assets/icons/like.jpeg")}
+            source={require("../../assets/icons/like_icon.png")}
             style={{ width: 20, height: 20, marginRight: 4 }}
           />
-          <Text style={{ color: "#666" }}>200</Text>
+          <Text style={{ color: isDark ? "#fff" : "#666" }}>200</Text>
         </View>
-        <Text style={{ color: "#666" }}>100 bình luận</Text>
+        <Text style={{ color: isDark ? "#fff" : "#666" }}>100 bình luận</Text>
       </ExTouchableOpacity>
       <View style={styles.reactHandle}>
         <ExTouchableOpacity
           style={styles.btnOption}
-          onPress={() => setLiked(!liked)}
+          onPress={handleLikeButtonClick}
           onLongPress={() => console.log("press")}
         >
           <VectorIcon
             name={liked ? "thumb-up" : "thumb-up-outline"}
             type="MaterialCommunityIcons"
-            color={liked ? "#1877f2" : "#666"}
+            color={liked ? "#1877f2" : isDark ? "#fff" : "#666"}
             size={22}
           />
-          <Text style={{ color: liked ? "#1877f2" : "#666", marginLeft: 4 }}>
+          <Text
+            style={{
+              color: liked ? "#1877f2" : isDark ? "#fff" : "#666",
+              marginLeft: 4,
+            }}
+          >
             Thích
           </Text>
         </ExTouchableOpacity>
@@ -57,10 +83,12 @@ const Reaction = () => {
           <VectorIcon
             name="chat-outline"
             type="MaterialCommunityIcons"
-            color="#666"
+            color={isDark ? "#fff" : "#666"}
             size={22}
           />
-          <Text style={{ color: "#666", marginLeft: 4 }}>Bình luận</Text>
+          <Text style={{ color: isDark ? "#fff" : "#666", marginLeft: 4 }}>
+            Bình luận
+          </Text>
         </ExTouchableOpacity>
       </View>
       <BottomModal isVisible={commentVisible} closeModal={closeComment}>

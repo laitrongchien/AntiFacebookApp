@@ -38,18 +38,19 @@ const FullNameScreen = () => {
         "Tên trên Facebook không thể quá ngắn. Hãy nhập họ tên có ít nhất 2 chữ cái"
       );
     } else {
-      navigation.navigate("DateOfBirthScreen");
+      const fullName = firstName + " " + lastName;
+      navigation.navigate("ChangeAvatarScreen", { fullName });
     }
   };
   return (
     <View style={styles.container}>
-      <VectorIcon
+      {/* <VectorIcon
         name="arrow-left"
         type="MaterialCommunityIcons"
         color="#000"
         size={30}
         onPress={() => navigation.goBack()}
-      />
+      /> */}
       <Text style={{ paddingTop: 12, fontSize: 22, fontWeight: "500" }}>
         Bạn tên gì?
       </Text>

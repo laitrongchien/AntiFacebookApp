@@ -10,5 +10,15 @@ export const pickImage = async () => {
     orderedSelection: true,
   });
 
-  return result; // Return the result to be handled by the component
+  return result;
+};
+
+export const pickOneImage = async () => {
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  return result;
 };

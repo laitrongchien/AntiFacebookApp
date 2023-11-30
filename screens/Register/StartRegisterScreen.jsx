@@ -43,7 +43,7 @@ const StartRegisterScreen = () => {
       </Text>
       <TouchableOpacity
         style={styles.btn}
-        onPress={() => navigation.navigate("FullNameScreen")}
+        onPress={() => navigation.navigate("EmailScreen")}
       >
         <Text style={{ color: "#fff", fontSize: 16 }}>Bắt đầu</Text>
       </TouchableOpacity>
