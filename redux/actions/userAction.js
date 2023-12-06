@@ -27,3 +27,27 @@ export const setUserInfo = (formData) => async (dispatch) => {
     console.log(err.response.data.message);
   }
 };
+
+export const getRequestedFriend = (index, count) => async (dispatch) => {
+  try {
+    const res = await user.getRequestedFriend(index, count);
+    dispatch({
+      type: "GET_REQUESTED_FRIENDS",
+      payload: res.data.data,
+    });
+  } catch (err) {
+    console.log(err.response.data.message);
+  }
+};
+
+export const getSuggestedFriend = (index, count) => async (dispatch) => {
+  try {
+    const res = await user.getSuggestedFriend(index, count);
+    dispatch({
+      type: "GET_RECOMMEND_FRIENDS",
+      payload: res.data.data,
+    });
+  } catch (err) {
+    console.log(err.response.data.message);
+  }
+};

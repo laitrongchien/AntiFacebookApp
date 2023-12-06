@@ -1,19 +1,22 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
 import ExTouchableOpacity from "../ExTouchableOpacity";
-import ScaleImage from "../ScaleImage";
 import Reaction from "../Reaction";
-import { SCREEN_WIDTH } from "../../constants";
-import { useState } from "react";
+import { useState, memo } from "react";
 import BottomModal from "../BottomModal";
 import PostOptions from "./PostOption";
+import PostImage from "../PostImage";
+import { getTimeFromCreatePost } from "../../utils/helper";
+import { navigation } from "../../rootNavigation";
 
-const PostItem = () => {
+const PostItem = ({ postData }) => {
   const [postOptionVisible, setPostOptionVisible] = useState(false);
   const [showFullParagraph, setShowFullParagraph] = useState(false);
 
-  const paragraph =
-    'Quên giai thoại "Ông Anh Sinh Năm 96" đi, bây giờ "Ông em Sinh năm 2k1" mới là văn mẫu! Ngành IT Việt Nam hiện nay ở đầu của sự phát triển. Có thể nói IT là vua của các nghề. Vừa có tiền, có quyền. Vừa kiếm được nhiều $ lại được xã hội trọng vọng.';
+  const { id, image, described, created, feel, author, comment_mark, is_felt } =
+    postData;
+
+  const paragraph = described;
 
   const truncatedParagraph = showFullParagraph
     ? paragraph
@@ -25,7 +28,7 @@ const PostItem = () => {
 
   return (
     <View style={styles.item}>
-      <View
+      <TouchableOpacity
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -33,22 +36,44 @@ const PostItem = () => {
           paddingHorizontal: 16,
           paddingVertical: 12,
         }}
+        activeOpacity={0.6}
+        onPress={() =>
+          navigation.navigate("PostDetailScreen", { postData: postData })
+        }
       >
         <View style={styles.postHeaderInfo}>
-          <Image
-            style={styles.avatar}
-            source={require("../../assets/images/default-img.png")}
-          />
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("UserXProfileScreen", { userXId: author.id })
+            }
+          >
+            <Image
+              style={styles.avatar}
+              source={
+                author.avatar
+                  ? { uri: author.avatar }
+                  : require("../../assets/images/default-img.png")
+              }
+            />
+          </TouchableOpacity>
           <View style={styles.infoWrapper}>
             <View style={styles.nameWrapper}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("UserXProfileScreen", {
+                    userXId: author.id,
+                  })
+                }
+              >
                 <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                  HUST Confessions
+                  {author.name || "Username"}
                 </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.extraInfoWrapper}>
-              <Text style={{ color: "#333", fontSize: 12 }}>37p</Text>
+              <Text style={{ color: "#333", fontSize: 12 }}>
+                {getTimeFromCreatePost(created)}
+              </Text>
               <Text style={{ fontSize: 16, marginHorizontal: 5 }}>·</Text>
               <VectorIcon
                 name="earth"
@@ -80,7 +105,7 @@ const PostItem = () => {
             />
           </ExTouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
       <View style={styles.postContent}>
         <TouchableOpacity onPress={toggleParagraph} activeOpacity={0.8}>
           <Text style={styles.paragraph}>
@@ -91,15 +116,13 @@ const PostItem = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <ExTouchableOpacity>
-        <View style={styles.imageContainer}>
-          <ScaleImage
-            source="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
-            width={SCREEN_WIDTH}
-          />
-        </View>
-      </ExTouchableOpacity>
-      <Reaction />
+      {image.length !== 0 && <PostImage images={image} />}
+      <Reaction
+        numFeel={feel}
+        numMark={comment_mark}
+        isFelt={is_felt}
+        postId={id}
+      />
       <BottomModal
         isVisible={postOptionVisible}
         closeModal={() => setPostOptionVisible(false)}
@@ -116,7 +139,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowOffset: { height: 0, width: 0 },
-    marginBottom: 10,
+    marginTop: 8,
   },
   postHeaderInfo: {
     flexDirection: "row",
@@ -163,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PostItem;
+export default memo(PostItem);

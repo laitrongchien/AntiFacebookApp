@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
+  KeyboardAvoidingView,
+  FlatList,
 } from "react-native";
 import { Audio } from "expo-av";
 import ExTouchableOpacity from "../ExTouchableOpacity";
@@ -13,18 +15,26 @@ import VectorIcon from "../../utils/VectorIcon";
 import BottomModal from "../BottomModal";
 import Comment from "../Comment";
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from "../../constants";
+import { getComments } from "../../redux/actions/commentAction";
+import { useSelector, useDispatch } from "react-redux";
 
-const Reaction = ({ isDark }) => {
-  const [liked, setLiked] = useState(false);
+const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
   const [commentVisible, setCommentVisible] = useState(false);
+  const dispatch = useDispatch();
+  const comments = useSelector((state) => state.comments);
+  const defaultIndex = 0;
+  const defaultCount = 10;
 
   const openComment = () => {
     setCommentVisible(true);
+    dispatch(getComments(postId, defaultIndex, defaultCount));
   };
 
   const closeComment = () => {
     setCommentVisible(false);
   };
+
+  const renderItem = ({ item }) => <Comment item={item} />;
 
   useEffect(() => {
     Audio.Sound.createAsync(require("../../assets/sounds/like_sound.mp3"), {
@@ -40,8 +50,9 @@ const Reaction = ({ isDark }) => {
   };
 
   const handleLikeButtonClick = () => {
-    setLiked(!liked);
-    if (!liked) {
+    if (isFelt == 0) isFelt = -1;
+    if (isFelt == -1) {
+      isFelt = 0;
       playLikeSound();
     }
   };
@@ -49,14 +60,20 @@ const Reaction = ({ isDark }) => {
   return (
     <View>
       <ExTouchableOpacity style={styles.reactStatis} onPress={openComment}>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image
             source={require("../../assets/icons/like_icon.png")}
-            style={{ width: 20, height: 20, marginRight: 4 }}
+            style={{ width: 20, height: 20 }}
           />
-          <Text style={{ color: isDark ? "#fff" : "#666" }}>200</Text>
+          <Image
+            source={require("../../assets/icons/sad.png")}
+            style={{ width: 18, height: 18, marginRight: 4, marginLeft: -4 }}
+          />
+          <Text style={{ color: isDark ? "#fff" : "#666" }}>{numFeel}</Text>
         </View>
-        <Text style={{ color: isDark ? "#fff" : "#666" }}>100 bình luận</Text>
+        <Text style={{ color: isDark ? "#fff" : "#666" }}>
+          {numMark != 0 ? `${numMark} bình luận` : "Chưa có bình luận"}
+        </Text>
       </ExTouchableOpacity>
       <View style={styles.reactHandle}>
         <ExTouchableOpacity
@@ -65,14 +82,14 @@ const Reaction = ({ isDark }) => {
           onLongPress={() => console.log("press")}
         >
           <VectorIcon
-            name={liked ? "thumb-up" : "thumb-up-outline"}
+            name={isFelt == 0 ? "thumb-up" : "thumb-up-outline"}
             type="MaterialCommunityIcons"
-            color={liked ? "#1877f2" : isDark ? "#fff" : "#666"}
+            color={isFelt == 0 ? "#1877f2" : isDark ? "#fff" : "#666"}
             size={22}
           />
           <Text
             style={{
-              color: liked ? "#1877f2" : isDark ? "#fff" : "#666",
+              color: isFelt == 0 ? "#1877f2" : isDark ? "#fff" : "#666",
               marginLeft: 4,
             }}
           >
@@ -92,27 +109,86 @@ const Reaction = ({ isDark }) => {
         </ExTouchableOpacity>
       </View>
       <BottomModal isVisible={commentVisible} closeModal={closeComment}>
-        <ScrollView
-          bounces={true}
-          showsVerticalScrollIndicator={false}
-          style={{
-            paddingHorizontal: 12,
-            paddingVertical: 24,
-            height: SCREEN_HEIGHT - 64,
-            backgroundColor: "#fff",
-          }}
-        >
-          <Comment />
-        </ScrollView>
-        <View style={styles.commentInputContainer}>
-          <TextInput
-            style={styles.commentInput}
-            placeholder="Tìm kiếm..."
-            placeholderTextColor="#333"
-            selectionColor="#333"
-            underlineColorAndroid="transparent"
-          />
-        </View>
+        <KeyboardAvoidingView behavior="height">
+          <View style={styles.reactBar}>
+            <ExTouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <Image
+                source={require("../../assets/icons/like_icon.png")}
+                style={{ width: 20, height: 20 }}
+              />
+              <Image
+                source={require("../../assets/icons/sad.png")}
+                style={{
+                  width: 18,
+                  height: 18,
+                  marginRight: 4,
+                  marginLeft: -4,
+                }}
+              />
+              <Text style={{ color: isDark ? "#fff" : "#666" }}>{numFeel}</Text>
+              <VectorIcon
+                name="chevron-right"
+                type="MaterialCommunityIcons"
+                color="#666"
+                size={30}
+              />
+            </ExTouchableOpacity>
+          </View>
+          {/* <ScrollView
+            bounces={true}
+            showsVerticalScrollIndicator={false}
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 24,
+              backgroundColor: "#fff",
+              height: SCREEN_HEIGHT - 50 - 50,
+            }}
+          >
+            <Comment />
+            <Comment />
+            <Comment />
+          </ScrollView> */}
+          {comments.length != 0 ? (
+            <FlatList
+              data={comments}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 24,
+                backgroundColor: "#fff",
+                height: SCREEN_HEIGHT - 100,
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                height: SCREEN_HEIGHT - 100,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#fff",
+              }}
+            >
+              <Text style={{ fontSize: 18, color: "#333" }}>
+                Chưa có bình luận nào
+              </Text>
+              <Text style={{ fontSize: 16, color: "#333" }}>
+                Hãy là người đầu tiên bình luận
+              </Text>
+            </View>
+          )}
+          <View style={styles.commentInputContainer}>
+            <TextInput
+              style={styles.commentInput}
+              placeholder="Nhập bình luận..."
+              placeholderTextColor="#333"
+              selectionColor="#333"
+              underlineColorAndroid="transparent"
+            />
+          </View>
+        </KeyboardAvoidingView>
       </BottomModal>
     </View>
   );
@@ -125,8 +201,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 15,
     paddingVertical: 12,
-    // borderTopColor: "#ccc",
-    // borderTopWidth: 1,
   },
   reactHandle: {
     flexDirection: "row",
@@ -145,8 +219,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderTopColor: "#eee",
     borderTopWidth: 1,
-    position: "absolute",
     width: SCREEN_WIDTH,
+    position: "absolute",
     bottom: 0,
     left: 0,
     backgroundColor: "#fff",
@@ -158,6 +232,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 16,
     color: "#333",
+  },
+  reactBar: {
+    paddingHorizontal: 12,
+    width: SCREEN_WIDTH,
+    height: 50,
+    borderBottomColor: "#eee",
+    borderBottomWidth: 1,
+    borderTopColor: "#eee",
+    borderTopWidth: 1,
+    backgroundColor: "#fff",
+    flexDirection: "row",
   },
 });
 

@@ -19,6 +19,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { db } from "../firebase/config";
 import { doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
 import {
   registerForPushNotificationsAsync,
@@ -45,6 +46,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const device_id = "string";
   const dispatch = useDispatch();
+  const { error } = useSelector((state) => state.alert);
 
   const onCreateAccount = () => {
     navigation.navigate("StartRegisterScreen");
@@ -153,6 +155,12 @@ const LoginScreen = () => {
             onFocus={() => setIsPasswordFocused(true)}
             onBlur={() => setIsPasswordFocused(false)}
           />
+          {error && (
+            <Text style={{ marginTop: 8, color: "#a81414" }}>
+              {error == "Email or password is not correct" &&
+                "Tài khoản hoặc mật khẩu không đúng"}
+            </Text>
+          )}
           <TouchableOpacity style={styles.loginButton} onPress={onLoginPress}>
             {loading ? (
               <ActivityIndicator color="#fff" />

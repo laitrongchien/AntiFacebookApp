@@ -8,29 +8,37 @@ import {
 } from "react-native";
 import ExTouchableOpacity from "../ExTouchableOpacity";
 
-const RecommendFriendItem = () => {
+const RecommendFriendItem = ({ recommendItem }) => {
+  const { username, avatar, same_friends } = recommendItem;
   return (
     <View>
       <ExTouchableOpacity style={styles.container}>
         <ImageBackground
           imageStyle={{ borderRadius: 64 }}
           style={styles.avatarView}
-          source={require("../../assets/images/default-img.png")}
+          source={
+            avatar
+              ? { uri: avatar }
+              : require("../../assets/images/default-img.png")
+          }
         ></ImageBackground>
         <View style={styles.optionView}>
           <View style={styles.optionView_name}>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              Nguyễn Thế Duyệt
+              {username || "Username"}
             </Text>
           </View>
-          <View style={styles.optionView_coFriend}>
-            <ImageBackground
-              imageStyle={{ borderRadius: 64 }}
-              style={styles.coFriendAvatar}
-              source={require("../../assets/images/default-img.png")}
-            ></ImageBackground>
-            <Text style={{ marginLeft: 5 }}>1 bạn chung</Text>
-          </View>
+          {same_friends != 0 && (
+            <View style={styles.optionView_coFriend}>
+              <ImageBackground
+                imageStyle={{ borderRadius: 64 }}
+                style={styles.coFriendAvatar}
+                source={require("../../assets/images/default-img.png")}
+              ></ImageBackground>
+              <Text style={{ marginLeft: 5 }}>{same_friends} bạn chung</Text>
+            </View>
+          )}
+
           <View style={styles.optionView_button}>
             <TouchableOpacity
               style={{ ...styles.button, backgroundColor: "#1877f2" }}
@@ -54,7 +62,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 5,
+    paddingVertical: 8,
   },
   avatarView: {
     flex: 3,
@@ -64,7 +74,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 6,
     marginLeft: -8,
-    marginRight: -5,
+    marginRight: 5,
   },
 
   optionView: {
@@ -92,7 +102,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 5,
-    margin: 5,
+    marginVertical: 5,
+    marginRight: 10,
     flex: 1,
   },
   buttonText: {

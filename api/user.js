@@ -23,4 +23,23 @@ const setUserInfo = async (formData) => {
   }
 };
 
-export const user = { getUserInfo, setUserInfo };
+const getRequestedFriend = async (index, count) => {
+  return await axios.post("/get_requested_friends", {
+    index,
+    count,
+  });
+};
+
+const getSuggestedFriend = async (index, count) => {
+  return await axios.post("/get_suggested_friends", {
+    index,
+    count,
+  });
+};
+
+export const user = {
+  getUserInfo,
+  setUserInfo,
+  getRequestedFriend,
+  getSuggestedFriend,
+};

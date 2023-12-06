@@ -2,16 +2,15 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import FriendRequestItem from "./FriendRequestItem";
 import { useNavigation } from "@react-navigation/native";
-import { navigation } from "../../rootNavigation";
 
-const AddFriendRequest = () => {
+const AddFriendRequest = ({ requestedFriends }) => {
   const navigation = useNavigation();
   return (
     <View style={styles.wrapper}>
       <View style={styles.infoWrapper}>
         <View style={styles.requestWrapper}>
           <Text style={styles.titleText}>Lời mời kết bạn</Text>
-          <Text style={styles.number}>3</Text>
+          <Text style={styles.number}>{requestedFriends.total}</Text>
         </View>
         <TouchableOpacity>
           <Text
@@ -24,7 +23,11 @@ const AddFriendRequest = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <FriendRequestItem />
+      {requestedFriends.requests.map((requestItem) => {
+        return (
+          <FriendRequestItem key={requestItem.id} requestItem={requestItem} />
+        );
+      })}
     </View>
   );
 };

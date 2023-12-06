@@ -4,6 +4,8 @@ const authReducer = (state = {}, action) => {
       return action.payload;
     case "CHANGE_PROFILE_AFTER_SIGNUP":
       return { ...state, ...action.payload };
+    case "RESET_STATE":
+      return {};
     default:
       return state;
   }

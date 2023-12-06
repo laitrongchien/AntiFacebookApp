@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderColor: "#ddd",
     borderWidth: 1,
-    marginVertical: 8,
+    marginTop: 8,
   },
   stories: {
     flexWrap: "nowrap",

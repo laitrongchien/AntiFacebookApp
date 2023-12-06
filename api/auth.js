@@ -2,30 +2,19 @@ import axios from "./axios";
 import { setCacheStorage, removeCacheStorage } from "../utils/storage";
 
 const login = async (email, password, device_id) => {
-  // console.log(email, password, device_id);
-  try {
-    const res = await axios.post("/login", {
-      email,
-      password,
-      uuid: device_id,
-    });
-    // console.log(res.data.data.token);
-    await setCacheStorage("access-token", res.data.data.token);
-    // await setCacheStorage("logged", "true");
-    // const access_token = await getCacheStorage("access-token");
-    // console.log(access_token);
-    return res;
-  } catch (err) {
-    console.log(err.response.data.message);
-  }
+  const res = await axios.post("/login", {
+    email,
+    password,
+    uuid: device_id,
+  });
+  await setCacheStorage("access-token", res.data.data.token);
+  return res;
 };
 
 const logout = async () => {
   try {
     const res = await axios.post("/logout");
-    // console.log(res.data.code);
     await removeCacheStorage("access-token");
-    // await setCacheStorage("logged", "");
   } catch (err) {
     console.log(err.response.data.message);
   }
