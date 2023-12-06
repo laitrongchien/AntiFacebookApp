@@ -15,10 +15,9 @@ import { changeProfileAfterSignup } from "../../redux/actions/authAction";
 import { navigation } from "../../rootNavigation";
 
 const ChangeAvatarScreen = () => {
-  const defaultImage =
-    "https://t4.ftcdn.net/jpg/05/49/98/39/240_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg";
+  const defaultImage = require("../../assets/images/default-img.png");
   const route = useRoute();
-  const { fullName } = route.params;
+  const fullName = route.params?.fullName;
   const [image, setImage] = useState(defaultImage);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();

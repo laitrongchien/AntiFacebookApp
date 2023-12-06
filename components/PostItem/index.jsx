@@ -1,5 +1,4 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import LoadingSkeleton from "../Loading/Skeleton";
 import VectorIcon from "../../utils/VectorIcon";
 import ExTouchableOpacity from "../ExTouchableOpacity";
 import Reaction from "../Reaction";
@@ -8,12 +7,14 @@ import BottomModal from "../BottomModal";
 import PostOptions from "./PostOption";
 import PostImage from "../PostImage";
 import { getTimeFromCreatePost } from "../../utils/helper";
+import { navigation } from "../../rootNavigation";
 
 const PostItem = ({ postData }) => {
   const [postOptionVisible, setPostOptionVisible] = useState(false);
   const [showFullParagraph, setShowFullParagraph] = useState(false);
 
-  const { name, image, described, created, feel, author } = postData;
+  const { id, image, described, created, feel, author, comment_mark, is_felt } =
+    postData;
 
   const paragraph = described;
 
@@ -27,7 +28,7 @@ const PostItem = ({ postData }) => {
 
   return (
     <View style={styles.item}>
-      <View
+      <TouchableOpacity
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -35,21 +36,37 @@ const PostItem = ({ postData }) => {
           paddingHorizontal: 16,
           paddingVertical: 12,
         }}
+        activeOpacity={0.6}
+        onPress={() =>
+          navigation.navigate("PostDetailScreen", { postData: postData })
+        }
       >
         <View style={styles.postHeaderInfo}>
-          <Image
-            style={styles.avatar}
-            source={{
-              uri: author.avatar
-                ? author.avatar
-                : "https://t4.ftcdn.net/jpg/05/49/98/39/240_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg",
-            }}
-          />
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("UserXProfileScreen", { userXId: author.id })
+            }
+          >
+            <Image
+              style={styles.avatar}
+              source={
+                author.avatar
+                  ? { uri: author.avatar }
+                  : require("../../assets/images/default-img.png")
+              }
+            />
+          </TouchableOpacity>
           <View style={styles.infoWrapper}>
             <View style={styles.nameWrapper}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("UserXProfileScreen", {
+                    userXId: author.id,
+                  })
+                }
+              >
                 <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                  {author.name}
+                  {author.name || "Username"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -88,7 +105,7 @@ const PostItem = ({ postData }) => {
             />
           </ExTouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
       <View style={styles.postContent}>
         <TouchableOpacity onPress={toggleParagraph} activeOpacity={0.8}>
           <Text style={styles.paragraph}>
@@ -100,7 +117,12 @@ const PostItem = ({ postData }) => {
         </TouchableOpacity>
       </View>
       {image.length !== 0 && <PostImage images={image} />}
-      <Reaction />
+      <Reaction
+        numFeel={feel}
+        numMark={comment_mark}
+        isFelt={is_felt}
+        postId={id}
+      />
       <BottomModal
         isVisible={postOptionVisible}
         closeModal={() => setPostOptionVisible(false)}

@@ -58,9 +58,7 @@ const ProfileScreen = () => {
             >
               <Image
                 style={styles.cover}
-                source={{
-                  uri: "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
-                }}
+                source={require("../../assets/images/cover_img.jpg")}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -233,9 +231,6 @@ const ProfileScreen = () => {
           </Text>
           <PostTool />
         </View>
-        <PostItem />
-        <PostItem />
-        <PostItem />
       </ScrollView>
       <BottomModal
         isVisible={isCoverOptionsVisible}
@@ -392,71 +387,5 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 40,
     borderRadius: 5,
-  },
-  friendsWrapper: {
-    paddingVertical: 15,
-  },
-  friendsBar: {
-    borderRadius: 5,
-    paddingVertical: 10,
-    backgroundColor: "#fff",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  btnFindFriends: {
-    paddingHorizontal: 10,
-  },
-  friendGallery: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  friendItem: {
-    width: (SCREEN_WIDTH - 30 - 20) / 3,
-    marginBottom: 15,
-  },
-  friendAvatar: {
-    width: (SCREEN_WIDTH - 30 - 20) / 3,
-    height: (SCREEN_WIDTH - 30 - 20) / 3,
-    borderRadius: 10,
-    borderWidth: 0.2,
-    borderColor: "#333",
-  },
-  btnViewAllFriends: {
-    width: "100%",
-    borderRadius: 5,
-    height: 40,
-    backgroundColor: "#ddd",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navigationsWrapper: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    marginTop: 15,
-    borderTopColor: "#ddd",
-    borderTopWidth: 1,
-    borderBottomColor: "#ddd",
-    borderBottomWidth: 1,
-    height: 100,
-    width: SCREEN_WIDTH,
-    paddingHorizontal: 10,
-  },
-  navigation: {
-    flexDirection: "row",
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 15,
-    backgroundColor: "#ddd",
-    borderRadius: 48,
-    marginHorizontal: 5,
-  },
-  lastNavigation: {
-    marginRight: 25,
-  },
-  navigationIcon: {
-    width: 30,
-    alignItems: "center",
   },
 });

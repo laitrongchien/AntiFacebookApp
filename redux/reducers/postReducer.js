@@ -1,7 +1,6 @@
-const postReducer = (
-  state = { post: [], last_id: undefined, new_items: undefined },
-  action
-) => {
+const initialState = { post: [], last_id: undefined, new_items: undefined };
+
+const postReducer = (state = initialState, action) => {
   switch (action.type) {
     case "GET_LIST_POSTS":
       const { post, last_id, new_items } = action.payload;
@@ -11,7 +10,9 @@ const postReducer = (
         new_items: new_items,
       };
     case "REMOVE_LIST_POSTS":
-      return action.payload;
+      return initialState;
+    case "RESET_STATE":
+      return initialState;
     default:
       return state;
   }

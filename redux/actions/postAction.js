@@ -1,7 +1,7 @@
 import { post } from "../../api/post";
 
 export const getListPosts =
-  (userId, inCampaign, campaignId, latitude, longitude, lastId, index, count) =>
+  (inCampaign, campaignId, latitude, longitude, lastId, index, count) =>
   async (dispatch) => {
     try {
       dispatch({
@@ -9,7 +9,6 @@ export const getListPosts =
         payload: { loading: true },
       });
       const res = await post.getListPosts(
-        userId,
         inCampaign,
         campaignId,
         latitude,
@@ -18,10 +17,9 @@ export const getListPosts =
         index,
         count
       );
-      // console.log(res.data.data);
       dispatch({
         type: "GET_LIST_POSTS",
-        payload: res.data.data,
+        payload: res?.data?.data,
       });
       dispatch({
         type: "ALERT",

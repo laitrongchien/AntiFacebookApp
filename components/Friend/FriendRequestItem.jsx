@@ -6,33 +6,45 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import { memo } from "react";
 import ExTouchableOpacity from "../ExTouchableOpacity";
+import { getTimeSendRequest } from "../../utils/helper";
 
-const FriendRequestItem = () => {
+const FriendRequestItem = ({ requestItem }) => {
+  const { username, avatar, created, same_friends } = requestItem;
   return (
     <View>
       <ExTouchableOpacity style={styles.container}>
         <ImageBackground
           imageStyle={{ borderRadius: 64 }}
           style={styles.avatarView}
-          source={require("../../assets/images/default-img.png")}
+          source={
+            avatar
+              ? { uri: avatar }
+              : require("../../assets/images/default-img.png")
+          }
         ></ImageBackground>
         <View style={styles.optionView}>
           <View style={styles.optionView_name}>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              Nguyễn Thế Duyệt
+              {username || "Username"}
             </Text>
             <Text style={{ opacity: 0.4, right: -10, fontSize: 12 }}>
-              1 ngày
+              {getTimeSendRequest(created)}
             </Text>
           </View>
           <View style={styles.optionView_coFriend}>
-            <ImageBackground
-              imageStyle={{ borderRadius: 64 }}
-              style={styles.coFriendAvatar}
-              source={require("../../assets/images/default-img.png")}
-            ></ImageBackground>
-            <Text style={{ marginLeft: 5 }}>1 bạn chung</Text>
+            {same_friends != 0 && (
+              <ImageBackground
+                imageStyle={{ borderRadius: 64 }}
+                style={styles.coFriendAvatar}
+                source={require("../../assets/images/default-img.png")}
+              ></ImageBackground>
+            )}
+
+            {same_friends != 0 && (
+              <Text style={{ marginLeft: 5 }}>{same_friends} bạn chung</Text>
+            )}
           </View>
           <View style={styles.optionView_button}>
             <TouchableOpacity
@@ -57,7 +69,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     justifyContent: "space-between",
-    marginTop: 8,
+    marginTop: 16,
   },
   avatarView: {
     flex: 3,
@@ -94,7 +106,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 5,
-    margin: 5,
+    marginVertical: 5,
+    marginRight: 10,
     flex: 1,
   },
   buttonText: {
@@ -105,4 +118,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendRequestItem;
+export default memo(FriendRequestItem);

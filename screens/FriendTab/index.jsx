@@ -1,13 +1,27 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import React from "react";
-import { Colors } from "../../utils/Colors";
 import ExTouchableOpacity from "../../components/ExTouchableOpacity";
 import { navigation } from "../../rootNavigation";
 import VectorIcon from "../../utils/VectorIcon";
 import AddFriendRequest from "../../components/Friend/AddFriendRequest";
 import RecommendFriend from "../../components/Friend/RecommendFriend";
+import { useDispatch, useSelector } from "react-redux";
+import { getRequestedFriend } from "../../redux/actions/userAction";
+import { getSuggestedFriend } from "../../redux/actions/userAction";
+import { useEffect } from "react";
 
 const FriendScreen = () => {
+  const dispatch = useDispatch();
+  const { requestedFriends, recommendFriends } = useSelector(
+    (state) => state.friend
+  );
+  const defaultIndex = 0;
+  const defaultCount = 10;
+
+  useEffect(() => {
+    dispatch(getRequestedFriend(defaultIndex, defaultCount));
+    dispatch(getSuggestedFriend(defaultIndex, defaultCount));
+  }, []);
+
   return (
     <ScrollView
       bounces={false}
@@ -30,8 +44,8 @@ const FriendScreen = () => {
           </ExTouchableOpacity>
         </View>
       </View>
-      <AddFriendRequest />
-      <RecommendFriend />
+      <AddFriendRequest requestedFriends={requestedFriends} />
+      <RecommendFriend recommendFriends={recommendFriends} />
     </ScrollView>
   );
 };

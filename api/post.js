@@ -1,7 +1,6 @@
 import axios from "./axios";
 
 const getListPosts = async (
-  userId,
   inCampaign,
   campaignId,
   latitude,
@@ -12,7 +11,6 @@ const getListPosts = async (
 ) => {
   try {
     const res = await axios.post("/get_list_posts", {
-      user_id: userId,
       in_campaign: inCampaign,
       campaign_id: campaignId,
       latitude,
@@ -28,4 +26,8 @@ const getListPosts = async (
   }
 };
 
-export const post = { getListPosts };
+const getPost = async (id) => {
+  return await axios.post("/get_post", { id });
+};
+
+export const post = { getListPosts, getPost };

@@ -3,15 +3,36 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
 } from "react-native";
+import { useEffect } from "react";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
 import FriendRequestItem from "../../components/Friend/FriendRequestItem";
+import { useSelector, useDispatch } from "react-redux";
+import { getRequestedFriend } from "../../redux/actions/userAction";
 
 const AllRequest = () => {
+  const dispatch = useDispatch();
+  const { requestedFriends } = useSelector((state) => state.friend);
+
+  const defaultIndex = 0;
+  const defaultCount = 10;
+
+  useEffect(() => {
+    dispatch(getRequestedFriend(defaultIndex, defaultCount));
+  }, []);
+
+  const renderItem = ({ item }) => {
+    return (
+      <View style={{ paddingHorizontal: 20 }}>
+        <FriendRequestItem requestItem={item} />
+      </View>
+    );
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.leftItem}>
           <TouchableOpacity
@@ -44,7 +65,7 @@ const AllRequest = () => {
       >
         <View style={styles.requestWrapper}>
           <Text style={styles.titleText}>Lời mời kết bạn</Text>
-          <Text style={styles.number}>3</Text>
+          <Text style={styles.number}>{requestedFriends.total}</Text>
         </View>
         <TouchableOpacity>
           <Text
@@ -59,20 +80,13 @@ const AllRequest = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.friendRequestItem}>
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-        <FriendRequestItem />
-      </View>
-    </ScrollView>
+      <FlatList
+        data={requestedFriends.requests}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        style={styles.friendRequestItem}
+      />
+    </View>
   );
 };
 
@@ -95,11 +109,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   friendRequestItem: {
-    paddingHorizontal: 20,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    marginTop: 12,
   },
   requestWrapper: {
     flexDirection: "row",

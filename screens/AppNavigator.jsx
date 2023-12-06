@@ -8,8 +8,10 @@ import LoginScreen from "./LoginScreen";
 import StartRegisterScreen from "./Register/StartRegisterScreen";
 import MainScreen from "./MainScreen";
 import CreatePost from "./CreatePost";
+import PostDetailScreen from "./PostDetailScreen";
 import Search from "./Search";
 import ProfileScreen from "./ProfileTab";
+import UserXProfileScreen from "./ProfileTab/UserXProfile";
 import ProfileSetting from "./ProfileTab/ProfileSetting";
 import EditProfile from "./ProfileTab/EditProfile";
 import EditDetailInfo from "./ProfileTab/EditDetailInfo";
@@ -82,8 +84,16 @@ const AppNavigator = () => {
 
             <Stack.Screen name="MainScreen" component={MainScreen} />
             <Stack.Screen name="CreatePost" component={CreatePost} />
+            <Stack.Screen
+              name="PostDetailScreen"
+              component={PostDetailScreen}
+            />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+            <Stack.Screen
+              name="UserXProfileScreen"
+              component={UserXProfileScreen}
+            />
             <Stack.Screen name="ProfileSetting" component={ProfileSetting} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="EditDetailInfo" component={EditDetailInfo} />

@@ -11,8 +11,6 @@ import LoadingSkeleton from "../components/Loading/Skeleton";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
-  const { id } = useSelector((state) => state.auth);
-
   const { post, last_id, new_items } = useSelector((state) => state.post);
   const { loading } = useSelector((state) => state.alert);
 
@@ -24,7 +22,6 @@ const HomeScreen = () => {
   const defaultIndex = 0;
   const defaultCount = 20;
 
-  // const [postList, setPostList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingSkeleton, setLoadingSkeleton] = useState(false);
 
@@ -34,11 +31,10 @@ const HomeScreen = () => {
     const contentHeight = event.nativeEvent.contentSize.height;
     // console.log(contentHeight - scrollY - flatListHeight);
     if (contentHeight - scrollY - flatListHeight <= 1000) {
-      if (new_items !== 0 && !loading) {
+      if (new_items != 0 && !loading) {
         // console.log(loading, last_id);
         dispatch(
           getListPosts(
-            id,
             defaultInCampaign,
             defaultCampaignId,
             latitude,
@@ -52,14 +48,19 @@ const HomeScreen = () => {
     }
   };
 
-  const renderItem = ({ item }) => <PostItem postData={item} />;
+  const renderItem = ({ item }) => {
+    // console.log(item.id);
+    return <PostItem postData={item} />;
+  };
 
   useEffect(() => {
     const handleGetListPost = async () => {
       setLoadingSkeleton(true);
+      dispatch({
+        type: "REMOVE_LIST_POSTS",
+      });
       await dispatch(
         getListPosts(
-          id,
           defaultInCampaign,
           defaultCampaignId,
           latitude,

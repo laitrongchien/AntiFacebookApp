@@ -4,6 +4,8 @@ const userReducer = (state = {}, action) => {
       return action.payload;
     case "SET_USER_INFO":
       return { ...state, ...action.payload };
+    case "RESET_STATE":
+      return {};
     default:
       return state;
   }

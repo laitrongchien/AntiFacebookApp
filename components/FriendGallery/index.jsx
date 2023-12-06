@@ -29,7 +29,7 @@ const FriendGallery = () => {
             />
           </ExTouchableOpacity>
           <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Lại Chiến</Text>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
           </ExTouchableOpacity>
         </View>
         <View style={styles.friendItem}>
@@ -40,7 +40,7 @@ const FriendGallery = () => {
             />
           </ExTouchableOpacity>
           <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Lại Chiến</Text>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
           </ExTouchableOpacity>
         </View>
         <View style={styles.friendItem}>
@@ -51,7 +51,7 @@ const FriendGallery = () => {
             />
           </ExTouchableOpacity>
           <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Lại Chiến</Text>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
           </ExTouchableOpacity>
         </View>
         <View style={styles.friendItem}>
@@ -62,7 +62,7 @@ const FriendGallery = () => {
             />
           </ExTouchableOpacity>
           <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Lại Chiến</Text>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
           </ExTouchableOpacity>
         </View>
         <View style={styles.friendItem}>
@@ -73,7 +73,7 @@ const FriendGallery = () => {
             />
           </ExTouchableOpacity>
           <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Lại Chiến</Text>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
           </ExTouchableOpacity>
         </View>
         <View style={styles.friendItem}>
@@ -84,7 +84,7 @@ const FriendGallery = () => {
             />
           </ExTouchableOpacity>
           <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Lại Chiến</Text>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
           </ExTouchableOpacity>
         </View>
       </View>
