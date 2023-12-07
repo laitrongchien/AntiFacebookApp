@@ -9,11 +9,43 @@ const PostImage = ({ images }) => {
       : images.length === 2
       ? SCREEN_WIDTH / 2 - 2
       : images.length === 3
-      ? SCREEN_WIDTH / 3 - 2
+      ? SCREEN_WIDTH / 2 - 2
       : SCREEN_WIDTH / 2 - 2;
 
   let imageHeight =
     images.length === 1 ? null : images.length === 4 ? 200 : 400;
+
+  if (images.length === 3)
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 16,
+        }}
+      >
+        <ScaleImage
+          key={images[0].id}
+          source={images[0].url}
+          width={imageWidth}
+          height={imageHeight}
+        />
+        <View>
+          <ScaleImage
+            key={images[1].id}
+            source={images[1].url}
+            width={imageWidth}
+            height={imageHeight / 2}
+          />
+          <ScaleImage
+            key={images[2].id}
+            source={images[2].url}
+            width={imageWidth}
+            height={imageHeight / 2}
+          />
+        </View>
+      </View>
+    );
 
   return (
     <View

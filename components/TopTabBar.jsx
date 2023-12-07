@@ -43,17 +43,6 @@ const TabData = [
     size: 25,
     unFocusSize: 25,
   },
-  // {
-  //   id: 4,
-  //   route: MarketPlaceScreen,
-  //   name: "MarketPlace",
-  //   activeIconName: "storefront",
-  //   activeIconType: "MaterialCommunityIcons",
-  //   inactiveIconName: "storefront-outline",
-  //   inactiveIconType: "MaterialCommunityIcons",
-  //   size: 25,
-  //   unFocusSize: 25,
-  // },
   {
     id: 4,
     route: NotificationScreen,

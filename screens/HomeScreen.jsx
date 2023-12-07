@@ -1,5 +1,5 @@
-import { StyleSheet, ScrollView, FlatList, Text } from "react-native";
-import { useState, useEffect, useCallback } from "react";
+import { StyleSheet, FlatList, Text, RefreshControl } from "react-native";
+import { useState, useEffect, useRef } from "react";
 import PostTool from "../components/PostTool";
 import Stories from "../components/Stories";
 import PostItem from "../components/PostItem";
@@ -8,11 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { getListPosts } from "../redux/actions/postAction";
 import { SCREEN_WIDTH } from "../constants";
 import LoadingSkeleton from "../components/Loading/Skeleton";
+import { useScrollToTop } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const { post, last_id, new_items } = useSelector((state) => state.post);
   const { loading } = useSelector((state) => state.alert);
+  const flatListRef = useRef(null);
 
   const defaultInCampaign = 1;
   const defaultCampaignId = 1;
@@ -24,6 +26,30 @@ const HomeScreen = () => {
 
   const [refreshing, setRefreshing] = useState(false);
   const [loadingSkeleton, setLoadingSkeleton] = useState(false);
+
+  useScrollToTop(flatListRef);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setLoadingSkeleton(true);
+    dispatch({
+      type: "REMOVE_LIST_POSTS",
+    });
+
+    await dispatch(
+      getListPosts(
+        defaultInCampaign,
+        defaultCampaignId,
+        latitude,
+        longitude,
+        defaultLastId,
+        defaultIndex,
+        defaultCount
+      )
+    );
+    setRefreshing(false);
+    setLoadingSkeleton(false);
+  };
 
   const handleScroll = (event) => {
     const scrollY = event.nativeEvent.contentOffset.y;
@@ -88,6 +114,7 @@ const HomeScreen = () => {
   return (
     <FlatList
       data={post}
+      ref={flatListRef}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
       onScroll={handleScroll}
@@ -98,6 +125,13 @@ const HomeScreen = () => {
         </>
       )}
       style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={["#1877f2"]}
+        />
+      }
     />
   );
 };
