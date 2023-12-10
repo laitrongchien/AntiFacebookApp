@@ -51,3 +51,15 @@ export const getSuggestedFriend = (index, count) => async (dispatch) => {
     console.log(err.response.data.message);
   }
 };
+
+export const getUserFriends = (userId, index, count) => async (dispatch) => {
+  try {
+    const res = await user.getUserFriends(userId, index, count);
+    dispatch({
+      type: "GET_LIST_USER_FRIENDS",
+      payload: res.data.data,
+    });
+  } catch (err) {
+    console.log(err.response.data.message);
+  }
+};

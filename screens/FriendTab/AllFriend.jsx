@@ -4,29 +4,62 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  Image,
 } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
-import FriendRequestItem from "../../components/Friend/FriendRequestItem";
 import { useSelector, useDispatch } from "react-redux";
-import { getRequestedFriend } from "../../redux/actions/userAction";
+import { getUserFriends } from "../../redux/actions/userAction";
 
-const AllRequest = () => {
+const AllFriend = () => {
   const dispatch = useDispatch();
-  const { requestedFriends } = useSelector((state) => state.friend);
+  const { id } = useSelector((state) => state.auth);
+  const { friends, total } = useSelector((state) => state.userFriend);
+  const [friendList, setFriendList] = useState([]);
 
   const defaultIndex = 0;
-  const defaultCount = 10;
+  const defaultCount = 20;
 
   useEffect(() => {
-    dispatch(getRequestedFriend(defaultIndex, defaultCount));
+    dispatch(getUserFriends(id, defaultIndex, defaultCount));
+    setFriendList(friends);
   }, []);
 
   const renderItem = ({ item }) => {
     return (
-      <View style={{ paddingHorizontal: 20 }}>
-        <FriendRequestItem requestItem={item} />
+      <View style={styles.friendWrapper}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            source={
+              item.avatar
+                ? { uri: item.avatar }
+                : require("../../assets/images/default-img.png")
+            }
+            style={styles.avatar}
+          />
+          <View style={{ marginLeft: 16 }}>
+            <TouchableOpacity>
+              <Text style={{ fontSize: 18, fontWeight: 500 }}>
+                {item.username}
+              </Text>
+            </TouchableOpacity>
+            <Text style={{ fontSize: 16, color: "#666" }}>
+              {item.same_friends} bạn chung
+            </Text>
+          </View>
+        </View>
+        <VectorIcon
+          name="dots-horizontal"
+          type="MaterialCommunityIcons"
+          color="#666"
+          size={32}
+        />
       </View>
     );
   };
@@ -46,12 +79,12 @@ const AllRequest = () => {
               size={32}
             />
           </TouchableOpacity>
-          <Text style={{ marginLeft: 8, fontSize: 18 }}>Lời mời kết bạn</Text>
+          <Text style={{ marginLeft: 8, fontSize: 18 }}>Bạn bè</Text>
         </View>
         <VectorIcon
-          name="dots-horizontal"
+          name="magnify"
           type="MaterialCommunityIcons"
-          color="#666"
+          color="#000"
           size={28}
           style={{ marginRight: 6 }}
         />
@@ -61,18 +94,15 @@ const AllRequest = () => {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
+          paddingVertical: 12,
         }}
       >
-        <View style={styles.requestWrapper}>
-          <Text style={styles.titleText}>Lời mời kết bạn</Text>
-          <Text style={styles.number}>{requestedFriends.total}</Text>
-        </View>
+        <Text style={styles.titleText}>{total} người bạn</Text>
         <TouchableOpacity>
           <Text
             style={{
               color: "#0a7bff",
               marginRight: 10,
-              marginTop: 16,
               fontSize: 16,
             }}
           >
@@ -81,10 +111,10 @@ const AllRequest = () => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={requestedFriends.requests}
+        data={friendList}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        style={styles.friendRequestItem}
+        // style={styles.friendRequestItem}
       />
     </View>
   );
@@ -108,26 +138,23 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     height: "100%",
   },
-  friendRequestItem: {
-    paddingVertical: 12,
-  },
-  requestWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 12,
-    marginBottom: 16,
-  },
+
   titleText: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "bold",
     marginLeft: 16,
   },
-  number: {
-    fontSize: 20,
-    color: "red",
-    fontWeight: "bold",
-    marginLeft: 8,
+  avatar: {
+    width: 72,
+    height: 72,
+    borderRadius: 50,
+  },
+  friendWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 15,
   },
 });
 
-export default AllRequest;
+export default AllFriend;

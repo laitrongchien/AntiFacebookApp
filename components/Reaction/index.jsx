@@ -5,7 +5,6 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  ScrollView,
   KeyboardAvoidingView,
   FlatList,
 } from "react-native";
@@ -17,17 +16,21 @@ import Comment from "../Comment";
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from "../../constants";
 import { getComments } from "../../redux/actions/commentAction";
 import { useSelector, useDispatch } from "react-redux";
+import LoadingCommentSkeleton from "../Loading/LoadingCommentSkeleton";
 
 const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
   const [commentVisible, setCommentVisible] = useState(false);
+  const [loadingComments, setLoadingComments] = useState(false);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comments);
   const defaultIndex = 0;
   const defaultCount = 10;
 
-  const openComment = () => {
+  const openComment = async () => {
     setCommentVisible(true);
-    dispatch(getComments(postId, defaultIndex, defaultCount));
+    setLoadingComments(true);
+    await dispatch(getComments(postId, defaultIndex, defaultCount));
+    setLoadingComments(false);
   };
 
   const closeComment = () => {
@@ -69,10 +72,14 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
             source={require("../../assets/icons/sad.png")}
             style={{ width: 18, height: 18, marginRight: 4, marginLeft: -4 }}
           />
-          <Text style={{ color: isDark ? "#fff" : "#666" }}>{numFeel}</Text>
+          <Text style={{ color: isDark ? "#fff" : "#666" }}>
+            {numFeel || 0}
+          </Text>
         </View>
         <Text style={{ color: isDark ? "#fff" : "#666" }}>
-          {numMark != 0 ? `${numMark} bình luận` : "Chưa có bình luận"}
+          {numMark && numMark != 0
+            ? `${numMark} bình luận`
+            : "Chưa có bình luận"}
         </Text>
       </ExTouchableOpacity>
       <View style={styles.reactHandle}>
@@ -150,35 +157,50 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
             <Comment />
             <Comment />
           </ScrollView> */}
-          {comments.length != 0 ? (
-            <FlatList
-              data={comments}
-              keyExtractor={(item) => item.id}
-              renderItem={renderItem}
+          {!loadingComments ? (
+            comments.length != 0 ? (
+              <FlatList
+                data={comments}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 24,
+                  backgroundColor: "#fff",
+                  height: SCREEN_HEIGHT - 100,
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  height: SCREEN_HEIGHT - 100,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <Text style={{ fontSize: 18, color: "#333" }}>
+                  Chưa có bình luận nào
+                </Text>
+                <Text style={{ fontSize: 16, color: "#333" }}>
+                  Hãy là người đầu tiên bình luận
+                </Text>
+              </View>
+            )
+          ) : (
+            <View
               style={{
                 paddingHorizontal: 12,
                 paddingVertical: 24,
                 backgroundColor: "#fff",
                 height: SCREEN_HEIGHT - 100,
               }}
-            />
-          ) : (
-            <View
-              style={{
-                height: SCREEN_HEIGHT - 100,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#fff",
-              }}
             >
-              <Text style={{ fontSize: 18, color: "#333" }}>
-                Chưa có bình luận nào
-              </Text>
-              <Text style={{ fontSize: 16, color: "#333" }}>
-                Hãy là người đầu tiên bình luận
-              </Text>
+              <LoadingCommentSkeleton />
+              <LoadingCommentSkeleton />
             </View>
           )}
+
           <View style={styles.commentInputContainer}>
             <TextInput
               style={styles.commentInput}

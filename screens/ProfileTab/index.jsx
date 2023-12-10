@@ -10,19 +10,48 @@ import { navigation } from "../../rootNavigation";
 import { SCREEN_WIDTH } from "../../constants";
 import FriendGallery from "../../components/FriendGallery";
 import VectorIcon from "../../utils/VectorIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AvatarOptions from "./AvartarOptions";
 import CoverOptions from "./CoverOptions";
 import BottomModal from "../../components/BottomModal";
 import PostTool from "../../components/PostTool";
 import PostItem from "../../components/PostItem";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { getListUserPosts } from "../../redux/actions/postAction";
+import { getUserFriends } from "../../redux/actions/userAction";
 
 const ProfileScreen = () => {
   const [isAvatarOptionsVisible, setIsAvatarOptionsVisible] = useState("false");
   const [isCoverOptionsVisible, setIsCoverOptionsVisible] = useState("false");
-  const { username, avatar } = useSelector((state) => state.auth);
+  const { username, avatar, id } = useSelector((state) => state.auth);
   const { cover_image, city, country } = useSelector((state) => state.user);
+  const { post } = useSelector((state) => state.userPost);
+  const { friends, total } = useSelector((state) => state.userFriend);
+  const dispatch = useDispatch();
+
+  const defaultInCampaign = 1;
+  const defaultCampaignId = 1;
+  const latitude = 20.0;
+  const longitude = 105.0;
+  const defaultLastId = 0;
+  const defaultIndex = 0;
+  const defaultCount = 20;
+
+  useEffect(() => {
+    dispatch(
+      getListUserPosts(
+        id,
+        defaultInCampaign,
+        defaultCampaignId,
+        latitude,
+        longitude,
+        defaultLastId,
+        defaultIndex,
+        defaultCount
+      )
+    );
+    dispatch(getUserFriends(id, defaultIndex, defaultCount));
+  }, []);
 
   return (
     <View style={{ position: "relative" }}>
@@ -216,9 +245,9 @@ const ProfileScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <FriendGallery />
+          <FriendGallery friends={friends} total={total} />
         </View>
-        <View style={{ backgroundColor: "#fff", marginVertical: 10 }}>
+        <View style={{ backgroundColor: "#fff", marginTop: 10 }}>
           <Text
             style={{
               fontSize: 16,
@@ -231,6 +260,17 @@ const ProfileScreen = () => {
           </Text>
           <PostTool />
         </View>
+        {post.length == 0 ? (
+          <View style={styles.noPost}>
+            <Text style={{ fontSize: 16 }}>Chưa có bài post nào!</Text>
+          </View>
+        ) : (
+          <View>
+            {post.map((item) => {
+              return <PostItem postData={item} key={item.id} />;
+            })}
+          </View>
+        )}
       </ScrollView>
       <BottomModal
         isVisible={isCoverOptionsVisible}
@@ -387,5 +427,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 40,
     borderRadius: 5,
+  },
+  noPost: {
+    height: 100,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

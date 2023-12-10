@@ -11,28 +11,32 @@ import {
   TextInput,
   Animated,
   ScrollView,
-  Platform,
+  Alert,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import VectorIcon from "../utils/VectorIcon";
 import { pickImage, pickVideo } from "../utils/PickImage";
 import * as navigation from "../rootNavigation";
-import BottomModal from "../components/BottomModal";
-import DiscardPostOption from "../components/DiscardPostOption";
 import PreviewImage from "../components/PreviewImage";
 import { Video, ResizeMode } from "expo-av";
-import { createPost } from "../redux/actions/postAction";
+import { useRoute } from "@react-navigation/native";
+import { editPost } from "../redux/actions/postAction";
 
-const CreatePost = () => {
+const EditPost = () => {
+  const dispatch = useDispatch();
+  const route = useRoute();
+  const { postData } = route.params;
+  const { image, described, id } = postData;
+  const textExisted = described;
+  const imageExisted = image;
+
   const [showDefaultOptions, setShowDefaultOptions] = useState(true);
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
-  const [text, setText] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [images, setImages] = useState([]);
+  const [text, setText] = useState(described);
+  const [images, setImages] = useState(image);
   const [video, setVideo] = useState(null);
   const { username, avatar } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -57,8 +61,19 @@ const CreatePost = () => {
   }, []);
 
   const handleGoBack = () => {
-    if (text.trim() !== "" || images.length !== 0 || video != null) {
-      setShowModal(true); // Show the modal if there is text in TextInput
+    if (text != textExisted || images != imageExisted) {
+      Alert.alert(
+        "Bỏ thay đổi ?",
+        "Nếu bạn bỏ bây giờ những thay đổi sẽ không được lưu.",
+        [
+          { text: "Tiếp tục chỉnh sửa", style: "cancel" },
+          {
+            text: "Bỏ",
+            style: "destructive",
+            onPress: () => navigation.goBack(),
+          },
+        ]
+      );
     } else {
       navigation.goBack();
     }
@@ -68,7 +83,6 @@ const CreatePost = () => {
     const result = await pickImage();
     if (!result.canceled) {
       const selectedImages = result.assets.map((asset) => asset);
-      console.log(selectedImages);
       setImages((prevImages) => [...prevImages, ...selectedImages]);
     }
   };
@@ -80,18 +94,19 @@ const CreatePost = () => {
     }
   };
 
-  const handleCreatePost = async () => {
+  const handleEditPost = async () => {
     const formData = new FormData();
+    formData.append("id", id);
     formData.append("described", text);
     formData.append("status", "Hyped");
     formData.append("auto_accept", "1");
 
-    if (images.length > 0) {
-      images.forEach((image, index) => {
+    if (images != imageExisted && images.length > 0) {
+      images.forEach((image) => {
         const uriParts = image.uri.split("/");
         const fileNameWithType = uriParts[uriParts.length - 1];
         const [fileName, fileType] = fileNameWithType.split(".");
-        console.log(fileName, fileType);
+        // console.log(fileName, fileType);
 
         const imageData = {
           uri:
@@ -119,8 +134,8 @@ const CreatePost = () => {
 
     console.log(formData);
 
-    dispatch(createPost(formData));
-    navigation.navigate("Home");
+    dispatch(editPost(formData));
+    navigation.goBack();
   };
 
   return (
@@ -138,23 +153,26 @@ const CreatePost = () => {
             size={30}
             onPress={handleGoBack}
           />
-          <Text style={styles.navigationTitle}>Tạo bài viết</Text>
+          <Text style={styles.navigationTitle}>Chỉnh sửa bài viết</Text>
           <TouchableOpacity
+            onPress={handleEditPost}
             style={
-              text || images.length > 0
+              text != textExisted || images != imageExisted
                 ? { ...styles.btnPost, backgroundColor: "#1877f2" }
                 : styles.btnPost
             }
-            disabled={!(text || images.length > 0 || video)}
-            onPress={handleCreatePost}
+            disabled={text == textExisted && images == imageExisted}
           >
             <Text
               style={{
                 fontSize: 16,
-                color: text || images.length > 0 ? "#fff" : "#333",
+                color:
+                  text != textExisted || images != imageExisted
+                    ? "#fff"
+                    : "#333",
               }}
             >
-              ĐĂNG
+              LƯU
             </Text>
           </TouchableOpacity>
         </View>
@@ -183,10 +201,10 @@ const CreatePost = () => {
             </View>
           </View>
           <TextInput
-            placeholder="Bạn đang nghĩ gì?"
             placeholderTextColor="#888"
             selectionColor="#888"
             multiline
+            defaultValue={described}
             style={{
               ...styles.editor,
               fontSize: 26,
@@ -317,12 +335,6 @@ const CreatePost = () => {
             </Animated.View>
           )}
         </Animated.View>
-        <BottomModal
-          isVisible={showModal}
-          closeModal={() => setShowModal(false)}
-        >
-          <DiscardPostOption setShowModal={setShowModal} />
-        </BottomModal>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -394,10 +406,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 6,
   },
-  // editorWrapper: {
-  //   overflow: "hidden",
-  //   paddingHorizontal: 12,
-  // },
   editor: {
     width: "100%",
     paddingHorizontal: 12,
@@ -415,7 +423,6 @@ const styles = StyleSheet.create({
     width: "100%",
     left: 0,
     zIndex: 999999,
-    // paddingBottom: 90,
   },
   optionWrapper: {
     flexDirection: "row",
@@ -438,4 +445,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreatePost;
+export default EditPost;

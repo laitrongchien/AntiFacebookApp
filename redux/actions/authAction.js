@@ -20,6 +20,7 @@ export const login = (email, password, device_id) => async (dispatch) => {
 export const changeProfileAfterSignup = (formData) => async (dispatch) => {
   try {
     const res = await auth.changeProfileAfterSignup(formData);
+    console.log(res);
     dispatch({
       type: "CHANGE_PROFILE_AFTER_SIGNUP",
       payload: res.data.data,

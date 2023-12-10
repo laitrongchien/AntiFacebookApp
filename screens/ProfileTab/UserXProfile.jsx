@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { navigation } from "../../rootNavigation";
@@ -13,25 +14,63 @@ import FriendGallery from "../../components/FriendGallery";
 import VectorIcon from "../../utils/VectorIcon";
 import { useRoute } from "@react-navigation/native";
 import { user as userApi } from "../../api/user";
+import { useSelector, useDispatch } from "react-redux";
+import PostItem from "../../components/PostItem";
+import { getListUserPosts } from "../../redux/actions/postAction";
+import { getUserFriends } from "../../redux/actions/userAction";
 
 const UserXProfileScreen = () => {
   const route = useRoute();
   const { userXId } = route.params;
-  console.log(userXId);
   const [userX, setUserX] = useState({});
+  const [loadingUserX, setLoadingUserX] = useState(false);
+  const { post } = useSelector((state) => state.userPost);
+  const { friends, total } = useSelector((state) => state.userFriend);
+  const dispatch = useDispatch();
+
+  const defaultInCampaign = 1;
+  const defaultCampaignId = 1;
+  const latitude = 20.0;
+  const longitude = 105.0;
+  const defaultLastId = 0;
+  const defaultIndex = 0;
+  const defaultCount = 6;
 
   useEffect(() => {
-    console.log("mounted");
     const handleGetUserXInfo = async () => {
       try {
+        setLoadingUserX(true);
         const res = await userApi.getUserInfo(userXId);
         setUserX(res.data.data);
+
+        await dispatch({
+          type: "RESET_USER_POSTS",
+        });
+        await dispatch(
+          getListUserPosts(
+            userXId,
+            defaultInCampaign,
+            defaultCampaignId,
+            latitude,
+            longitude,
+            defaultLastId,
+            defaultIndex,
+            defaultCount
+          )
+        );
+        await dispatch({
+          type: "RESET_USER_FRIENDS",
+        });
+        await dispatch(getUserFriends(userXId, defaultIndex, defaultCount));
+        setLoadingUserX(false);
       } catch (err) {
         console.log(err.response.data.message);
       }
     };
     handleGetUserXInfo();
   }, []);
+
+  if (loadingUserX) return <ActivityIndicator size="large" color="#000" />;
 
   return (
     <View style={{ position: "relative" }}>
@@ -143,8 +182,7 @@ const UserXProfileScreen = () => {
             />
             {userX.city ? (
               <Text style={styles.introLineText}>
-                Quốc gia{" "}
-                <Text style={styles.introHightLight}>{userX.city}</Text>
+                Đến từ <Text style={styles.introHightLight}>{userX.city}</Text>
               </Text>
             ) : (
               <Text style={styles.introLineText}>
@@ -183,8 +221,19 @@ const UserXProfileScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <FriendGallery />
+          <FriendGallery friends={friends} total={total} />
         </View>
+        {post.length == 0 ? (
+          <View style={styles.noPost}>
+            <Text style={{ fontSize: 16 }}>Chưa có bài post nào!</Text>
+          </View>
+        ) : (
+          <View>
+            {post.map((item) => {
+              return <PostItem postData={item} key={item.id} />;
+            })}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -293,5 +342,11 @@ const styles = StyleSheet.create({
   introHightLight: {
     fontWeight: "bold",
     fontSize: 16,
+  },
+  noPost: {
+    height: 100,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

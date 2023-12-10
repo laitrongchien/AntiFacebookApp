@@ -4,8 +4,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  FlatList,
   TextInput,
+  ScrollView,
 } from "react-native";
 import VectorIcon from "../utils/VectorIcon";
 import Comment from "../components/Comment";
@@ -17,17 +17,17 @@ import { post as postApi } from "../api/post";
 import { getTimeFromCreatePost } from "../utils/helper";
 import { useDispatch, useSelector } from "react-redux";
 import { getComments } from "../redux/actions/commentAction";
+import LoadingCommentSkeleton from "../components/Loading/LoadingCommentSkeleton";
 
 const PostDetailScreen = () => {
   const route = useRoute();
   const { postData } = route.params;
   const dispatch = useDispatch();
   const [postDetail, setPostDetail] = useState(postData);
+  const [loadingComments, setLoadingComments] = useState(false);
   const comments = useSelector((state) => state.comments);
   const defaultIndex = 0;
   const defaultCount = 10;
-
-  const renderItem = ({ item }) => <Comment item={item} />;
 
   useEffect(() => {
     console.log("mounted");
@@ -43,8 +43,12 @@ const PostDetailScreen = () => {
   }, []);
 
   useEffect(() => {
-    console.log("mounted comment");
-    dispatch(getComments(postData.id, defaultIndex, defaultCount));
+    const getPostComments = async () => {
+      setLoadingComments(true);
+      await dispatch(getComments(postData.id, defaultIndex, defaultCount));
+      setLoadingComments(false);
+    };
+    getPostComments();
   }, [postData.id]);
 
   const { image, described, created, author, is_felt } = postDetail;
@@ -62,6 +66,9 @@ const PostDetailScreen = () => {
             size={32}
           />
         </TouchableOpacity>
+        <Text style={{ fontSize: 16, fontWeight: "500" }}>
+          {author.name || "Username"}
+        </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Search")}>
           <VectorIcon
             name="magnify"
@@ -71,145 +78,152 @@ const PostDetailScreen = () => {
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.item}>
-        <View
+      <ScrollView
+        style={styles.item}
+        bounces={false}
+        showsVerticalScrollIndicator={false}
+      >
+        <View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+            }}
+          >
+            <View style={styles.postHeaderInfo}>
+              <Image
+                style={styles.avatar}
+                source={
+                  author.avatar
+                    ? { uri: author.avatar }
+                    : require("../assets/images/default-img.png")
+                }
+              />
+              <View style={styles.infoWrapper}>
+                <View style={styles.nameWrapper}>
+                  <TouchableOpacity>
+                    <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                      {author.name || "Username"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.extraInfoWrapper}>
+                  <Text style={{ color: "#333", fontSize: 12 }}>
+                    {getTimeFromCreatePost(created)}
+                  </Text>
+                  <Text style={{ fontSize: 16, marginHorizontal: 5 }}>·</Text>
+                  <VectorIcon
+                    name="earth"
+                    type="MaterialCommunityIcons"
+                    size={19}
+                    color="#666"
+                  />
+                </View>
+              </View>
+            </View>
+            <View style={styles.iconWrapper}>
+              <TouchableOpacity style={{ marginRight: 16 }}>
+                <VectorIcon
+                  name="dots-horizontal"
+                  type="MaterialCommunityIcons"
+                  size={30}
+                  color="#666"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.postContent}>
+            <Text style={styles.paragraph}>{described}</Text>
+          </View>
+          {image.length !== 0 && <PostImage images={image} />}
+        </View>
+        <View style={styles.reactHandle}>
+          <TouchableOpacity
+            style={styles.btnOption}
+            // onPress={handleLikeButtonClick}
+            onLongPress={() => console.log("press")}
+          >
+            <VectorIcon
+              name={is_felt == 0 ? "thumb-up" : "thumb-up-outline"}
+              type="MaterialCommunityIcons"
+              color={is_felt == 0 ? "#1877f2" : "#666"}
+              size={22}
+            />
+            <Text
+              style={{
+                color: is_felt == 0 ? "#1877f2" : "#666",
+                marginLeft: 4,
+              }}
+            >
+              Thích
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnOption}>
+            <VectorIcon
+              name="chat-outline"
+              type="MaterialCommunityIcons"
+              color="#666"
+              size={22}
+            />
+            <Text style={{ color: "#666", marginLeft: 4 }}>Bình luận</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
           style={{
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: 16,
-            paddingVertical: 12,
+            padding: 12,
+            marginBottom: 12,
           }}
         >
-          <View style={styles.postHeaderInfo}>
-            <Image
-              style={styles.avatar}
-              source={
-                author.avatar
-                  ? { uri: author.avatar }
-                  : require("../assets/images/default-img.png")
-              }
-            />
-            <View style={styles.infoWrapper}>
-              <View style={styles.nameWrapper}>
-                <TouchableOpacity>
-                  <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                    {author.name || "Username"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.extraInfoWrapper}>
-                <Text style={{ color: "#333", fontSize: 12 }}>
-                  {getTimeFromCreatePost(created)}
-                </Text>
-                <Text style={{ fontSize: 16, marginHorizontal: 5 }}>·</Text>
-                <VectorIcon
-                  name="earth"
-                  type="MaterialCommunityIcons"
-                  size={19}
-                  color="#666"
-                />
-              </View>
-            </View>
-          </View>
-          <View style={styles.iconWrapper}>
-            <TouchableOpacity
-              style={{ marginRight: 16 }}
-              // onPress={() => setPostOptionVisible(true)}
-            >
-              <VectorIcon
-                name="dots-horizontal"
-                type="MaterialCommunityIcons"
-                size={30}
-                color="#666"
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.postContent}>
-          <Text style={styles.paragraph}>{described}</Text>
-        </View>
-        {image.length !== 0 && <PostImage images={image} />}
-      </View>
-      <View style={styles.reactHandle}>
-        <TouchableOpacity
-          style={styles.btnOption}
-          // onPress={handleLikeButtonClick}
-          onLongPress={() => console.log("press")}
-        >
-          <VectorIcon
-            name={is_felt == 0 ? "thumb-up" : "thumb-up-outline"}
-            type="MaterialCommunityIcons"
-            color={is_felt == 0 ? "#1877f2" : "#666"}
-            size={22}
+          <Image
+            source={require("../assets/icons/like_icon.png")}
+            style={{ width: 20, height: 20 }}
           />
-          <Text
+          <Image
+            source={require("../assets/icons/sad.png")}
             style={{
-              color: is_felt == 0 ? "#1877f2" : "#666",
-              marginLeft: 4,
+              width: 18,
+              height: 18,
+              marginRight: 4,
+              marginLeft: -4,
             }}
-          >
-            Thích
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btnOption}>
-          <VectorIcon
-            name="chat-outline"
-            type="MaterialCommunityIcons"
-            color="#666"
-            size={22}
           />
-          <Text style={{ color: "#666", marginLeft: 4 }}>Bình luận</Text>
+          <Text style={{ color: "#666" }}>{postData.feel}</Text>
         </TouchableOpacity>
-      </View>
-      <TouchableOpacity
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          padding: 12,
-          marginBottom: 12,
-        }}
-      >
-        <Image
-          source={require("../assets/icons/like_icon.png")}
-          style={{ width: 20, height: 20 }}
-        />
-        <Image
-          source={require("../assets/icons/sad.png")}
-          style={{
-            width: 18,
-            height: 18,
-            marginRight: 4,
-            marginLeft: -4,
-          }}
-        />
-        <Text style={{ color: "#666" }}>{postData.feel}</Text>
-      </TouchableOpacity>
-      {comments.length != 0 ? (
-        <FlatList
-          data={comments}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          style={{
-            paddingHorizontal: 12,
-          }}
-        />
-      ) : (
-        <View
-          style={{
-            height: 300,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ fontSize: 18, color: "#333" }}>
-            Chưa có bình luận nào
-          </Text>
-          <Text style={{ fontSize: 16, color: "#333" }}>
-            Hãy là người đầu tiên bình luận
-          </Text>
-        </View>
-      )}
+        {!loadingComments ? (
+          comments.length != 0 ? (
+            <View style={{ paddingHorizontal: 10 }}>
+              {comments.map((item) => {
+                return <Comment item={item} key={item.id} />;
+              })}
+            </View>
+          ) : (
+            <View
+              style={{
+                height: 300,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ fontSize: 18, color: "#333" }}>
+                Chưa có bình luận nào
+              </Text>
+              <Text style={{ fontSize: 16, color: "#333" }}>
+                Hãy là người đầu tiên bình luận
+              </Text>
+            </View>
+          )
+        ) : (
+          <>
+            <LoadingCommentSkeleton />
+            <LoadingCommentSkeleton />
+          </>
+        )}
+      </ScrollView>
 
       <View style={styles.commentInputContainer}>
         <TextInput
@@ -243,6 +257,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowOffset: { height: 0, width: 0 },
     marginTop: 50,
+    marginBottom: 68,
   },
   postHeaderInfo: {
     flexDirection: "row",

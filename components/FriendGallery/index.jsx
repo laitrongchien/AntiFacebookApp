@@ -2,7 +2,7 @@ import { Text, StyleSheet, View, TouchableOpacity, Image } from "react-native";
 import { SCREEN_WIDTH } from "../../constants";
 import ExTouchableOpacity from "../ExTouchableOpacity";
 
-const FriendGallery = () => {
+const FriendGallery = ({ friends, total }) => {
   return (
     <View style={styles.friendsWrapper}>
       <View>
@@ -10,7 +10,7 @@ const FriendGallery = () => {
           <View>
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>Bạn bè</Text>
             <Text style={{ fontSize: 16, fontWeight: "500", color: "#333" }}>
-              437 người bạn
+              {total} người bạn
             </Text>
           </View>
           <TouchableOpacity activeOpacity={0.8} style={styles.btnFindFriends}>
@@ -21,72 +21,25 @@ const FriendGallery = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.friendGallery}>
-        <View style={styles.friendItem}>
-          <ExTouchableOpacity activeOpacity={0.8}>
-            <Image
-              source={require("../../assets/images/default-img.png")}
-              style={styles.friendAvatar}
-            />
-          </ExTouchableOpacity>
-          <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
-          </ExTouchableOpacity>
-        </View>
-        <View style={styles.friendItem}>
-          <ExTouchableOpacity activeOpacity={0.8}>
-            <Image
-              source={require("../../assets/images/default-img.png")}
-              style={styles.friendAvatar}
-            />
-          </ExTouchableOpacity>
-          <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
-          </ExTouchableOpacity>
-        </View>
-        <View style={styles.friendItem}>
-          <ExTouchableOpacity activeOpacity={0.8}>
-            <Image
-              source={require("../../assets/images/default-img.png")}
-              style={styles.friendAvatar}
-            />
-          </ExTouchableOpacity>
-          <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
-          </ExTouchableOpacity>
-        </View>
-        <View style={styles.friendItem}>
-          <ExTouchableOpacity activeOpacity={0.8}>
-            <Image
-              source={require("../../assets/images/default-img.png")}
-              style={styles.friendAvatar}
-            />
-          </ExTouchableOpacity>
-          <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
-          </ExTouchableOpacity>
-        </View>
-        <View style={styles.friendItem}>
-          <ExTouchableOpacity activeOpacity={0.8}>
-            <Image
-              source={require("../../assets/images/default-img.png")}
-              style={styles.friendAvatar}
-            />
-          </ExTouchableOpacity>
-          <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
-          </ExTouchableOpacity>
-        </View>
-        <View style={styles.friendItem}>
-          <ExTouchableOpacity activeOpacity={0.8}>
-            <Image
-              source={require("../../assets/images/default-img.png")}
-              style={styles.friendAvatar}
-            />
-          </ExTouchableOpacity>
-          <ExTouchableOpacity style={{ marginTop: 5 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>Name</Text>
-          </ExTouchableOpacity>
-        </View>
+        {friends.slice(0, 6).map((friend) => (
+          <View style={styles.friendItem} key={friend.id}>
+            <ExTouchableOpacity activeOpacity={0.8}>
+              <Image
+                source={
+                  friend.avatar
+                    ? { uri: friend.avatar }
+                    : require("../../assets/images/default-img.png")
+                }
+                style={styles.friendAvatar}
+              />
+            </ExTouchableOpacity>
+            <ExTouchableOpacity style={{ marginTop: 5 }}>
+              <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                {friend.username}
+              </Text>
+            </ExTouchableOpacity>
+          </View>
+        ))}
       </View>
       <TouchableOpacity activeOpacity={0.8} style={styles.btnViewAllFriends}>
         <Text style={{ fontSize: 16, fontWeight: "500" }}>

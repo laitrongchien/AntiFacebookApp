@@ -1,4 +1,11 @@
-import { StyleSheet, FlatList, Text, RefreshControl } from "react-native";
+import {
+  StyleSheet,
+  FlatList,
+  Text,
+  RefreshControl,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import { useState, useEffect, useRef } from "react";
 import PostTool from "../components/PostTool";
 import Stories from "../components/Stories";
@@ -6,14 +13,13 @@ import PostItem from "../components/PostItem";
 import HorizontalRecommendFriends from "../components/HorizontalRecommendFriends";
 import { useDispatch, useSelector } from "react-redux";
 import { getListPosts } from "../redux/actions/postAction";
-import { SCREEN_WIDTH } from "../constants";
 import LoadingSkeleton from "../components/Loading/Skeleton";
 import { useScrollToTop } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const { post, last_id, new_items } = useSelector((state) => state.post);
-  const { loading } = useSelector((state) => state.alert);
+  const { loading, loadingPostCreated } = useSelector((state) => state.alert);
   const flatListRef = useRef(null);
 
   const defaultInCampaign = 1;
@@ -32,8 +38,8 @@ const HomeScreen = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     setLoadingSkeleton(true);
-    dispatch({
-      type: "REMOVE_LIST_POSTS",
+    await dispatch({
+      type: "RESET_LIST_POSTS",
     });
 
     await dispatch(
@@ -55,7 +61,6 @@ const HomeScreen = () => {
     const scrollY = event.nativeEvent.contentOffset.y;
     const flatListHeight = event.nativeEvent.layoutMeasurement.height;
     const contentHeight = event.nativeEvent.contentSize.height;
-    // console.log(contentHeight - scrollY - flatListHeight);
     if (contentHeight - scrollY - flatListHeight <= 1000) {
       if (new_items != 0 && !loading) {
         // console.log(loading, last_id);
@@ -75,15 +80,14 @@ const HomeScreen = () => {
   };
 
   const renderItem = ({ item }) => {
-    // console.log(item.id);
     return <PostItem postData={item} />;
   };
 
   useEffect(() => {
     const handleGetListPost = async () => {
       setLoadingSkeleton(true);
-      dispatch({
-        type: "REMOVE_LIST_POSTS",
+      await dispatch({
+        type: "RESET_LIST_POSTS",
       });
       await dispatch(
         getListPosts(
@@ -122,6 +126,12 @@ const HomeScreen = () => {
         <>
           <PostTool />
           <Stories />
+          {loadingPostCreated && (
+            <View style={styles.loadingPostWrapper}>
+              <Text style={{ fontSize: 16 }}>Đang đăng...</Text>
+              <ActivityIndicator size="large" color="#1877f2" />
+            </View>
+          )}
         </>
       )}
       style={styles.container}
@@ -139,6 +149,13 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "rgba(0,0,0,0.1)",
+  },
+  loadingPostWrapper: {
+    padding: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 8,
+    backgroundColor: "#fff",
   },
 });
 

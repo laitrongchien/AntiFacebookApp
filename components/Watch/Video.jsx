@@ -1,13 +1,15 @@
-import { useRef } from "react";
+import { useRef, memo } from "react";
 import { StyleSheet, View, TouchableOpacity, Animated } from "react-native";
 import { Video, ResizeMode } from "expo-av";
 import { SCREEN_WIDTH } from "../../constants";
 import VectorIcon from "../../utils/VectorIcon";
+import { useSelector } from "react-redux";
 
-const VideoControl = () => {
+const VideoControl = ({ videoUrl, videoId }) => {
   const videoRef = useRef(null);
   var isMuted = false;
   const volumeIconOpacity = new Animated.Value(1);
+  const { playingId, isPlaying } = useSelector((state) => state.videoControl);
 
   const onPressToggleVolume = () => {
     isMuted = !isMuted;
@@ -30,14 +32,14 @@ const VideoControl = () => {
       <Video
         ref={videoRef}
         source={{
-          uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+          uri: videoUrl,
         }}
         rate={1.0}
         volume={1.0}
         isMuted={false}
         resizeMode={ResizeMode.COVER}
-        // shouldPlay={true}
-        // isLooping={true}
+        shouldPlay={playingId === videoId && isPlaying}
+        isLooping={true}
         style={styles.video}
       />
       <TouchableOpacity
@@ -67,7 +69,7 @@ const VideoControl = () => {
   );
 };
 
-export default VideoControl;
+export default memo(VideoControl);
 
 const styles = StyleSheet.create({
   container: {

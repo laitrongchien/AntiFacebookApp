@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
 import { SCREEN_WIDTH } from "../../constants";
@@ -7,27 +7,37 @@ import Reaction from "../Reaction";
 import BottomModal from "../BottomModal";
 import WatchOptions from "./WatchOption";
 import { navigation } from "../../rootNavigation";
+import { getTimeFromCreatePost } from "../../utils/helper";
 
-const WatchItem = () => {
+const WatchItem = ({ watchData }) => {
   const [watchOptionVisible, setWatchOptionVisible] = useState(false);
+
+  const { id, video, described, created, feel, author, comment_mark, is_felt } =
+    watchData;
   return (
     <View style={styles.item}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <View style={styles.watchHeaderInfo}>
           <Image
             style={styles.avatar}
-            source={require("../../assets/images/default-img.png")}
+            source={
+              author.avatar
+                ? { uri: author.avatar }
+                : require("../../assets/images/default-img.png")
+            }
           />
           <View style={styles.infoWrapper}>
             <View style={styles.nameWrapper}>
               <TouchableOpacity>
                 <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                  GTV Plus
+                  {author.name || "Username"}
                 </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.extraInfoWrapper}>
-              <Text style={{ color: "#333", fontSize: 12 }}>28 Th7</Text>
+              <Text style={{ color: "#333", fontSize: 12 }}>
+                {getTimeFromCreatePost(created)}
+              </Text>
               <Text style={{ fontSize: 16, marginHorizontal: 5 }}>·</Text>
               <VectorIcon
                 name="earth"
@@ -51,17 +61,22 @@ const WatchItem = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.watchContent}>
-        <Text style={styles.paragraph}>Tham gia minigame ngay</Text>
+        <Text style={styles.paragraph}>{described}</Text>
       </View>
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => navigation.navigate("WatchDetailList")}
       >
         <View style={styles.videoContainer}>
-          <VideoControl />
+          <VideoControl videoUrl={video.url} videoId={id} />
         </View>
       </TouchableOpacity>
-      <Reaction />
+      <Reaction
+        numFeel={feel}
+        numMark={comment_mark}
+        isFelt={is_felt}
+        postId={id}
+      />
       <BottomModal
         isVisible={watchOptionVisible}
         closeModal={() => setWatchOptionVisible(false)}
@@ -117,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WatchItem;
+export default memo(WatchItem);

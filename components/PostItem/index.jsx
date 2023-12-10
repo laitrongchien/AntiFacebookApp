@@ -127,7 +127,12 @@ const PostItem = ({ postData }) => {
         isVisible={postOptionVisible}
         closeModal={() => setPostOptionVisible(false)}
       >
-        <PostOptions />
+        <PostOptions
+          authorId={author.id}
+          setPostOptionVisible={setPostOptionVisible}
+          postId={id}
+          postData={postData}
+        />
       </BottomModal>
     </View>
   );

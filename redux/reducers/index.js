@@ -6,6 +6,10 @@ import post from "./postReducer";
 import alert from "./alertReducer";
 import comments from "./commentReducer";
 import friend from "./friendReducer";
+import userPost from "./userPostReducer";
+import userFriend from "./userFriendReducer";
+import watchVideos from "./watchVideosReducer";
+import videoControl from "./videoControlReducer";
 
 export default combineReducers({
   auth,
@@ -14,4 +18,8 @@ export default combineReducers({
   alert,
   comments,
   friend,
+  userPost,
+  userFriend,
+  watchVideos,
+  videoControl,
 });

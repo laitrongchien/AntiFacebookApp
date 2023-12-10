@@ -34,7 +34,7 @@ const PreviewImage = ({ images, setImages }) => {
       {images.map((image, index) => (
         <ScaleImage
           key={index}
-          source={image}
+          source={image.uri || image.url}
           style={{ marginBottom: 4 }}
           width={imageWidth}
           height={imageHeight}

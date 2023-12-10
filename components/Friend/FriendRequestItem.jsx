@@ -1,17 +1,24 @@
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import { memo } from "react";
+import { memo, useState } from "react";
 import ExTouchableOpacity from "../ExTouchableOpacity";
 import { getTimeSendRequest } from "../../utils/helper";
+import { user as userApi } from "../../api/user";
 
 const FriendRequestItem = ({ requestItem }) => {
-  const { username, avatar, created, same_friends } = requestItem;
+  const { id, username, avatar, created, same_friends } = requestItem;
+  const [isAccepted, setIsAccepted] = useState(false);
+
+  const handleAcceptRequest = async () => {
+    setIsAccepted(true);
+    await userApi.setAcceptFriend(id, "1");
+  };
+
   return (
     <View>
       <ExTouchableOpacity style={styles.container}>
@@ -46,18 +53,27 @@ const FriendRequestItem = ({ requestItem }) => {
               <Text style={{ marginLeft: 5 }}>{same_friends} bạn chung</Text>
             )}
           </View>
-          <View style={styles.optionView_button}>
-            <TouchableOpacity
-              style={{ ...styles.button, backgroundColor: "#1877f2" }}
-            >
-              <Text style={styles.buttonText}>Chấp nhận</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ ...styles.button, backgroundColor: "#e8e8e8" }}
-            >
-              <Text style={{ ...styles.buttonText, color: "black" }}>Xóa</Text>
-            </TouchableOpacity>
-          </View>
+          {isAccepted ? (
+            <Text style={{ fontSize: 15 }}>
+              Bạn và {username} hiện đã là bạn bè
+            </Text>
+          ) : (
+            <View style={styles.optionView_button}>
+              <TouchableOpacity
+                style={{ ...styles.button, backgroundColor: "#1877f2" }}
+                onPress={handleAcceptRequest}
+              >
+                <Text style={styles.buttonText}>Chấp nhận</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ ...styles.button, backgroundColor: "#e8e8e8" }}
+              >
+                <Text style={{ ...styles.buttonText, color: "black" }}>
+                  Xóa
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </ExTouchableOpacity>
     </View>

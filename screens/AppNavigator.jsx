@@ -8,6 +8,7 @@ import LoginScreen from "./LoginScreen";
 import StartRegisterScreen from "./Register/StartRegisterScreen";
 import MainScreen from "./MainScreen";
 import CreatePost from "./CreatePost";
+import EditPost from "./EditPost";
 import PostDetailScreen from "./PostDetailScreen";
 import Search from "./Search";
 import ProfileScreen from "./ProfileTab";
@@ -26,6 +27,7 @@ import AvatarOptions from "./ProfileTab/AvartarOptions";
 // import { onAuthStateChanged } from "firebase/auth";
 // import { auth } from "./firebase/config";
 import AllRequest from "./FriendTab/AllRequest";
+import AllFriend from "./FriendTab/AllFriend";
 import AddFriendRequest from "../components/Friend/AddFriendRequest";
 import WatchDetailList from "./WatchTab/WatchDetailList";
 import VerifyScreen from "./Register/VerifyScreen";
@@ -84,6 +86,7 @@ const AppNavigator = () => {
 
             <Stack.Screen name="MainScreen" component={MainScreen} />
             <Stack.Screen name="CreatePost" component={CreatePost} />
+            <Stack.Screen name="EditPost" component={EditPost} />
             <Stack.Screen
               name="PostDetailScreen"
               component={PostDetailScreen}
@@ -107,6 +110,7 @@ const AppNavigator = () => {
               component={AddFriendRequest}
             />
             <Stack.Screen name="AllRequest" component={AllRequest} />
+            <Stack.Screen name="AllFriend" component={AllFriend} />
             <Stack.Screen name="WatchDetailList" component={WatchDetailList} />
           </>
         ) : (

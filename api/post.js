@@ -26,8 +26,60 @@ const getListPosts = async (
   }
 };
 
+const getListUserPosts = async (
+  userId,
+  inCampaign,
+  campaignId,
+  latitude,
+  longitude,
+  lastId,
+  index,
+  count
+) => {
+  return await axios.post("/get_list_posts", {
+    user_id: userId,
+    in_campaign: inCampaign,
+    campaign_id: campaignId,
+    latitude,
+    longitude,
+    last_id: lastId,
+    index,
+    count,
+  });
+};
+
 const getPost = async (id) => {
   return await axios.post("/get_post", { id });
 };
 
-export const post = { getListPosts, getPost };
+const createPost = async (formData) => {
+  const res = await axios.post("/add_post", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  // console.log(res);
+  return res;
+};
+
+const editPost = async (formData) => {
+  const res = await axios.post("/edit_post", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res;
+};
+
+const deletePost = async (id) => {
+  return await axios.post("/delete_post", { id });
+};
+
+export const post = {
+  getListPosts,
+  getPost,
+  createPost,
+  deletePost,
+  getListUserPosts,
+  editPost,
+};
