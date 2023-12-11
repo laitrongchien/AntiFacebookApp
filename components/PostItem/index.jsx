@@ -116,7 +116,7 @@ const PostItem = ({ postData }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      {image.length !== 0 && <PostImage images={image} />}
+      {image.length !== 0 && <PostImage images={image} postData={postData} />}
       <Reaction
         numFeel={feel}
         numMark={comment_mark}

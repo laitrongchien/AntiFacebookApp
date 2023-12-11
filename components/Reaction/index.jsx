@@ -21,6 +21,7 @@ import LoadingCommentSkeleton from "../Loading/LoadingCommentSkeleton";
 const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
   const [commentVisible, setCommentVisible] = useState(false);
   const [loadingComments, setLoadingComments] = useState(false);
+  const [isReact, setIsReact] = useState(isFelt);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comments);
   const defaultIndex = 0;
@@ -52,10 +53,10 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
     );
   };
 
-  const handleLikeButtonClick = () => {
-    if (isFelt == 0) isFelt = -1;
-    if (isFelt == -1) {
-      isFelt = 0;
+  const handleLikeButtonClick = async () => {
+    if (isReact == 1) setIsReact(-1);
+    if (isReact === -1) {
+      setIsReact(1);
       playLikeSound();
     }
   };
@@ -89,14 +90,14 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
           onLongPress={() => console.log("press")}
         >
           <VectorIcon
-            name={isFelt == 0 ? "thumb-up" : "thumb-up-outline"}
+            name={isReact == 1 ? "thumb-up" : "thumb-up-outline"}
             type="MaterialCommunityIcons"
-            color={isFelt == 0 ? "#1877f2" : isDark ? "#fff" : "#666"}
+            color={isReact == 1 ? "#1877f2" : isDark ? "#fff" : "#666"}
             size={22}
           />
           <Text
             style={{
-              color: isFelt == 0 ? "#1877f2" : isDark ? "#fff" : "#666",
+              color: isReact == 1 ? "#1877f2" : isDark ? "#fff" : "#666",
               marginLeft: 4,
             }}
           >

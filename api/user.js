@@ -70,6 +70,13 @@ const getUserFriends = async (userId, index, count) => {
   });
 };
 
+const feelPost = async (postId, type) => {
+  return await axios.post("/feel", {
+    id: postId,
+    type: type,
+  });
+};
+
 export const user = {
   getUserInfo,
   setUserInfo,
@@ -79,4 +86,5 @@ export const user = {
   setAcceptFriend,
   delRequestFriend,
   getUserFriends,
+  feelPost,
 };

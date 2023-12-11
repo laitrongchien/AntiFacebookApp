@@ -61,6 +61,7 @@ const AllRequest = () => {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
+          paddingVertical: 12,
         }}
       >
         <View style={styles.requestWrapper}>
@@ -72,7 +73,6 @@ const AllRequest = () => {
             style={{
               color: "#0a7bff",
               marginRight: 10,
-              marginTop: 16,
               fontSize: 16,
             }}
           >
@@ -109,13 +109,11 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   friendRequestItem: {
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   requestWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 12,
-    marginBottom: 16,
   },
   titleText: {
     fontSize: 18,

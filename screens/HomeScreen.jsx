@@ -122,6 +122,9 @@ const HomeScreen = () => {
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
       onScroll={handleScroll}
+      maxToRenderPerBatch={4}
+      bounces={false}
+      showsVerticalScrollIndicator={false}
       ListHeaderComponent={() => (
         <>
           <PostTool />

@@ -24,7 +24,7 @@ const AllFriend = () => {
   useEffect(() => {
     dispatch(getUserFriends(id, defaultIndex, defaultCount));
     setFriendList(friends);
-  }, []);
+  }, [friends]);
 
   const renderItem = ({ item }) => {
     return (

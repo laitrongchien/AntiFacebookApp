@@ -10,6 +10,7 @@ import MainScreen from "./MainScreen";
 import CreatePost from "./CreatePost";
 import EditPost from "./EditPost";
 import PostDetailScreen from "./PostDetailScreen";
+import PostListViewScreen from "./PostListViewScreen";
 import Search from "./Search";
 import ProfileScreen from "./ProfileTab";
 import UserXProfileScreen from "./ProfileTab/UserXProfile";
@@ -90,6 +91,10 @@ const AppNavigator = () => {
             <Stack.Screen
               name="PostDetailScreen"
               component={PostDetailScreen}
+            />
+            <Stack.Screen
+              name="PostListViewScreen"
+              component={PostListViewScreen}
             />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
