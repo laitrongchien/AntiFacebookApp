@@ -9,16 +9,16 @@ import { getTimeFromCreatePost } from "../utils/helper";
 
 const PostImage = ({ images, postData }) => {
   let imageWidth =
-    images.length === 1
+    images?.length === 1
       ? SCREEN_WIDTH
-      : images.length === 2
+      : images?.length === 2
       ? SCREEN_WIDTH / 2 - 2
-      : images.length === 3
+      : images?.length === 3
       ? SCREEN_WIDTH / 2 - 2
       : SCREEN_WIDTH / 2 - 2;
 
   let imageHeight =
-    images.length === 1 ? null : images.length === 4 ? 200 : 400;
+    images?.length === 1 ? null : images?.length === 4 ? 200 : 400;
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [showFullParagraph, setShowFullParagraph] = useState(false);
@@ -35,7 +35,7 @@ const PostImage = ({ images, postData }) => {
   };
 
   const handleNavigate = () => {
-    if (images.length == 1) setSelectedImageIndex(0);
+    if (images?.length == 1) setSelectedImageIndex(0);
     else navigation.navigate("PostListViewScreen", { postData: postData });
   };
 
@@ -43,7 +43,7 @@ const PostImage = ({ images, postData }) => {
     setSelectedImageIndex(null);
   };
 
-  if (images.length === 3)
+  if (images?.length === 3)
     return (
       <View
         style={{
@@ -63,7 +63,7 @@ const PostImage = ({ images, postData }) => {
             height={imageHeight}
           />
         </TouchableOpacity>
-        <View>
+        <View style={{ justifyContent: "space-between" }}>
           <TouchableOpacity
             key={images[1].id}
             onPress={handleNavigate}
@@ -72,7 +72,7 @@ const PostImage = ({ images, postData }) => {
             <ScaleImage
               source={images[1].url}
               width={imageWidth}
-              height={imageHeight / 2}
+              height={imageHeight / 2 - 2}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -83,7 +83,7 @@ const PostImage = ({ images, postData }) => {
             <ScaleImage
               source={images[2].url}
               width={imageWidth}
-              height={imageHeight / 2}
+              height={imageHeight / 2 - 2}
             />
           </TouchableOpacity>
         </View>
@@ -99,7 +99,7 @@ const PostImage = ({ images, postData }) => {
         marginTop: 16,
       }}
     >
-      {images.map((image) => (
+      {images?.map((image) => (
         <TouchableOpacity
           key={image.id}
           onPress={handleNavigate}
@@ -113,7 +113,7 @@ const PostImage = ({ images, postData }) => {
           />
         </TouchableOpacity>
       ))}
-      {images.length === 1 && (
+      {images?.length === 1 && (
         <Modal visible={selectedImageIndex !== null} transparent={true}>
           <ImageViewer
             imageUrls={images}

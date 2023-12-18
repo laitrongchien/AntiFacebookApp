@@ -3,12 +3,24 @@ import ScaleImage from "./ScaleImage";
 import { SCREEN_WIDTH } from "../constants";
 import VectorIcon from "../utils/VectorIcon";
 
-const PreviewImage = ({ images, setImages }) => {
-  const handleRemoveImage = (index) => {
-    console.log(index);
-    const updatedImages = [...images];
-    updatedImages.splice(index, 1);
-    setImages(updatedImages);
+const EditImage = ({
+  images,
+  setImages,
+  onRemoveImage,
+  imagesAdd,
+  setImagesAdd,
+}) => {
+  const handleRemoveImage = (image) => {
+    if (image.id) {
+      onRemoveImage(image.id);
+      const updatedImages = images.filter((img) => img.id !== image.id);
+      setImages(updatedImages);
+    } else {
+      const index = images.findIndex((img) => img === image);
+      const indexAdd = imagesAdd.findIndex((img) => img === image);
+      setImages(images.filter((_, i) => i !== index));
+      setImagesAdd(imagesAdd.filter((_, i) => i !== indexAdd));
+    }
   };
 
   let imageWidth =
@@ -35,7 +47,7 @@ const PreviewImage = ({ images, setImages }) => {
       {images.map((image, index) => (
         <ScaleImage
           key={index}
-          source={image.uri || image.url}
+          source={image.url || image.uri}
           style={{ marginBottom: 4 }}
           width={imageWidth}
           height={imageHeight}
@@ -47,7 +59,7 @@ const PreviewImage = ({ images, setImages }) => {
               right: 8,
               backgroundColor: "rgba(0, 0, 0, 0.2)",
             }}
-            onPress={() => handleRemoveImage(index)}
+            onPress={() => handleRemoveImage(image)}
           >
             <VectorIcon
               name="close"
@@ -62,4 +74,4 @@ const PreviewImage = ({ images, setImages }) => {
   );
 };
 
-export default PreviewImage;
+export default EditImage;

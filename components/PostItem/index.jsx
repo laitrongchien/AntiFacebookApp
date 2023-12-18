@@ -8,13 +8,23 @@ import PostOptions from "./PostOption";
 import PostImage from "../PostImage";
 import { getTimeFromCreatePost } from "../../utils/helper";
 import { navigation } from "../../rootNavigation";
+import { Video, ResizeMode } from "expo-av";
 
 const PostItem = ({ postData }) => {
   const [postOptionVisible, setPostOptionVisible] = useState(false);
   const [showFullParagraph, setShowFullParagraph] = useState(false);
 
-  const { id, image, described, created, feel, author, comment_mark, is_felt } =
-    postData;
+  const {
+    id,
+    image,
+    described,
+    created,
+    feel,
+    author,
+    comment_mark,
+    is_felt,
+    video,
+  } = postData;
 
   const paragraph = described;
 
@@ -38,7 +48,9 @@ const PostItem = ({ postData }) => {
         }}
         activeOpacity={0.6}
         onPress={() =>
-          navigation.navigate("PostDetailScreen", { postData: postData })
+          navigation.navigate("PostDetailScreen", {
+            postData: postData,
+          })
         }
       >
         <View style={styles.postHeaderInfo}>
@@ -117,6 +129,19 @@ const PostItem = ({ postData }) => {
         </TouchableOpacity>
       </View>
       {image.length !== 0 && <PostImage images={image} postData={postData} />}
+      {video && (
+        <Video
+          source={{
+            uri: video.url,
+          }}
+          rate={1.0}
+          volume={1.0}
+          isMuted={false}
+          resizeMode={ResizeMode.COVER}
+          useNativeControls={true}
+          style={styles.video}
+        />
+      )}
       <Reaction
         numFeel={feel}
         numMark={comment_mark}
@@ -188,6 +213,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomColor: "#ccc",
     borderBottomWidth: 1,
+  },
+  video: {
+    width: "100%",
+    height: 300,
+    backgroundColor: "#000",
   },
 });
 

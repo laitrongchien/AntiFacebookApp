@@ -1,8 +1,11 @@
 import { Text, StyleSheet, View, TouchableOpacity, Image } from "react-native";
 import { SCREEN_WIDTH } from "../../constants";
 import ExTouchableOpacity from "../ExTouchableOpacity";
+import { navigation } from "../../rootNavigation";
+import { useSelector } from "react-redux";
 
-const FriendGallery = ({ friends, total }) => {
+const FriendGallery = ({ friends, total, userXId }) => {
+  const { id } = useSelector((state) => state.auth);
   return (
     <View style={styles.friendsWrapper}>
       <View>
@@ -14,9 +17,13 @@ const FriendGallery = ({ friends, total }) => {
             </Text>
           </View>
           <TouchableOpacity activeOpacity={0.8} style={styles.btnFindFriends}>
-            <Text style={{ fontSize: 16, color: "#1877f2", fontWeight: "500" }}>
-              Tìm bạn bè
-            </Text>
+            {id == userXId && (
+              <Text
+                style={{ fontSize: 16, color: "#1877f2", fontWeight: "500" }}
+              >
+                Tìm bạn bè
+              </Text>
+            )}
           </TouchableOpacity>
         </TouchableOpacity>
       </View>
@@ -41,7 +48,11 @@ const FriendGallery = ({ friends, total }) => {
           </View>
         ))}
       </View>
-      <TouchableOpacity activeOpacity={0.8} style={styles.btnViewAllFriends}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.btnViewAllFriends}
+        onPress={() => navigation.navigate("AllFriend")}
+      >
         <Text style={{ fontSize: 16, fontWeight: "500" }}>
           Xem tất cả bạn bè
         </Text>

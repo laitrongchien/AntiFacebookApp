@@ -43,7 +43,7 @@ const UserXProfileScreen = () => {
         const res = await userApi.getUserInfo(userXId);
         setUserX(res.data.data);
 
-        await dispatch({
+        dispatch({
           type: "RESET_USER_POSTS",
         });
         await dispatch(
@@ -58,7 +58,7 @@ const UserXProfileScreen = () => {
             defaultCount
           )
         );
-        await dispatch({
+        dispatch({
           type: "RESET_USER_FRIENDS",
         });
         await dispatch(getUserFriends(userXId, defaultIndex, defaultCount));
@@ -70,7 +70,10 @@ const UserXProfileScreen = () => {
     handleGetUserXInfo();
   }, []);
 
-  if (loadingUserX) return <ActivityIndicator size="large" color="#000" />;
+  if (loadingUserX)
+    return (
+      <ActivityIndicator size="large" color="#000" style={{ marginTop: 300 }} />
+    );
 
   return (
     <View style={{ position: "relative" }}>
@@ -135,7 +138,13 @@ const UserXProfileScreen = () => {
                       marginLeft: 5,
                     }}
                   >
-                    Thêm bạn bè
+                    {userX.is_friend == 1
+                      ? "Bạn bè"
+                      : userX.is_friend == 2
+                      ? "Đã gửi lời mời"
+                      : userX.is_friend == 3
+                      ? "Chấp nhận lời mời"
+                      : "Thêm bạn bè"}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -221,7 +230,7 @@ const UserXProfileScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <FriendGallery friends={friends} total={total} />
+          <FriendGallery friends={friends} total={total} userXId={userXId} />
         </View>
         {post.length == 0 ? (
           <View style={styles.noPost}>

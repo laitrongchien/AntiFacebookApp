@@ -20,6 +20,7 @@ import { auth } from "../firebase/config";
 import { db } from "../firebase/config";
 import { doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { setting } from "../api/setting";
 
 import {
   registerForPushNotificationsAsync,
@@ -44,9 +45,10 @@ const LoginScreen = () => {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const [loading, setLoading] = useState(false);
-  const device_id = "string";
+  // const device_id = "string";
   const dispatch = useDispatch();
   const { error } = useSelector((state) => state.alert);
+  const defaultDevType = "1"; //android
 
   const onCreateAccount = () => {
     navigation.navigate("StartRegisterScreen");
@@ -82,7 +84,9 @@ const LoginScreen = () => {
       //     .slice(0, devices.length - 1)
       //     .forEach((device) => sendPushNotification(device));
       // }
-      await dispatch(login(email, password, device_id));
+      console.log(expoPushToken);
+      await dispatch(login(email, password, expoPushToken));
+      await setting.setDevToken(defaultDevType, expoPushToken);
       setLoading(false);
     } catch (err) {
       setLoading(false);

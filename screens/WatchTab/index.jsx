@@ -68,7 +68,7 @@ const WatchScreen = () => {
     setRefreshing(true);
     setLoadingSkeleton(true);
 
-    await dispatch({
+    dispatch({
       type: "RESET_LIST_VIDEOS",
     });
     await dispatch(
@@ -110,7 +110,7 @@ const WatchScreen = () => {
     // console.log(index);
     if (index != currentIndex) {
       // console.log(watchVideos[index].id);
-      dispatch(setWatchingVideo(watchVideos[index].id, true));
+      dispatch(setWatchingVideo(watchVideos[index]?.id, true));
       setCurrentIndex(index);
     }
   };
@@ -131,7 +131,7 @@ const WatchScreen = () => {
     console.log("mount");
     const handleGetListVideos = async () => {
       setLoadingSkeleton(true);
-      await dispatch({
+      dispatch({
         type: "RESET_LIST_VIDEOS",
       });
       await dispatch(
@@ -153,7 +153,7 @@ const WatchScreen = () => {
 
   useEffect(() => {
     if (initialLoad)
-      dispatch(setWatchingVideo(watchVideos[currentIndex].id, isFocused));
+      dispatch(setWatchingVideo(watchVideos[currentIndex]?.id, isFocused));
   }, [initialLoad, isFocused]);
 
   if (loadingSkeleton)

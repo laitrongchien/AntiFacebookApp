@@ -6,32 +6,73 @@ import NotificationOption from "./NotificationOption";
 import BottomModal from "../BottomModal";
 import { useState } from "react";
 import { navigation } from "../../rootNavigation";
+import { formatTime } from "../../utils/helper";
+import { post } from "../../api/post";
 
-const NotificationItem = () => {
+const NotificationItem = ({ notificationData }) => {
   const [notificationOptionVisible, setNotificationOptionVisible] =
     useState("false");
+
+  const { type, object_id, title, created, group, read, user } =
+    notificationData;
+
+  let content = "";
+  if (type == 1) {
+    content = `gửi lời mời kết bạn đến bạn`;
+  } else if (type == 2) {
+    content = "đã chấp nhận lời mời kết bạn của bạn";
+  } else if (type == 3) {
+    content = "đã đăng một bài đăng mới";
+  } else if (type == 4) {
+    content = "đã có những cập nhật mới liên quan đến bài đăng";
+  } else if (type == 5) {
+    content = "đã bày tỏ cảm xúc về bài viết của bạn";
+  } else if (type == 6) {
+    content = "đã đăng mark về bài viết của bạn";
+  } else if (type == 7) {
+    content = "đã phản hồi bình luận của bạn";
+  } else if (type == 8) {
+    content = "đã đăng một video mới";
+  } else if (type == 9) {
+    content = "đã bình luận về bài viết của bạn";
+  }
+
+  const handlePress = async () => {
+    if (type == 1) {
+      navigation.navigate("AllRequest");
+    } else if (type != 1 && type != 2) {
+      const res = await post.getPost(object_id);
+      navigation.navigate("PostDetailScreen", { postData: res.data.data });
+    }
+  };
   return (
-    <View>
-      <ExTouchableOpacity style={{ ...styles.container }}>
+    <View style={{ backgroundColor: read == 0 ? "#e7f3ff" : "#fff" }}>
+      <ExTouchableOpacity style={{ ...styles.container }} onPress={handlePress}>
         <ImageBackground
           imageStyle={{ borderRadius: 64 }}
           style={styles.avatar}
-          source={require("../../assets/images/default-img.png")}
+          source={
+            user.avatar
+              ? { uri: user.avatar }
+              : require("../../assets/images/default-img.png")
+          }
         >
-          <View style={{ ...styles.notificationIcon }}>
-            <VectorIcon
-              name="account-multiple"
-              type="MaterialCommunityIcons"
-              color="#666"
-              size={28}
-            />
-          </View>
+          {/* {type == 1 && (
+            <View style={{ ...styles.notificationIcon }}>
+              <VectorIcon
+                name="account-multiple"
+                type="MaterialCommunityIcons"
+                color="#666"
+                size={28}
+              />
+            </View>
+          )} */}
         </ImageBackground>
         <View style={styles.contentWrapper}>
-          <Text style={{ fontSize: 14, fontWeight: "400" }}>
-            A vừa tải lên một tin mới, khám phá ngay
+          <Text style={{ fontSize: 15, fontWeight: "400" }}>
+            <Text style={{ fontWeight: "500" }}>{user.username}</Text> {content}
           </Text>
-          <Text style={{ color: "#333" }}>26/10</Text>
+          <Text style={{ color: "#333" }}>{formatTime(created)}</Text>
         </View>
         <ExTouchableOpacity
           style={styles.btnOptions}
@@ -59,7 +100,7 @@ export default NotificationItem;
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingHorizontal: 20,
     flexDirection: "row",
   },

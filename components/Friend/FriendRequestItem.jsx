@@ -9,6 +9,7 @@ import { memo, useState } from "react";
 import ExTouchableOpacity from "../ExTouchableOpacity";
 import { getTimeSendRequest } from "../../utils/helper";
 import { user as userApi } from "../../api/user";
+import { navigation } from "../../rootNavigation";
 
 const FriendRequestItem = ({ requestItem }) => {
   const { id, username, avatar, created, same_friends } = requestItem;
@@ -21,7 +22,12 @@ const FriendRequestItem = ({ requestItem }) => {
 
   return (
     <View>
-      <ExTouchableOpacity style={styles.container}>
+      <ExTouchableOpacity
+        style={styles.container}
+        onPress={() =>
+          navigation.navigate("UserXProfileScreen", { userXId: id })
+        }
+      >
         <ImageBackground
           imageStyle={{ borderRadius: 64 }}
           style={styles.avatarView}

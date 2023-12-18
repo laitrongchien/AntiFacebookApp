@@ -75,6 +75,19 @@ const deletePost = async (id) => {
   return await axios.post("/delete_post", { id });
 };
 
+const feelPost = async (postId, type) => {
+  return await axios.post("/feel", {
+    id: postId,
+    type: type,
+  });
+};
+
+const deleteFeel = async (postId) => {
+  return await axios.post("/delete_feel", {
+    id: postId,
+  });
+};
+
 export const post = {
   getListPosts,
   getPost,
@@ -82,4 +95,6 @@ export const post = {
   deletePost,
   getListUserPosts,
   editPost,
+  feelPost,
+  deleteFeel,
 };

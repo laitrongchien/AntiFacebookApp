@@ -11,3 +11,45 @@ export const getComments = (id, index, count) => async (dispatch) => {
     console.log(err.response.data.message);
   }
 };
+
+export const createMark =
+  (id, content, index, count, type) => async (dispatch) => {
+    try {
+      const res = await comment.createMark(id, content, index, count, type);
+      dispatch({
+        type: "CREATE_MARK",
+        payload: res.data.data,
+      });
+      dispatch({
+        type: "COMMENT_POST",
+        payload: id,
+      });
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
+  };
+
+export const createCommentMark =
+  (id, content, index, count, markId) => async (dispatch) => {
+    try {
+      console.log(markId);
+      const res = await comment.createCommentMark(
+        id,
+        content,
+        index,
+        count,
+        markId
+      );
+      // console.log(res);
+      dispatch({
+        type: "CREATE_MARK",
+        payload: res.data.data,
+      });
+      dispatch({
+        type: "COMMENT_POST",
+        payload: id,
+      });
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
+  };

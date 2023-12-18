@@ -9,6 +9,7 @@ import {
 import ExTouchableOpacity from "../ExTouchableOpacity";
 import { user as userApi } from "../../api/user";
 import { useState } from "react";
+import { navigation } from "../../rootNavigation";
 
 const RecommendFriendItem = ({ recommendItem }) => {
   const { id, username, avatar, same_friends } = recommendItem;
@@ -26,7 +27,12 @@ const RecommendFriendItem = ({ recommendItem }) => {
 
   return (
     <View>
-      <ExTouchableOpacity style={styles.container}>
+      <ExTouchableOpacity
+        style={styles.container}
+        onPress={() =>
+          navigation.navigate("UserXProfileScreen", { userXId: id })
+        }
+      >
         <ImageBackground
           imageStyle={{ borderRadius: 64 }}
           style={styles.avatarView}

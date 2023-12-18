@@ -35,12 +35,4 @@ export const logout = () => async (dispatch) => {
   dispatch({
     type: "RESET_STATE",
   });
-  // dispatch({
-  //   type: "GET_USER_INFO",
-  //   payload: {},
-  // });
-  // dispatch({
-  //   type: "REMOVE_LIST_POSTS",
-  //   payload: { post: [], last_id: undefined, new_items: undefined },
-  // });
 };

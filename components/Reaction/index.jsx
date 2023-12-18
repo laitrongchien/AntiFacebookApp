@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   Image,
@@ -6,7 +6,9 @@ import {
   StyleSheet,
   TextInput,
   KeyboardAvoidingView,
+  Keyboard,
   FlatList,
+  ScrollView,
 } from "react-native";
 import { Audio } from "expo-av";
 import ExTouchableOpacity from "../ExTouchableOpacity";
@@ -14,18 +16,29 @@ import VectorIcon from "../../utils/VectorIcon";
 import BottomModal from "../BottomModal";
 import Comment from "../Comment";
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from "../../constants";
-import { getComments } from "../../redux/actions/commentAction";
+import {
+  getComments,
+  createMark,
+  createCommentMark,
+} from "../../redux/actions/commentAction";
 import { useSelector, useDispatch } from "react-redux";
 import LoadingCommentSkeleton from "../Loading/LoadingCommentSkeleton";
+import { feelPost, deleteFeel } from "../../redux/actions/postAction";
 
 const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
   const [commentVisible, setCommentVisible] = useState(false);
+  const [content, setContent] = useState("");
+  const [markId, setMarkId] = useState();
+  const [reactionBarVisible, setReactionBarVisible] = useState(false);
   const [loadingComments, setLoadingComments] = useState(false);
   const [isReact, setIsReact] = useState(isFelt);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comments);
   const defaultIndex = 0;
   const defaultCount = 10;
+  const defaultMarkType = 1;
+
+  const commentInputRef = useRef(null);
 
   const openComment = async () => {
     setCommentVisible(true);
@@ -38,7 +51,36 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
     setCommentVisible(false);
   };
 
-  const renderItem = ({ item }) => <Comment item={item} />;
+  // const setMarkToReply = (id) => {
+  //   setMarkId(id);
+  // };
+
+  const createComment = () => {
+    if (markId) {
+      // console.log(markId);
+      dispatch(
+        createCommentMark(postId, content, defaultIndex, defaultCount, markId)
+      );
+    } else {
+      dispatch(
+        createMark(postId, content, defaultIndex, defaultCount, defaultMarkType)
+      );
+    }
+    setContent("");
+    Keyboard.dismiss();
+  };
+
+  const openReactionBar = () => {
+    setReactionBarVisible(true);
+  };
+
+  const renderItem = ({ item }) => (
+    <Comment
+      item={item}
+      commentInputRef={commentInputRef}
+      setMarkId={setMarkId}
+    />
+  );
 
   useEffect(() => {
     Audio.Sound.createAsync(require("../../assets/sounds/like_sound.mp3"), {
@@ -53,11 +95,31 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
     );
   };
 
-  const handleLikeButtonClick = async () => {
-    if (isReact == 1) setIsReact(-1);
-    if (isReact === -1) {
+  const handleClickLike = async () => {
+    if (isReact == 1 || isReact == 0) {
+      setIsReact(-1);
+      dispatch(deleteFeel(postId));
+    }
+    if (isReact == -1) {
       setIsReact(1);
       playLikeSound();
+      dispatch(feelPost(postId, "1"));
+    }
+  };
+
+  const handleClickLikeBar = async () => {
+    setReactionBarVisible(false);
+    if (isReact == 0 || isReact == -1) {
+      setIsReact(1);
+      dispatch(feelPost(postId, "1"));
+    }
+  };
+
+  const handleClickSadBar = async () => {
+    setReactionBarVisible(false);
+    if (isReact == 1 || isReact == -1) {
+      setIsReact(0);
+      dispatch(feelPost(postId, "0"));
     }
   };
 
@@ -83,25 +145,63 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
             : "Chưa có bình luận"}
         </Text>
       </ExTouchableOpacity>
+
       <View style={styles.reactHandle}>
+        {reactionBarVisible && (
+          <View style={styles.reactionToolBar}>
+            <ExTouchableOpacity onPress={handleClickLikeBar}>
+              <Image
+                source={require("../../assets/icons/like_icon.png")}
+                style={{ width: 40, height: 40 }}
+              />
+            </ExTouchableOpacity>
+            <ExTouchableOpacity onPress={handleClickSadBar}>
+              <Image
+                source={require("../../assets/icons/sad.png")}
+                style={{ width: 40, height: 40 }}
+              />
+            </ExTouchableOpacity>
+          </View>
+        )}
         <ExTouchableOpacity
           style={styles.btnOption}
-          onPress={handleLikeButtonClick}
-          onLongPress={() => console.log("press")}
+          onPress={handleClickLike}
+          onLongPress={openReactionBar}
         >
           <VectorIcon
-            name={isReact == 1 ? "thumb-up" : "thumb-up-outline"}
+            name={
+              isReact == 1
+                ? "thumb-up"
+                : isReact == 0
+                ? "emoticon-sad"
+                : "thumb-up-outline"
+            }
             type="MaterialCommunityIcons"
-            color={isReact == 1 ? "#1877f2" : isDark ? "#fff" : "#666"}
+            color={
+              isReact == 1
+                ? "#1877f2"
+                : isReact == 0
+                ? "#ebcc34"
+                : isDark
+                ? "#fff"
+                : "#666"
+            }
             size={22}
           />
           <Text
             style={{
-              color: isReact == 1 ? "#1877f2" : isDark ? "#fff" : "#666",
+              color:
+                isReact == 1
+                  ? "#1877f2"
+                  : isReact == 0
+                  ? "#ebcc34"
+                  : isDark
+                  ? "#fff"
+                  : "#666",
               marginLeft: 4,
             }}
           >
-            Thích
+            {isReact == 0 ? "Thất vọng" : "Thích"}
           </Text>
         </ExTouchableOpacity>
         <ExTouchableOpacity style={styles.btnOption} onPress={openComment}>
@@ -204,12 +304,28 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
 
           <View style={styles.commentInputContainer}>
             <TextInput
+              ref={commentInputRef}
               style={styles.commentInput}
               placeholder="Nhập bình luận..."
               placeholderTextColor="#333"
               selectionColor="#333"
               underlineColorAndroid="transparent"
+              value={content}
+              onChangeText={(text) => setContent(text)}
             />
+            <ScrollView
+              keyboardShouldPersistTaps="always"
+              keyboardDismissMode="on-drag"
+            >
+              <ExTouchableOpacity onPress={createComment}>
+                <VectorIcon
+                  name="send"
+                  type="MaterialCommunityIcons"
+                  color="#666"
+                  size={28}
+                />
+              </ExTouchableOpacity>
+            </ScrollView>
           </View>
         </KeyboardAvoidingView>
       </BottomModal>
@@ -229,6 +345,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderTopWidth: 1,
     borderTopColor: "#ddd",
+    position: "relative",
   },
   btnOption: {
     flexDirection: "row",
@@ -247,6 +364,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     backgroundColor: "#fff",
+    flexDirection: "row",
+    alignItems: "center",
   },
   commentInput: {
     height: 44,
@@ -255,6 +374,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 16,
     color: "#333",
+    width: SCREEN_WIDTH * 0.84,
+    marginRight: 4,
   },
   reactBar: {
     paddingHorizontal: 12,
@@ -266,6 +387,21 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     backgroundColor: "#fff",
     flexDirection: "row",
+  },
+  reactionToolBar: {
+    position: "absolute",
+    top: -50,
+    left: 60,
+    zIndex: 10,
+    width: 100,
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    paddingHorizontal: 6,
   },
 });
 

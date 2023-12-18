@@ -70,10 +70,10 @@ const getUserFriends = async (userId, index, count) => {
   });
 };
 
-const feelPost = async (postId, type) => {
-  return await axios.post("/feel", {
-    id: postId,
-    type: type,
+const getNotification = async (index, count) => {
+  return await axios.post("/get_notification", {
+    index,
+    count,
   });
 };
 
@@ -86,5 +86,5 @@ export const user = {
   setAcceptFriend,
   delRequestFriend,
   getUserFriends,
-  feelPost,
+  getNotification,
 };

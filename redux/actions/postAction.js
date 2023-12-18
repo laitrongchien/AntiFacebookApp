@@ -6,7 +6,7 @@ export const getListPosts =
     try {
       dispatch({
         type: "ALERT",
-        payload: { loading: true },
+        payload: { loadingPosts: true },
       });
       const res = await post.getListPosts(
         inCampaign,
@@ -23,7 +23,7 @@ export const getListPosts =
       });
       dispatch({
         type: "ALERT",
-        payload: { loading: false },
+        payload: { loadingPosts: false },
       });
     } catch (err) {
       console.log(err.response.data.message);
@@ -122,3 +122,29 @@ export const getListUserPosts =
       console.log(err.response.data.message);
     }
   };
+
+export const feelPost = (postId, type) => async (dispatch) => {
+  try {
+    const res = await post.feelPost(postId, type);
+
+    dispatch({
+      type: "FEEL_POST",
+      payload: postId,
+    });
+  } catch (err) {
+    console.log(err.response.data.message);
+  }
+};
+
+export const deleteFeel = (postId) => async (dispatch) => {
+  try {
+    const res = await post.deleteFeel(postId);
+
+    dispatch({
+      type: "DELETE_FEEL",
+      payload: postId,
+    });
+  } catch (err) {
+    console.log(err.response.data.message);
+  }
+};

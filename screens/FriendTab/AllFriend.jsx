@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import VectorIcon from "../../utils/VectorIcon";
+import BottomModal from "../../components/BottomModal";
 import { navigation } from "../../rootNavigation";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserFriends } from "../../redux/actions/userAction";
@@ -17,6 +18,8 @@ const AllFriend = () => {
   const { id } = useSelector((state) => state.auth);
   const { friends, total } = useSelector((state) => state.userFriend);
   const [friendList, setFriendList] = useState([]);
+  const [friendOptionVisible, setFriendOptionVisible] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState(null);
 
   const defaultIndex = 0;
   const defaultCount = 20;
@@ -54,12 +57,19 @@ const AllFriend = () => {
             </Text>
           </View>
         </View>
-        <VectorIcon
-          name="dots-horizontal"
-          type="MaterialCommunityIcons"
-          color="#666"
-          size={32}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedFriend(item);
+            setFriendOptionVisible(true);
+          }}
+        >
+          <VectorIcon
+            name="dots-horizontal"
+            type="MaterialCommunityIcons"
+            color="#666"
+            size={32}
+          />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -114,8 +124,36 @@ const AllFriend = () => {
         data={friendList}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        // style={styles.friendRequestItem}
       />
+      <BottomModal
+        isVisible={friendOptionVisible}
+        closeModal={() => setFriendOptionVisible(false)}
+      >
+        <View style={{ backgroundColor: "#fff" }}>
+          <TouchableOpacity style={styles.optionBtn}>
+            <VectorIcon
+              name="account-cancel-outline"
+              type="MaterialCommunityIcons"
+              color="#000"
+              size={28}
+            />
+            <Text style={{ fontSize: 16, marginLeft: 12 }}>
+              Chặn trang cá nhân của {selectedFriend?.username}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionBtn}>
+            <VectorIcon
+              name="account-remove-outline"
+              type="MaterialCommunityIcons"
+              color="red"
+              size={28}
+            />
+            <Text style={{ fontSize: 16, marginLeft: 12, color: "red" }}>
+              Hủy kết bạn với {selectedFriend?.username}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </BottomModal>
     </View>
   );
 };
@@ -152,6 +190,12 @@ const styles = StyleSheet.create({
   friendWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  optionBtn: {
+    flexDirection: "row",
     alignItems: "center",
     padding: 15,
   },

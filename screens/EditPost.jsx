@@ -12,13 +12,14 @@ import {
   Animated,
   ScrollView,
   Alert,
+  Platform,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import VectorIcon from "../utils/VectorIcon";
 import { pickImage, pickVideo } from "../utils/PickImage";
 import * as navigation from "../rootNavigation";
-import PreviewImage from "../components/PreviewImage";
+import EditImage from "../components/EditImage";
 import { Video, ResizeMode } from "expo-av";
 import { useRoute } from "@react-navigation/native";
 import { editPost } from "../redux/actions/postAction";
@@ -35,7 +36,9 @@ const EditPost = () => {
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
   const [text, setText] = useState(described);
   const [images, setImages] = useState(image);
+  const [imagesAdd, setImagesAdd] = useState(null);
   const [video, setVideo] = useState(null);
+  const [imageDel, setImageDel] = useState([]);
   const { username, avatar } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -84,6 +87,7 @@ const EditPost = () => {
     if (!result.canceled) {
       const selectedImages = result.assets.map((asset) => asset);
       setImages((prevImages) => [...prevImages, ...selectedImages]);
+      setImagesAdd(selectedImages);
     }
   };
 
@@ -94,31 +98,37 @@ const EditPost = () => {
     }
   };
 
+  const handleRemoveImage = (removedId) => {
+    console.log(removedId);
+    setImageDel((prevImageDel) => [...prevImageDel, removedId]);
+  };
+
   const handleEditPost = async () => {
     const formData = new FormData();
     formData.append("id", id);
     formData.append("described", text);
+    formData.append("image_del", imageDel.join(","));
     formData.append("status", "Hyped");
     formData.append("auto_accept", "1");
 
-    if (images != imageExisted && images.length > 0) {
-      images.forEach((image) => {
-        const uriParts = image.uri.split("/");
-        const fileNameWithType = uriParts[uriParts.length - 1];
-        const [fileName, fileType] = fileNameWithType.split(".");
-        // console.log(fileName, fileType);
+    // if (images != imageExisted && images.length > 0) {
+    imagesAdd?.forEach((image) => {
+      const uriParts = image.uri.split("/");
+      const fileNameWithType = uriParts[uriParts.length - 1];
+      const [fileName, fileType] = fileNameWithType.split(".");
+      // console.log(fileName, fileType);
 
-        const imageData = {
-          uri:
-            Platform.OS === "android"
-              ? image.uri
-              : image.uri.replace("file://", ""),
-          type: "image/" + fileType,
-          name: fileName,
-        };
-        formData.append("image", imageData);
-      });
-    }
+      const imageData = {
+        uri:
+          Platform.OS === "android"
+            ? image.uri
+            : image.uri.replace("file://", ""),
+        type: "image/" + fileType,
+        name: fileName,
+      };
+      formData.append("image", imageData);
+    });
+    // }
 
     // Append video if available
     if (video) {
@@ -219,7 +229,13 @@ const EditPost = () => {
             }}
             onChangeText={(text) => setText(text)}
           ></TextInput>
-          <PreviewImage images={images} setImages={setImages} />
+          <EditImage
+            images={images}
+            setImages={setImages}
+            imagesAdd={imagesAdd}
+            setImagesAdd={setImagesAdd}
+            onRemoveImage={handleRemoveImage}
+          />
           {video && (
             <View>
               <Video

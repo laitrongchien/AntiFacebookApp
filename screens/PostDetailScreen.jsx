@@ -12,7 +12,7 @@ import Comment from "../components/Comment";
 import PostImage from "../components/PostImage";
 import { navigation } from "../rootNavigation";
 import { useRoute } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { post as postApi } from "../api/post";
 import { getTimeFromCreatePost } from "../utils/helper";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,24 +23,27 @@ const PostDetailScreen = () => {
   const route = useRoute();
   const { postData } = route.params;
   const dispatch = useDispatch();
-  const [postDetail, setPostDetail] = useState(postData);
+  // const [postDetail, setPostDetail] = useState(postData);
   const [loadingComments, setLoadingComments] = useState(false);
+  const [content, setContent] = useState("");
   const comments = useSelector((state) => state.comments);
   const defaultIndex = 0;
   const defaultCount = 10;
 
-  useEffect(() => {
-    console.log("mounted");
-    const handleGetPost = async () => {
-      try {
-        const res = await postApi.getPost(postData.id);
-        setPostDetail(res.data.data);
-      } catch (err) {
-        console.log(err.response.data.message);
-      }
-    };
-    handleGetPost();
-  }, []);
+  const commentInputRef = useRef(null);
+
+  // useEffect(() => {
+  //   console.log("mounted");
+  //   const handleGetPost = async () => {
+  //     try {
+  //       const res = await postApi.getPost(postId);
+  //       setPostDetail(res.data.data);
+  //     } catch (err) {
+  //       console.log(err.response.data.message);
+  //     }
+  //   };
+  //   handleGetPost();
+  // }, []);
 
   useEffect(() => {
     const getPostComments = async () => {
@@ -51,7 +54,16 @@ const PostDetailScreen = () => {
     getPostComments();
   }, [postData.id]);
 
-  const { image, described, created, author, is_felt } = postDetail;
+  const {
+    image,
+    described,
+    created,
+    author,
+    feel,
+    is_felt,
+    kudos,
+    disappointed,
+  } = postData;
 
   return (
     <View
@@ -67,7 +79,7 @@ const PostDetailScreen = () => {
           />
         </TouchableOpacity>
         <Text style={{ fontSize: 16, fontWeight: "500" }}>
-          {author.name || "Username"}
+          {author?.name || "Username"}
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Search")}>
           <VectorIcon
@@ -97,8 +109,8 @@ const PostDetailScreen = () => {
               <Image
                 style={styles.avatar}
                 source={
-                  author.avatar
-                    ? { uri: author.avatar }
+                  author?.avatar
+                    ? { uri: author?.avatar }
                     : require("../assets/images/default-img.png")
                 }
               />
@@ -106,7 +118,7 @@ const PostDetailScreen = () => {
                 <View style={styles.nameWrapper}>
                   <TouchableOpacity>
                     <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                      {author.name || "Username"}
+                      {author?.name || "Username"}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -138,7 +150,9 @@ const PostDetailScreen = () => {
           <View style={styles.postContent}>
             <Text style={styles.paragraph}>{described}</Text>
           </View>
-          {image.length !== 0 && <PostImage images={image} />}
+          {image?.length !== 0 && (
+            <PostImage images={image} postData={postData} />
+          )}
         </View>
         <View style={styles.reactHandle}>
           <TouchableOpacity
@@ -192,13 +206,21 @@ const PostDetailScreen = () => {
               marginLeft: -4,
             }}
           />
-          <Text style={{ color: "#666" }}>{postData.feel}</Text>
+          <Text style={{ color: "#666" }}>
+            {feel || parseInt(kudos) + parseInt(disappointed)}
+          </Text>
         </TouchableOpacity>
         {!loadingComments ? (
-          comments.length != 0 ? (
+          comments?.length != 0 ? (
             <View style={{ paddingHorizontal: 10 }}>
               {comments.map((item) => {
-                return <Comment item={item} key={item.id} />;
+                return (
+                  <Comment
+                    item={item}
+                    key={item.id}
+                    commentInputRef={commentInputRef}
+                  />
+                );
               })}
             </View>
           ) : (
@@ -227,11 +249,14 @@ const PostDetailScreen = () => {
 
       <View style={styles.commentInputContainer}>
         <TextInput
+          ref={commentInputRef}
           style={styles.commentInput}
           placeholder="Nhập bình luận..."
           placeholderTextColor="#333"
           selectionColor="#333"
           underlineColorAndroid="transparent"
+          value={content}
+          onChangeText={(text) => setContent(text)}
         />
       </View>
     </View>

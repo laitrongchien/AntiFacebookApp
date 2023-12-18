@@ -6,6 +6,7 @@ const postReducer = (state = initialState, action) => {
       const { post, last_id, new_items } = action.payload;
       return {
         post: [...state.post, ...post],
+        // post: post,
         last_id: last_id,
         new_items: new_items,
       };
@@ -26,6 +27,33 @@ const postReducer = (state = initialState, action) => {
       return {
         ...state,
         post: state.post.filter((item) => item.id !== action.payload),
+      };
+    case "FEEL_POST":
+      return {
+        ...state,
+        post: state.post.map((item) =>
+          item.id === action.payload
+            ? { ...item, feel: parseInt(item.feel) + 1 }
+            : item
+        ),
+      };
+    case "DELETE_FEEL":
+      return {
+        ...state,
+        post: state.post.map((item) =>
+          item.id === action.payload
+            ? { ...item, feel: parseInt(item.feel) - 1 }
+            : item
+        ),
+      };
+    case "COMMENT_POST":
+      return {
+        ...state,
+        post: state.post.map((item) =>
+          item.id === action.payload
+            ? { ...item, comment_mark: parseInt(item.comment_mark) + 1 }
+            : item
+        ),
       };
     case "RESET_LIST_POSTS":
       return initialState;

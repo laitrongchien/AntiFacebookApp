@@ -84,7 +84,6 @@ const AllRequest = () => {
         data={requestedFriends.requests}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        style={styles.friendRequestItem}
       />
     </View>
   );
@@ -105,11 +104,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    backgroundColor: "white",
-    height: "100%",
-  },
-  friendRequestItem: {
-    paddingVertical: 8,
+    flex: 1,
+    backgroundColor: "#fff",
   },
   requestWrapper: {
     flexDirection: "row",

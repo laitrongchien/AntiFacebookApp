@@ -10,11 +10,7 @@ const NotificationScreen = () => {
     navigation.navigate("Search");
   };
   return (
-    <ScrollView
-      bounces={false}
-      showsVerticalScrollIndicator={false}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.titleWrapper}>
         <Text style={styles.title}>Thông báo</Text>
         <ExTouchableOpacity onPress={onNavigateSearch} style={styles.btnSearch}>
@@ -26,16 +22,14 @@ const NotificationScreen = () => {
           />
         </ExTouchableOpacity>
       </View>
-      <Text style={styles.notiTitle}>Mới</Text>
       <NotificationList />
-      <Text style={styles.notiTitle}>Trước đó</Text>
-      <NotificationList />
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    height: "100%",
     backgroundColor: "#fff",
   },
   titleWrapper: {
