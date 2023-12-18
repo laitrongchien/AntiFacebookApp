@@ -30,12 +30,13 @@ const EmailScreen = () => {
     return res.data.data.existed;
   };
 
-  const handleValidate = () => {
+  const handleValidate = async () => {
+    const isExistedEmail = await isEmailExisted(email);
     if (!email) {
       setError("Phải có email");
     } else if (!isEmailValid(email)) {
       setError("Nhập địa chỉ email hợp lệ");
-    } else if (isEmailExisted(email)) {
+    } else if (isExistedEmail == 1) {
       setError("Hiện đã có tài khoản liên kết với địa chỉ email này");
     } else {
       navigation.navigate("PasswordScreen", { email });
