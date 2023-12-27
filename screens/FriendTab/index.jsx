@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getRequestedFriend } from "../../redux/actions/userAction";
 import { getSuggestedFriend } from "../../redux/actions/userAction";
 import { useEffect, useState } from "react";
+import { checkNewFriendItems } from "../../redux/actions/notification";
 
 const FriendScreen = () => {
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ const FriendScreen = () => {
     (state) => state.friend
   );
   const defaultIndex = 0;
-  const defaultCount = 10;
+  const defaultCount = 20;
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -30,6 +31,10 @@ const FriendScreen = () => {
     await dispatch(getSuggestedFriend(defaultIndex, defaultCount));
     setRefreshing(false);
   };
+
+  useEffect(() => {
+    dispatch(checkNewFriendItems(0, 1));
+  }, []);
 
   useEffect(() => {
     dispatch(getRequestedFriend(defaultIndex, defaultCount));
@@ -67,7 +72,12 @@ const FriendScreen = () => {
       </View>
       <View style={styles.navigateBtnWrap}>
         <ExTouchableOpacity style={styles.navigateBtn}>
-          <Text style={{ fontSize: 16, fontWeight: "500" }}>Gợi ý</Text>
+          <Text
+            style={{ fontSize: 16, fontWeight: "500" }}
+            onPress={() => navigation.navigate("AllRecommend")}
+          >
+            Gợi ý
+          </Text>
         </ExTouchableOpacity>
         <ExTouchableOpacity
           style={{ ...styles.navigateBtn, marginLeft: 8 }}

@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
 import { StatusBar } from "react-native";
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { navigationRef } from "../rootNavigation";
 import LoginScreen from "./LoginScreen";
 import StartRegisterScreen from "./Register/StartRegisterScreen";
@@ -15,8 +14,11 @@ import Search from "./Search";
 import ProfileScreen from "./ProfileTab";
 import UserXProfileScreen from "./ProfileTab/UserXProfile";
 import ProfileSetting from "./ProfileTab/ProfileSetting";
+import UserXProfileSetting from "./ProfileTab/UserXProfileSetting";
 import EditProfile from "./ProfileTab/EditProfile";
 import EditDetailInfo from "./ProfileTab/EditDetailInfo";
+import CreateAvatar from "./ProfileTab/CreateAvatar";
+import CreateCover from "./ProfileTab/CreateCover";
 import FullNameScreen from "./Register/FullNameScreen";
 import ChangeAvatarScreen from "./Register/ChangeAvatarScreen";
 import DateOfBirthScreen from "./Register/DateOfBirthScreen";
@@ -28,30 +30,26 @@ import AvatarOptions from "./ProfileTab/AvartarOptions";
 // import { onAuthStateChanged } from "firebase/auth";
 // import { auth } from "./firebase/config";
 import AllRequest from "./FriendTab/AllRequest";
+import AllRecommend from "./FriendTab/AllRecommend";
 import AllFriend from "./FriendTab/AllFriend";
+import AllXFriend from "./FriendTab/AllXFriend";
 import AddFriendRequest from "../components/Friend/AddFriendRequest";
 import WatchDetailList from "./WatchTab/WatchDetailList";
+import AllFeel from "./AllFeel";
 import VerifyScreen from "./Register/VerifyScreen";
 import EmailResetScreen from "./ResetPassword/EmailResetScreen";
 import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
 import NewPasswordScreen from "./ResetPassword/NewPasswordScreen";
-// import { getUserInfo } from "../redux/actions/userAction";
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
-  // const [user, setUser] = useState(null);
   const { id, token, username, avatar } = useSelector((state) => state.auth);
-  // const dispatch = useDispatch();
 
   const navigationOptions = {
     headerShown: false,
     gestureResponseDistance: 800,
   };
-
-  // useEffect(() => {
-  //   dispatch(getUserInfo(id));
-  // }, []);
 
   // useEffect(() => {
   //   const getCacheToken = async () => {
@@ -103,8 +101,14 @@ const AppNavigator = () => {
               component={UserXProfileScreen}
             />
             <Stack.Screen name="ProfileSetting" component={ProfileSetting} />
+            <Stack.Screen
+              name="UserXProfileSetting"
+              component={UserXProfileSetting}
+            />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="EditDetailInfo" component={EditDetailInfo} />
+            <Stack.Screen name="CreateAvatar" component={CreateAvatar} />
+            <Stack.Screen name="CreateCover" component={CreateCover} />
             <Stack.Screen
               options={{ cardStyle: { backgroundColor: "transparent" } }}
               name="AvatarOptions"
@@ -115,7 +119,10 @@ const AppNavigator = () => {
               component={AddFriendRequest}
             />
             <Stack.Screen name="AllRequest" component={AllRequest} />
+            <Stack.Screen name="AllRecommend" component={AllRecommend} />
             <Stack.Screen name="AllFriend" component={AllFriend} />
+            <Stack.Screen name="AllXFriend" component={AllXFriend} />
+            <Stack.Screen name="AllFeel" component={AllFeel} />
             <Stack.Screen name="WatchDetailList" component={WatchDetailList} />
           </>
         ) : (

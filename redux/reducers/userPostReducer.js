@@ -28,6 +28,15 @@ const userPostReducer = (state = initialState, action) => {
         ...state,
         post: state.post.filter((item) => item.id !== action.payload),
       };
+    case "FEEL_USER_POST":
+      return {
+        ...state,
+        post: state.post.map((item) =>
+          item.id === action.payload
+            ? { ...item, feel: parseInt(item.feel) + 1 }
+            : item
+        ),
+      };
     case "RESET_STATE":
       return initialState;
     default:

@@ -1,5 +1,6 @@
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
 
 export async function sendPushNotification(expoPushToken) {
   const message = {
@@ -17,18 +18,12 @@ export async function sendPushNotification(expoPushToken) {
     },
     body: JSON.stringify(message),
   });
-  // console.log(
-  //   "Push Notification Response:",
-  //   response.status,
-  //   await response.text()
-  // );
 }
 
 export async function registerForPushNotificationsAsync() {
   let token;
   if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -39,7 +34,7 @@ export async function registerForPushNotificationsAsync() {
       return;
     }
     token = (
-      await Notifications.getExpoPushTokenAsync({
+      await Notifications.getDevicePushTokenAsync({
         projectId: "e6069da3-f3d1-4e62-852e-4f74d1bad404",
       })
     ).data;

@@ -20,6 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "blockedPermissions": ["android.permission.RECORD_AUDIO"],
       "googleServicesFile": "./google-services.json",
       "package": "vn.io.catan.antifakebook"
     },
@@ -36,9 +37,15 @@
         }
       ],
       [
-        "expo-notifications",
+        "expo-av",
         {
-          "icon": "./assets/notification-icon.png"
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ],
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "DEFAULT"
         }
       ]
     ],

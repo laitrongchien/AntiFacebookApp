@@ -1,11 +1,20 @@
-import { Text, StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
+import { pickOneImage } from "../../utils/PickImage";
+import { navigation } from "../../rootNavigation";
 
 const AvatarOptions = () => {
+  const handlePickAvatar = async () => {
+    const result = await pickOneImage();
+    if (!result.canceled) {
+      navigation.navigate("CreateAvatar", { image: result.assets[0] });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.optionsWrapper}>
-        <TouchableOpacity style={styles.optionItem}>
+        <TouchableOpacity style={styles.optionItem} onPress={handlePickAvatar}>
           <View style={styles.optionIcon}>
             <VectorIcon
               name="image-area"
@@ -14,6 +23,7 @@ const AvatarOptions = () => {
               color="#000"
             />
           </View>
+
           <Text style={styles.optionTitle}>Chọn ảnh đại diện</Text>
         </TouchableOpacity>
       </View>

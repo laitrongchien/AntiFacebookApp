@@ -24,7 +24,9 @@ const ProfileScreen = () => {
   const [isAvatarOptionsVisible, setIsAvatarOptionsVisible] = useState("false");
   const [isCoverOptionsVisible, setIsCoverOptionsVisible] = useState("false");
   const { username, avatar, id } = useSelector((state) => state.auth);
-  const { cover_image, city, country } = useSelector((state) => state.user);
+  const { cover_image, city, country, address } = useSelector(
+    (state) => state.user
+  );
   const { post } = useSelector((state) => state.userPost);
   const { friends, total } = useSelector((state) => state.userFriend);
   const dispatch = useDispatch();
@@ -87,7 +89,11 @@ const ProfileScreen = () => {
             >
               <Image
                 style={styles.cover}
-                source={require("../../assets/images/cover_img.jpg")}
+                source={
+                  cover_image
+                    ? { uri: cover_image }
+                    : require("../../assets/images/cover_img.jpg")
+                }
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -189,23 +195,21 @@ const ProfileScreen = () => {
           <Text style={{ fontSize: 20, fontWeight: "500", marginBottom: 12 }}>
             Chi tiết
           </Text>
-          <View style={styles.introLine}>
+          {/* <View style={styles.introLine}>
             <VectorIcon
               name="home"
               type="MaterialCommunityIcons"
               color="#333"
               size={28}
             />
-            {city ? (
+            {address ? (
               <Text style={styles.introLineText}>
-                Đến từ <Text style={styles.introHightLight}>{city}</Text>
+                Sống tại <Text style={styles.introHightLight}>{address}</Text>
               </Text>
             ) : (
-              <Text style={styles.introLineText}>
-                Thêm thông tin nơi ở/ thành phố
-              </Text>
+              <Text style={styles.introLineText}>Thêm thông tin địa chỉ</Text>
             )}
-          </View>
+          </View> */}
           <View style={styles.introLine}>
             <VectorIcon
               name="map-marker"
@@ -213,12 +217,19 @@ const ProfileScreen = () => {
               color="#333"
               size={28}
             />
-            {country ? (
+            {city ? (
               <Text style={styles.introLineText}>
-                Quốc gia <Text style={styles.introHightLight}>{country}</Text>
+                Đến từ <Text style={styles.introHightLight}>{city}</Text>
+                {country && (
+                  <Text style={styles.introHightLight}>
+                    {"," + " " + country}
+                  </Text>
+                )}
               </Text>
             ) : (
-              <Text style={styles.introLineText}>Thêm thông tin quốc gia</Text>
+              <Text style={styles.introLineText}>
+                Thêm thông tin thành phố, quốc gia
+              </Text>
             )}
           </View>
           <View style={styles.introLine}>
@@ -245,7 +256,7 @@ const ProfileScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <FriendGallery friends={friends} total={total} />
+          <FriendGallery friends={friends} total={total} userXId={id} />
         </View>
         <View style={{ backgroundColor: "#fff", marginTop: 10 }}>
           <Text

@@ -16,7 +16,11 @@ const FriendGallery = ({ friends, total, userXId }) => {
               {total} người bạn
             </Text>
           </View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.btnFindFriends}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.btnFindFriends}
+            onPress={() => navigation.navigate("AllRequest")}
+          >
             {id == userXId && (
               <Text
                 style={{ fontSize: 16, color: "#1877f2", fontWeight: "500" }}
@@ -51,7 +55,7 @@ const FriendGallery = ({ friends, total, userXId }) => {
       <TouchableOpacity
         activeOpacity={0.8}
         style={styles.btnViewAllFriends}
-        onPress={() => navigation.navigate("AllFriend")}
+        onPress={() => navigation.navigate("AllXFriend", { userXId })}
       >
         <Text style={{ fontSize: 16, fontWeight: "500" }}>
           Xem tất cả bạn bè

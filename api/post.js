@@ -88,6 +88,14 @@ const deleteFeel = async (postId) => {
   });
 };
 
+const getListFeels = async (postId, index, count) => {
+  return await axios.post("/get_list_feels", {
+    id: postId,
+    index,
+    count,
+  });
+};
+
 export const post = {
   getListPosts,
   getPost,
@@ -97,4 +105,5 @@ export const post = {
   editPost,
   feelPost,
   deleteFeel,
+  getListFeels,
 };

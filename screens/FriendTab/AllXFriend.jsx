@@ -5,23 +5,19 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  Alert,
 } from "react-native";
 import { useEffect, useState } from "react";
 import VectorIcon from "../../utils/VectorIcon";
-import BottomModal from "../../components/BottomModal";
 import { navigation } from "../../rootNavigation";
 import { useSelector, useDispatch } from "react-redux";
-import { getUserFriends } from "../../redux/actions/userAction";
-import { user } from "../../api/user";
+import { getUserXFriends } from "../../redux/actions/userAction";
+import { useRoute } from "@react-navigation/native";
 
-const AllFriend = () => {
+const AllXFriend = () => {
   const dispatch = useDispatch();
-  const { id } = useSelector((state) => state.auth);
-  const { friends, total } = useSelector((state) => state.userFriend);
-  const [friendOptionVisible, setFriendOptionVisible] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState(null);
-  const [unfriendedIds, setUnfriendedIds] = useState([]);
+  const route = useRoute();
+  const { userXId } = route.params;
+  const { friends, total } = useSelector((state) => state.userXFriend);
   const [loadingFriends, setLoadingFriends] = useState();
 
   const defaultIndex = 0;
@@ -31,36 +27,14 @@ const AllFriend = () => {
     console.log("mount friends");
     const handleGetFriendList = async () => {
       setLoadingFriends(true);
-      await dispatch(getUserFriends(id, defaultIndex, defaultCount));
+      await dispatch(getUserXFriends(userXId, defaultIndex, defaultCount));
 
       setLoadingFriends(false);
     };
     handleGetFriendList();
   }, []);
 
-  const handleUnFriend = () => {
-    setFriendOptionVisible(false);
-    Alert.alert(
-      "Xác nhận hủy kết bạn",
-      `Bạn có chắc muốn hủy kết bạn với ${selectedFriend?.username}?`,
-      [
-        {
-          text: "Hủy",
-          style: "cancel",
-        },
-        {
-          text: "Xác nhận",
-          onPress: async () => {
-            setUnfriendedIds((prevIds) => [...prevIds, selectedFriend.id]);
-            await user.unFriend(selectedFriend.id);
-          },
-        },
-      ]
-    );
-  };
-
   const renderItem = ({ item }) => {
-    const isUnfriended = unfriendedIds.includes(item.id);
     return (
       <View style={styles.friendWrapper}>
         <View
@@ -92,26 +66,8 @@ const AllFriend = () => {
                 {item.same_friends} bạn chung
               </Text>
             )}
-            {isUnfriended && (
-              <Text style={{ fontSize: 16, color: "#666" }}>
-                Đã hủy kết bạn
-              </Text>
-            )}
           </View>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectedFriend(item);
-            setFriendOptionVisible(true);
-          }}
-        >
-          <VectorIcon
-            name="dots-horizontal"
-            type="MaterialCommunityIcons"
-            color="#666"
-            size={32}
-          />
-        </TouchableOpacity>
       </View>
     );
   };
@@ -171,36 +127,6 @@ const AllFriend = () => {
           />
         </>
       )}
-
-      <BottomModal
-        isVisible={friendOptionVisible}
-        closeModal={() => setFriendOptionVisible(false)}
-      >
-        <View style={{ backgroundColor: "#fff" }}>
-          <TouchableOpacity style={styles.optionBtn}>
-            <VectorIcon
-              name="account-cancel-outline"
-              type="MaterialCommunityIcons"
-              color="#000"
-              size={28}
-            />
-            <Text style={{ fontSize: 16, marginLeft: 12 }}>
-              Chặn trang cá nhân của {selectedFriend?.username}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.optionBtn} onPress={handleUnFriend}>
-            <VectorIcon
-              name="account-remove-outline"
-              type="MaterialCommunityIcons"
-              color="red"
-              size={28}
-            />
-            <Text style={{ fontSize: 16, marginLeft: 12, color: "red" }}>
-              Hủy kết bạn với {selectedFriend?.username}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </BottomModal>
     </View>
   );
 };
@@ -248,4 +174,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AllFriend;
+export default AllXFriend;

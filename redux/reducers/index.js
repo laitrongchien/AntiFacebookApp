@@ -8,9 +8,11 @@ import comments from "./commentReducer";
 import friend from "./friendReducer";
 import userPost from "./userPostReducer";
 import userFriend from "./userFriendReducer";
+import userXFriend from "./userXFriendReducer";
 import watchVideos from "./watchVideosReducer";
 import videoControl from "./videoControlReducer";
 import notification from "./notificationReducer";
+import newItems from "./newItemsReducer";
 
 export default combineReducers({
   auth,
@@ -21,7 +23,9 @@ export default combineReducers({
   friend,
   userPost,
   userFriend,
+  userXFriend,
   watchVideos,
   videoControl,
   notification,
+  newItems,
 });

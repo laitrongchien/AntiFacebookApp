@@ -1,11 +1,13 @@
 import "react-native-gesture-handler";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { Text, View } from "react-native";
 import HomeScreen from "../screens/HomeScreen";
 import FriendScreen from "../screens/FriendTab";
 import WatchScreen from "../screens/WatchTab";
 import NotificationScreen from "../screens/NotificationTab";
 import MenuScreen from "../screens/MenuTab";
 import VectorIcon from "../utils/VectorIcon";
+import { useSelector } from "react-redux";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -68,6 +70,8 @@ const TabData = [
 ];
 
 const TopTabBar = () => {
+  const { badge } = useSelector((state) => state.notification);
+  const { newFriends, newVideos } = useSelector((state) => state.newItems);
   return (
     <>
       <Tab.Navigator
@@ -102,6 +106,63 @@ const TopTabBar = () => {
                   color={color}
                 />
               ),
+              tabBarBadge: () => {
+                if (tab.name === "Friend" && newFriends > 0) {
+                  return (
+                    <View
+                      style={{
+                        position: "absolute",
+                        right: 18,
+                        top: 2,
+                        backgroundColor: "violet",
+                        width: 22,
+                        height: 22,
+                        borderRadius: 50,
+                      }}
+                    >
+                      <Text style={{ color: "#fff", textAlign: "center" }}>
+                        {newFriends}
+                      </Text>
+                    </View>
+                  );
+                } else if (tab.name === "Watch" && newVideos > 0) {
+                  return (
+                    <View
+                      style={{
+                        position: "absolute",
+                        right: 18,
+                        top: 2,
+                        backgroundColor: "violet",
+                        width: 22,
+                        height: 22,
+                        borderRadius: 50,
+                      }}
+                    >
+                      <Text style={{ color: "#fff", textAlign: "center" }}>
+                        {newVideos}
+                      </Text>
+                    </View>
+                  );
+                } else if (tab.name === "Notification" && badge > 0) {
+                  return (
+                    <View
+                      style={{
+                        position: "absolute",
+                        right: 18,
+                        top: 2,
+                        backgroundColor: "violet",
+                        width: 22,
+                        height: 22,
+                        borderRadius: 50,
+                      }}
+                    >
+                      <Text style={{ color: "#fff", textAlign: "center" }}>
+                        {badge}
+                      </Text>
+                    </View>
+                  );
+                }
+              },
             }}
           />
         ))}

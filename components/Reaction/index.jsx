@@ -1,3 +1,4 @@
+import { Audio } from "expo-av";
 import { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -10,20 +11,17 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
-import { Audio } from "expo-av";
-import ExTouchableOpacity from "../ExTouchableOpacity";
+import { useSelector, useDispatch } from "react-redux";
+
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from "../../constants";
+import { getComments, createMark, createCommentMark } from "../../redux/actions/commentAction";
+import { feelPost, deleteFeel } from "../../redux/actions/postAction";
+import { navigation } from "../../rootNavigation";
 import VectorIcon from "../../utils/VectorIcon";
 import BottomModal from "../BottomModal";
 import Comment from "../Comment";
-import { SCREEN_WIDTH, SCREEN_HEIGHT } from "../../constants";
-import {
-  getComments,
-  createMark,
-  createCommentMark,
-} from "../../redux/actions/commentAction";
-import { useSelector, useDispatch } from "react-redux";
+import ExTouchableOpacity from "../ExTouchableOpacity";
 import LoadingCommentSkeleton from "../Loading/LoadingCommentSkeleton";
-import { feelPost, deleteFeel } from "../../redux/actions/postAction";
 
 const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
   const [commentVisible, setCommentVisible] = useState(false);
@@ -31,7 +29,10 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
   const [markId, setMarkId] = useState();
   const [reactionBarVisible, setReactionBarVisible] = useState(false);
   const [loadingComments, setLoadingComments] = useState(false);
-  const [isReact, setIsReact] = useState(isFelt);
+  const [isReact, setIsReact] = useState();
+  // console.log("Feel", isFelt);
+  const [numReact, setNumReact] = useState();
+  // console.log("React", isReact);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comments);
   const defaultIndex = 0;
@@ -51,20 +52,12 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
     setCommentVisible(false);
   };
 
-  // const setMarkToReply = (id) => {
-  //   setMarkId(id);
-  // };
-
   const createComment = () => {
     if (markId) {
       // console.log(markId);
-      dispatch(
-        createCommentMark(postId, content, defaultIndex, defaultCount, markId)
-      );
+      dispatch(createCommentMark(postId, content, defaultIndex, defaultCount, markId));
     } else {
-      dispatch(
-        createMark(postId, content, defaultIndex, defaultCount, defaultMarkType)
-      );
+      dispatch(createMark(postId, content, defaultIndex, defaultCount, defaultMarkType));
     }
     setContent("");
     Keyboard.dismiss();
@@ -75,40 +68,49 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
   };
 
   const renderItem = ({ item }) => (
-    <Comment
-      item={item}
-      commentInputRef={commentInputRef}
-      setMarkId={setMarkId}
-    />
+    <Comment item={item} commentInputRef={commentInputRef} setMarkId={setMarkId} />
   );
 
   useEffect(() => {
-    Audio.Sound.createAsync(require("../../assets/sounds/like_sound.mp3"), {
-      shouldPlay: false,
-    });
-  }, []);
+    setIsReact(isFelt);
+  }, [isFelt]);
 
-  const playLikeSound = async () => {
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/sounds/like_sound.mp3"),
-      { shouldPlay: true }
-    );
-  };
+  useEffect(() => {
+    setNumReact(parseInt(numFeel, 10));
+  }, [numFeel]);
+
+  // useEffect(() => {
+  //   Audio.Sound.createAsync(require("../../assets/sounds/like_sound.mp3"), {
+  //     shouldPlay: false,
+  //   });
+  // }, []);
+
+  // const playLikeSound = async () => {
+  //   const { sound } = await Audio.Sound.createAsync(
+  //     require("../../assets/sounds/like_sound.mp3"),
+  //     { shouldPlay: true }
+  //   );
+  // };
 
   const handleClickLike = async () => {
     if (isReact == 1 || isReact == 0) {
       setIsReact(-1);
+
+      setNumReact(numReact - 1);
       dispatch(deleteFeel(postId));
     }
+
     if (isReact == -1) {
       setIsReact(1);
-      playLikeSound();
+      setNumReact(numReact + 1);
+      // playLikeSound();
       dispatch(feelPost(postId, "1"));
     }
   };
 
   const handleClickLikeBar = async () => {
     setReactionBarVisible(false);
+    if (isReact == -1) setNumReact(numReact + 1);
     if (isReact == 0 || isReact == -1) {
       setIsReact(1);
       dispatch(feelPost(postId, "1"));
@@ -117,6 +119,7 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
 
   const handleClickSadBar = async () => {
     setReactionBarVisible(false);
+    if (isReact == -1) setNumReact(numReact + 1);
     if (isReact == 1 || isReact == -1) {
       setIsReact(0);
       dispatch(feelPost(postId, "0"));
@@ -135,14 +138,10 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
             source={require("../../assets/icons/sad.png")}
             style={{ width: 18, height: 18, marginRight: 4, marginLeft: -4 }}
           />
-          <Text style={{ color: isDark ? "#fff" : "#666" }}>
-            {numFeel || 0}
-          </Text>
+          <Text style={{ color: isDark ? "#fff" : "#666" }}>{numReact || 0}</Text>
         </View>
         <Text style={{ color: isDark ? "#fff" : "#666" }}>
-          {numMark && numMark != 0
-            ? `${numMark} bình luận`
-            : "Chưa có bình luận"}
+          {numMark && numMark != 0 ? `${numMark} bình luận` : "Chưa có bình luận"}
         </Text>
       </ExTouchableOpacity>
 
@@ -158,7 +157,7 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
             <ExTouchableOpacity onPress={handleClickSadBar}>
               <Image
                 source={require("../../assets/icons/sad.png")}
-                style={{ width: 40, height: 40 }}
+                style={{ width: 36, height: 36 }}
               />
             </ExTouchableOpacity>
           </View>
@@ -166,41 +165,18 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
         <ExTouchableOpacity
           style={styles.btnOption}
           onPress={handleClickLike}
-          onLongPress={openReactionBar}
-        >
+          onLongPress={openReactionBar}>
           <VectorIcon
-            name={
-              isReact == 1
-                ? "thumb-up"
-                : isReact == 0
-                ? "emoticon-sad"
-                : "thumb-up-outline"
-            }
+            name={isReact == 1 ? "thumb-up" : isReact == 0 ? "emoticon-sad" : "thumb-up-outline"}
             type="MaterialCommunityIcons"
-            color={
-              isReact == 1
-                ? "#1877f2"
-                : isReact == 0
-                ? "#ebcc34"
-                : isDark
-                ? "#fff"
-                : "#666"
-            }
+            color={isReact == 1 ? "#1877f2" : isReact == 0 ? "#ebcc34" : isDark ? "#fff" : "#666"}
             size={22}
           />
           <Text
             style={{
-              color:
-                isReact == 1
-                  ? "#1877f2"
-                  : isReact == 0
-                  ? "#ebcc34"
-                  : isDark
-                  ? "#fff"
-                  : "#666",
+              color: isReact == 1 ? "#1877f2" : isReact == 0 ? "#ebcc34" : isDark ? "#fff" : "#666",
               marginLeft: 4,
-            }}
-          >
+            }}>
             {isReact == 0 ? "Thất vọng" : "Thích"}
           </Text>
         </ExTouchableOpacity>
@@ -211,9 +187,7 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
             color={isDark ? "#fff" : "#666"}
             size={22}
           />
-          <Text style={{ color: isDark ? "#fff" : "#666", marginLeft: 4 }}>
-            Bình luận
-          </Text>
+          <Text style={{ color: isDark ? "#fff" : "#666", marginLeft: 4 }}>Bình luận</Text>
         </ExTouchableOpacity>
       </View>
       <BottomModal isVisible={commentVisible} closeModal={closeComment}>
@@ -221,7 +195,13 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
           <View style={styles.reactBar}>
             <ExTouchableOpacity
               style={{ flexDirection: "row", alignItems: "center" }}
-            >
+              onPress={() => {
+                setCommentVisible(false);
+                navigation.navigate("AllFeel", {
+                  postId,
+                  numReact,
+                });
+              }}>
               <Image
                 source={require("../../assets/icons/like_icon.png")}
                 style={{ width: 20, height: 20 }}
@@ -235,7 +215,7 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
                   marginLeft: -4,
                 }}
               />
-              <Text style={{ color: isDark ? "#fff" : "#666" }}>{numFeel}</Text>
+              <Text style={{ color: isDark ? "#fff" : "#666" }}>{numReact}</Text>
               <VectorIcon
                 name="chevron-right"
                 type="MaterialCommunityIcons"
@@ -244,20 +224,6 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
               />
             </ExTouchableOpacity>
           </View>
-          {/* <ScrollView
-            bounces={true}
-            showsVerticalScrollIndicator={false}
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 24,
-              backgroundColor: "#fff",
-              height: SCREEN_HEIGHT - 50 - 50,
-            }}
-          >
-            <Comment />
-            <Comment />
-            <Comment />
-          </ScrollView> */}
           {!loadingComments ? (
             comments.length != 0 ? (
               <FlatList
@@ -278,14 +244,9 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
                   alignItems: "center",
                   justifyContent: "center",
                   backgroundColor: "#fff",
-                }}
-              >
-                <Text style={{ fontSize: 18, color: "#333" }}>
-                  Chưa có bình luận nào
-                </Text>
-                <Text style={{ fontSize: 16, color: "#333" }}>
-                  Hãy là người đầu tiên bình luận
-                </Text>
+                }}>
+                <Text style={{ fontSize: 18, color: "#333" }}>Chưa có bình luận nào</Text>
+                <Text style={{ fontSize: 16, color: "#333" }}>Hãy là người đầu tiên bình luận</Text>
               </View>
             )
           ) : (
@@ -295,8 +256,7 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
                 paddingVertical: 24,
                 backgroundColor: "#fff",
                 height: SCREEN_HEIGHT - 100,
-              }}
-            >
+              }}>
               <LoadingCommentSkeleton />
               <LoadingCommentSkeleton />
             </View>
@@ -313,17 +273,9 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
               value={content}
               onChangeText={(text) => setContent(text)}
             />
-            <ScrollView
-              keyboardShouldPersistTaps="always"
-              keyboardDismissMode="on-drag"
-            >
+            <ScrollView keyboardShouldPersistTaps="always" keyboardDismissMode="on-drag">
               <ExTouchableOpacity onPress={createComment}>
-                <VectorIcon
-                  name="send"
-                  type="MaterialCommunityIcons"
-                  color="#666"
-                  size={28}
-                />
+                <VectorIcon name="send" type="MaterialCommunityIcons" color="#666" size={28} />
               </ExTouchableOpacity>
             </ScrollView>
           </View>
@@ -393,7 +345,7 @@ const styles = StyleSheet.create({
     top: -50,
     left: 60,
     zIndex: 10,
-    width: 100,
+    width: 90,
     backgroundColor: "#fff",
     flexDirection: "row",
     alignItems: "center",

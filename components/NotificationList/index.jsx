@@ -22,7 +22,7 @@ const NotificationList = () => {
     dispatch({
       type: "RESET_NOTIFICATIONS",
     });
-    await dispatch(getNotifications(defaultIndex, defaultCount));
+    dispatch(getNotifications(defaultIndex, defaultCount));
     setRefreshing(false);
   };
 
@@ -31,10 +31,12 @@ const NotificationList = () => {
       dispatch({
         type: "RESET_NOTIFICATIONS",
       });
+      console.log("mount Noti");
       dispatch(getNotifications(defaultIndex, defaultCount));
     };
     handleGetListNotification();
   }, []);
+
   return (
     <FlatList
       data={data}

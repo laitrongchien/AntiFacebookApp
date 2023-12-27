@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  FlatList,
-} from "react-native";
-import VectorIcon from "../../utils/VectorIcon";
-import ExTouchableOpacity from "../../components/ExTouchableOpacity";
-import { navigation } from "../../rootNavigation";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from "react-native";
+
 import SearchApi from "../../api/search";
-import { SCREEN_WIDTH } from "../../constants";
+import ExTouchableOpacity from "../../components/ExTouchableOpacity";
+// import { SCREEN_WIDTH } from "../../constants";
+import { navigation } from "../../rootNavigation";
+import VectorIcon from "../../utils/VectorIcon";
 
 const Search = () => {
   const [savedSearchList, setSavedSearchList] = useState([]);
@@ -52,12 +46,7 @@ const Search = () => {
     <ExTouchableOpacity style={styles.recentSearchItem}>
       <Text style={styles.resultSearch}>{item.keyword}</Text>
       <TouchableOpacity onPress={() => handleDeleteSearch(item.id)}>
-        <VectorIcon
-          name="close"
-          type="MaterialCommunityIcons"
-          color="#666"
-          size={16}
-        />
+        <VectorIcon name="close" type="MaterialCommunityIcons" color="#666" size={16} />
       </TouchableOpacity>
     </ExTouchableOpacity>
   );
@@ -89,11 +78,7 @@ const Search = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.recentSearchWrapper}>
-        <FlatList
-          data={savedSearchList}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-        />
+        <FlatList data={savedSearchList} keyExtractor={(item) => item.id} renderItem={renderItem} />
       </View>
     </View>
   );

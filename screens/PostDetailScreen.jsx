@@ -1,3 +1,6 @@
+import { useRoute } from "@react-navigation/native";
+import { Video, ResizeMode } from "expo-av";
+import { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,44 +9,50 @@ import {
   Image,
   TextInput,
   ScrollView,
+  Keyboard,
 } from "react-native";
-import VectorIcon from "../utils/VectorIcon";
-import Comment from "../components/Comment";
-import PostImage from "../components/PostImage";
-import { navigation } from "../rootNavigation";
-import { useRoute } from "@react-navigation/native";
-import { useEffect, useState, useRef } from "react";
-import { post as postApi } from "../api/post";
-import { getTimeFromCreatePost } from "../utils/helper";
 import { useDispatch, useSelector } from "react-redux";
-import { getComments } from "../redux/actions/commentAction";
+
+import Comment from "../components/Comment";
 import LoadingCommentSkeleton from "../components/Loading/LoadingCommentSkeleton";
+import PostImage from "../components/PostImage";
+import { SCREEN_WIDTH } from "../constants";
+import { getComments, createMark, createCommentMark } from "../redux/actions/commentAction";
+import { feelPost, deleteFeel } from "../redux/actions/postAction";
+import { navigation } from "../rootNavigation";
+import VectorIcon from "../utils/VectorIcon";
+import { getTimeFromCreatePost } from "../utils/helper";
 
 const PostDetailScreen = () => {
   const route = useRoute();
   const { postData } = route.params;
+  const { image, described, created, author, feel, is_felt, kudos, disappointed, video } = postData;
   const dispatch = useDispatch();
-  // const [postDetail, setPostDetail] = useState(postData);
   const [loadingComments, setLoadingComments] = useState(false);
   const [content, setContent] = useState("");
+  const [markId, setMarkId] = useState();
+  const [isReact, setIsReact] = useState(is_felt);
+  const [numReact, setNumReact] = useState(
+    parseInt(feel, 10) || parseInt(kudos, 10) + parseInt(disappointed, 10),
+  );
+  const [reactionBarVisible, setReactionBarVisible] = useState(false);
   const comments = useSelector((state) => state.comments);
   const defaultIndex = 0;
   const defaultCount = 10;
+  const defaultMarkType = 1;
 
   const commentInputRef = useRef(null);
 
-  // useEffect(() => {
-  //   console.log("mounted");
-  //   const handleGetPost = async () => {
-  //     try {
-  //       const res = await postApi.getPost(postId);
-  //       setPostDetail(res.data.data);
-  //     } catch (err) {
-  //       console.log(err.response.data.message);
-  //     }
-  //   };
-  //   handleGetPost();
-  // }, []);
+  const createComment = () => {
+    if (markId) {
+      // console.log(markId);
+      dispatch(createCommentMark(postData.id, content, defaultIndex, defaultCount, markId));
+    } else {
+      dispatch(createMark(postData.id, content, defaultIndex, defaultCount, defaultMarkType));
+    }
+    setContent("");
+    Keyboard.dismiss();
+  };
 
   useEffect(() => {
     const getPostComments = async () => {
@@ -54,47 +63,56 @@ const PostDetailScreen = () => {
     getPostComments();
   }, [postData.id]);
 
-  const {
-    image,
-    described,
-    created,
-    author,
-    feel,
-    is_felt,
-    kudos,
-    disappointed,
-  } = postData;
+  const handleClickLike = async () => {
+    if (isReact == 1 || isReact == 0) {
+      setIsReact(-1);
+
+      setNumReact(numReact - 1);
+      dispatch(deleteFeel(postData.id));
+    }
+
+    if (isReact == -1) {
+      setIsReact(1);
+      setNumReact(numReact + 1);
+      // playLikeSound();
+      dispatch(feelPost(postData.id, "1"));
+    }
+  };
+
+  const handleClickLikeBar = async () => {
+    setReactionBarVisible(false);
+    if (isReact == -1) setNumReact(numReact + 1);
+    if (isReact == 0 || isReact == -1) {
+      setIsReact(1);
+      dispatch(feelPost(postData.id, "1"));
+    }
+  };
+
+  const handleClickSadBar = async () => {
+    setReactionBarVisible(false);
+    if (isReact == -1) setNumReact(numReact + 1);
+    if (isReact == 1 || isReact == -1) {
+      setIsReact(0);
+      dispatch(feelPost(postData.id, "0"));
+    }
+  };
+
+  const openReactionBar = () => {
+    setReactionBarVisible(true);
+  };
 
   return (
-    <View
-      style={{ position: "relative", backgroundColor: "#fff", height: "100%" }}
-    >
+    <View style={{ position: "relative", backgroundColor: "#fff", height: "100%" }}>
       <View style={styles.navigationBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <VectorIcon
-            name="arrow-left"
-            type="MaterialCommunityIcons"
-            color="#000"
-            size={32}
-          />
+          <VectorIcon name="arrow-left" type="MaterialCommunityIcons" color="#000" size={32} />
         </TouchableOpacity>
-        <Text style={{ fontSize: 16, fontWeight: "500" }}>
-          {author?.name || "Username"}
-        </Text>
+        <Text style={{ fontSize: 16, fontWeight: "500" }}>{author?.name || "Username"}</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-          <VectorIcon
-            name="magnify"
-            type="MaterialCommunityIcons"
-            color="#000"
-            size={32}
-          />
+          <VectorIcon name="magnify" type="MaterialCommunityIcons" color="#000" size={32} />
         </TouchableOpacity>
       </View>
-      <ScrollView
-        style={styles.item}
-        bounces={false}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.item} bounces={false} showsVerticalScrollIndicator={false}>
         <View>
           <View
             style={{
@@ -103,8 +121,7 @@ const PostDetailScreen = () => {
               justifyContent: "space-between",
               paddingHorizontal: 16,
               paddingVertical: 12,
-            }}
-          >
+            }}>
             <View style={styles.postHeaderInfo}>
               <Image
                 style={styles.avatar}
@@ -127,12 +144,7 @@ const PostDetailScreen = () => {
                     {getTimeFromCreatePost(created)}
                   </Text>
                   <Text style={{ fontSize: 16, marginHorizontal: 5 }}>·</Text>
-                  <VectorIcon
-                    name="earth"
-                    type="MaterialCommunityIcons"
-                    size={19}
-                    color="#666"
-                  />
+                  <VectorIcon name="earth" type="MaterialCommunityIcons" size={19} color="#666" />
                 </View>
               </View>
             </View>
@@ -150,38 +162,58 @@ const PostDetailScreen = () => {
           <View style={styles.postContent}>
             <Text style={styles.paragraph}>{described}</Text>
           </View>
-          {image?.length !== 0 && (
-            <PostImage images={image} postData={postData} />
+          {image?.length !== 0 && <PostImage images={image} postData={postData} />}
+          {video && (
+            <Video
+              source={{
+                uri: video.url,
+              }}
+              rate={1.0}
+              volume={1.0}
+              isMuted={false}
+              resizeMode={ResizeMode.COVER}
+              useNativeControls
+              style={styles.video}
+            />
           )}
         </View>
         <View style={styles.reactHandle}>
+          {reactionBarVisible && (
+            <View style={styles.reactionToolBar}>
+              <TouchableOpacity onPress={handleClickLikeBar}>
+                <Image
+                  source={require("../assets/icons/like_icon.png")}
+                  style={{ width: 40, height: 40 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleClickSadBar}>
+                <Image
+                  source={require("../assets/icons/sad.png")}
+                  style={{ width: 36, height: 36 }}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
           <TouchableOpacity
             style={styles.btnOption}
-            // onPress={handleLikeButtonClick}
-            onLongPress={() => console.log("press")}
-          >
+            onPress={handleClickLike}
+            onLongPress={openReactionBar}>
             <VectorIcon
-              name={is_felt == 0 ? "thumb-up" : "thumb-up-outline"}
+              name={isReact == 1 ? "thumb-up" : isReact == 0 ? "emoticon-sad" : "thumb-up-outline"}
               type="MaterialCommunityIcons"
-              color={is_felt == 0 ? "#1877f2" : "#666"}
+              color={isReact == 1 ? "#1877f2" : isReact == 0 ? "#ebcc34" : "#666"}
               size={22}
             />
             <Text
               style={{
-                color: is_felt == 0 ? "#1877f2" : "#666",
+                color: isReact == 1 ? "#1877f2" : isReact == 0 ? "#ebcc34" : "#666",
                 marginLeft: 4,
-              }}
-            >
-              Thích
+              }}>
+              {isReact == 0 ? "Thất vọng" : "Thích"}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnOption}>
-            <VectorIcon
-              name="chat-outline"
-              type="MaterialCommunityIcons"
-              color="#666"
-              size={22}
-            />
+            <VectorIcon name="chat-outline" type="MaterialCommunityIcons" color="#666" size={22} />
             <Text style={{ color: "#666", marginLeft: 4 }}>Bình luận</Text>
           </TouchableOpacity>
         </View>
@@ -192,7 +224,7 @@ const PostDetailScreen = () => {
             padding: 12,
             marginBottom: 12,
           }}
-        >
+          onPress={() => navigation.navigate("AllFeel", { postId: postData.id, numReact })}>
           <Image
             source={require("../assets/icons/like_icon.png")}
             style={{ width: 20, height: 20 }}
@@ -207,11 +239,12 @@ const PostDetailScreen = () => {
             }}
           />
           <Text style={{ color: "#666" }}>
-            {feel || parseInt(kudos) + parseInt(disappointed)}
+            {/* {numReact !== undefined ? numReact : parseInt(kudos) + parseInt(disappointed)} */}
+            {numReact}
           </Text>
         </TouchableOpacity>
         {!loadingComments ? (
-          comments?.length != 0 ? (
+          comments?.length !== 0 ? (
             <View style={{ paddingHorizontal: 10 }}>
               {comments.map((item) => {
                 return (
@@ -219,6 +252,7 @@ const PostDetailScreen = () => {
                     item={item}
                     key={item.id}
                     commentInputRef={commentInputRef}
+                    setMarkId={setMarkId}
                   />
                 );
               })}
@@ -229,14 +263,9 @@ const PostDetailScreen = () => {
                 height: 300,
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
-              <Text style={{ fontSize: 18, color: "#333" }}>
-                Chưa có bình luận nào
-              </Text>
-              <Text style={{ fontSize: 16, color: "#333" }}>
-                Hãy là người đầu tiên bình luận
-              </Text>
+              }}>
+              <Text style={{ fontSize: 18, color: "#333" }}>Chưa có bình luận nào</Text>
+              <Text style={{ fontSize: 16, color: "#333" }}>Hãy là người đầu tiên bình luận</Text>
             </View>
           )
         ) : (
@@ -258,6 +287,9 @@ const PostDetailScreen = () => {
           value={content}
           onChangeText={(text) => setContent(text)}
         />
+        <TouchableOpacity onPress={createComment}>
+          <VectorIcon name="send" type="MaterialCommunityIcons" color="#666" size={28} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -323,6 +355,7 @@ const styles = StyleSheet.create({
     borderTopColor: "#ddd",
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
+    position: "relative",
   },
   btnOption: {
     flexDirection: "row",
@@ -341,6 +374,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     backgroundColor: "#fff",
+    flexDirection: "row",
+    alignItems: "center",
   },
   commentInput: {
     height: 44,
@@ -349,6 +384,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 16,
     color: "#333",
+    width: SCREEN_WIDTH * 0.84,
+    marginRight: 4,
+  },
+  reactionToolBar: {
+    position: "absolute",
+    top: -50,
+    left: 60,
+    zIndex: 10,
+    width: 90,
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    paddingHorizontal: 6,
+  },
+  video: {
+    width: "100%",
+    height: 400,
+    backgroundColor: "#000",
   },
 });
 

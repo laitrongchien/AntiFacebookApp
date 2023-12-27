@@ -1,15 +1,16 @@
-import { View, Text, StyleSheet, FlatList, RefreshControl } from "react-native";
-import { useState, useEffect, useRef } from "react";
-import ExTouchableOpacity from "../../components/ExTouchableOpacity";
-import VectorIcon from "../../utils/VectorIcon";
-import { navigation } from "../../rootNavigation";
-import { getListVideos } from "../../redux/actions/watchVideosAction";
-import WatchItem from "../../components/Watch/WatchItem";
-import LoadingVideoSkeleton from "../../components/Loading/LoadingVideoSkeleton";
 import { useScrollToTop, useIsFocused } from "@react-navigation/native";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { View, Text, StyleSheet, FlatList, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { setWatchingVideo } from "../../redux/actions/videoControlAction";
 
+import ExTouchableOpacity from "../../components/ExTouchableOpacity";
+import LoadingVideoSkeleton from "../../components/Loading/LoadingVideoSkeleton";
+import WatchItem from "../../components/Watch/WatchItem";
+import { checkNewVideoItems } from "../../redux/actions/notification";
+import { setWatchingVideo } from "../../redux/actions/videoControlAction";
+import { getListVideos } from "../../redux/actions/watchVideosAction";
+import { navigation } from "../../rootNavigation";
+import VectorIcon from "../../utils/VectorIcon";
 const ListHeaderComponent = () => {
   return (
     <View style={styles.titleWrapper}>
@@ -17,25 +18,11 @@ const ListHeaderComponent = () => {
       <View style={styles.iconWrap}>
         <ExTouchableOpacity
           onPress={() => navigation.navigate("Search")}
-          style={{ ...styles.btnSearch, marginRight: 8 }}
-        >
-          <VectorIcon
-            name="user-alt"
-            type="FontAwesome5"
-            size={19}
-            color="#000"
-          />
+          style={{ ...styles.btnSearch, marginRight: 8 }}>
+          <VectorIcon name="user-alt" type="FontAwesome5" size={19} color="#000" />
         </ExTouchableOpacity>
-        <ExTouchableOpacity
-          onPress={() => navigation.navigate("Search")}
-          style={styles.btnSearch}
-        >
-          <VectorIcon
-            name="search"
-            type="FontAwesome5"
-            size={19}
-            color="#000"
-          />
+        <ExTouchableOpacity onPress={() => navigation.navigate("Search")} style={styles.btnSearch}>
+          <VectorIcon name="search" type="FontAwesome5" size={19} color="#000" />
         </ExTouchableOpacity>
       </View>
     </View>
@@ -44,9 +31,7 @@ const ListHeaderComponent = () => {
 
 const WatchScreen = () => {
   const dispatch = useDispatch();
-  const { watchVideos, last_id, new_items } = useSelector(
-    (state) => state.watchVideos
-  );
+  const { watchVideos, last_id, new_items } = useSelector((state) => state.watchVideos);
   const { loadingVideos } = useSelector((state) => state.alert);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingSkeleton, setLoadingSkeleton] = useState(false);
@@ -62,7 +47,7 @@ const WatchScreen = () => {
   const longitude = 105.0;
   const defaultLastId = 0;
   const defaultIndex = 0;
-  const defaultCount = 20;
+  const defaultCount = 5;
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -79,8 +64,8 @@ const WatchScreen = () => {
         longitude,
         defaultLastId,
         defaultIndex,
-        defaultCount
-      )
+        defaultCount,
+      ),
     );
     setRefreshing(false);
     setLoadingSkeleton(false);
@@ -100,8 +85,8 @@ const WatchScreen = () => {
             longitude,
             last_id,
             defaultIndex,
-            defaultCount
-          )
+            defaultCount,
+          ),
         );
       }
     }
@@ -123,9 +108,7 @@ const WatchScreen = () => {
   //   }
   // });
 
-  const renderItem = ({ item }) => {
-    return <WatchItem watchData={item} />;
-  };
+  const renderItem = useCallback(({ item }) => <WatchItem watchData={item} />, []);
 
   useEffect(() => {
     console.log("mount");
@@ -142,8 +125,8 @@ const WatchScreen = () => {
           longitude,
           defaultLastId,
           defaultIndex,
-          defaultCount
-        )
+          defaultCount,
+        ),
       );
       setLoadingSkeleton(false);
       setInitialLoad(true);
@@ -152,8 +135,11 @@ const WatchScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (initialLoad)
-      dispatch(setWatchingVideo(watchVideos[currentIndex]?.id, isFocused));
+    dispatch(checkNewVideoItems(0, 2));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (initialLoad) dispatch(setWatchingVideo(watchVideos[currentIndex]?.id, isFocused));
   }, [initialLoad, isFocused]);
 
   if (loadingSkeleton)
@@ -173,7 +159,10 @@ const WatchScreen = () => {
       renderItem={renderItem}
       onScroll={handleScroll}
       showsVerticalScrollIndicator={false}
+      initialNumToRender={5}
       maxToRenderPerBatch={2}
+      windowSize={2}
+      removeClippedSubviews={true}
       bounces={false}
       ListHeaderComponent={() => (
         <>
@@ -182,11 +171,7 @@ const WatchScreen = () => {
       )}
       style={styles.container}
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={["#1877f2"]}
-        />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#1877f2"]} />
       }
     />
   );

@@ -9,6 +9,7 @@ const NotificationScreen = () => {
   const onNavigateSearch = () => {
     navigation.navigate("Search");
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.titleWrapper}>

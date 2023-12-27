@@ -21,6 +21,10 @@ export const createMark =
         payload: res.data.data,
       });
       dispatch({
+        type: "SET_USER_COINS",
+        payload: res?.data,
+      });
+      dispatch({
         type: "COMMENT_POST",
         payload: id,
       });

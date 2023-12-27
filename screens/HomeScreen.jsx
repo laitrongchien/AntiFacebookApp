@@ -1,28 +1,20 @@
-import {
-  StyleSheet,
-  FlatList,
-  Text,
-  RefreshControl,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import NetInfo from "@react-native-community/netinfo";
+import { useScrollToTop } from "@react-navigation/native";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { StyleSheet, FlatList, Text, RefreshControl, View, ActivityIndicator } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+
+import HorizontalRecommendFriends from "../components/HorizontalRecommendFriends";
+import LoadingSkeleton from "../components/Loading/Skeleton";
+import PostItem from "../components/PostItem";
 import PostTool from "../components/PostTool";
 import Stories from "../components/Stories";
-import PostItem from "../components/PostItem";
-import HorizontalRecommendFriends from "../components/HorizontalRecommendFriends";
-import { useDispatch, useSelector } from "react-redux";
 import { getListPosts } from "../redux/actions/postAction";
-import LoadingSkeleton from "../components/Loading/Skeleton";
-import { useScrollToTop } from "@react-navigation/native";
-import NetInfo from "@react-native-community/netinfo";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const { post, last_id, new_items } = useSelector((state) => state.post);
-  const { loadingPosts, loadingPostCreated } = useSelector(
-    (state) => state.alert
-  );
+  const { loadingPosts, loadingPostCreated } = useSelector((state) => state.alert);
   const flatListRef = useRef(null);
 
   const defaultInCampaign = 1;
@@ -55,8 +47,8 @@ const HomeScreen = () => {
           longitude,
           defaultLastId,
           defaultIndex,
-          defaultCount
-        )
+          defaultCount,
+        ),
       );
       setRefreshing(false);
       setLoadingSkeleton(false);
@@ -69,7 +61,7 @@ const HomeScreen = () => {
     const contentHeight = event.nativeEvent.contentSize.height;
     // console.log(contentHeight - scrollY - flatListHeight);
     if (contentHeight - scrollY - flatListHeight <= 1000) {
-      if (new_items != 0 && !loadingPosts) {
+      if (new_items !== 0 && !loadingPosts) {
         dispatch(
           getListPosts(
             defaultInCampaign,
@@ -78,8 +70,8 @@ const HomeScreen = () => {
             longitude,
             last_id,
             defaultIndex,
-            defaultCount
-          )
+            defaultCount,
+          ),
         );
       }
     }
@@ -103,8 +95,8 @@ const HomeScreen = () => {
           longitude,
           defaultLastId,
           defaultIndex,
-          defaultCount
-        )
+          defaultCount,
+        ),
       );
       setLoadingSkeleton(false);
     };
@@ -146,6 +138,9 @@ const HomeScreen = () => {
       renderItem={renderItem}
       onScroll={handleScroll}
       bounces={false}
+      initialNumToRender={5}
+      maxToRenderPerBatch={2}
+      removeClippedSubviews={true}
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={() => (
         <>
@@ -161,11 +156,7 @@ const HomeScreen = () => {
       )}
       style={styles.container}
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={["#1877f2"]}
-        />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#1877f2"]} />
       }
     />
   );

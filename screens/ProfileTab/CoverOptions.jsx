@@ -1,7 +1,15 @@
-import { Text, StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
+import { pickOneImage } from "../../utils/PickImage";
+import { navigation } from "../../rootNavigation";
 
 const CoverOptions = () => {
+  const handlePickCover = async () => {
+    const result = await pickOneImage();
+    if (!result.canceled) {
+      navigation.navigate("CreateCover", { image: result.assets[0] });
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.optionsWrapper}>
@@ -16,7 +24,7 @@ const CoverOptions = () => {
           </View>
           <Text style={styles.optionTitle}>Xem ảnh bìa</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionItem}>
+        <TouchableOpacity style={styles.optionItem} onPress={handlePickCover}>
           <View style={styles.optionIcon}>
             <VectorIcon
               name="upload"

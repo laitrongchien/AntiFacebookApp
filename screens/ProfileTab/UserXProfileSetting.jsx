@@ -5,14 +5,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Clipboard,
-  // ToastAndroid,
+  //   ToastAndroid,
 } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
-import { useSelector } from "react-redux";
+import { useRoute } from "@react-navigation/native";
 
-const ProfileSetting = () => {
-  const { username } = useSelector((state) => state.auth);
+const UserXProfileSetting = () => {
+  const route = useRoute();
+  const { userXId, userXName } = route.params;
   const copyToClipboard = (link) => {
     Clipboard.setString(link);
     // ToastAndroid.show("Đã sao chép vào bộ nhớ tạm", ToastAndroid.SHORT);
@@ -54,37 +55,17 @@ const ProfileSetting = () => {
           <TouchableOpacity style={styles.settingCategory}>
             <View style={styles.settingIcon}>
               <VectorIcon
-                name="eye-outline"
+                name="account-cancel-outline"
                 type="MaterialCommunityIcons"
                 color="#000"
                 size={24}
               />
             </View>
-            <Text style={styles.settingTxt}>Chế độ xem</Text>
+            <Text style={styles.settingTxt}>Chặn</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingCategory}>
-            <View style={styles.settingIcon}>
-              <VectorIcon
-                name="format-list-bulleted"
-                type="MaterialCommunityIcons"
-                color="#000"
-                size={24}
-              />
-            </View>
-            <Text style={styles.settingTxt}>Nhật kí hoạt động</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.settingCategory}>
-            <View style={styles.settingIcon}>
-              <VectorIcon
-                name="lock-outline"
-                type="MaterialCommunityIcons"
-                color="#000"
-                size={24}
-              />
-            </View>
-            <Text style={styles.settingTxt}>Trung tâm quyền riêng tư</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.settingCategory}>
+          <TouchableOpacity
+            style={{ ...styles.settingCategory, borderBottomWidth: 0 }}
+          >
             <View style={styles.settingIcon}>
               <VectorIcon
                 name="magnify"
@@ -93,39 +74,23 @@ const ProfileSetting = () => {
                 size={24}
               />
             </View>
-            <Text style={styles.settingTxt}>Tìm kiếm</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ ...styles.settingCategory, borderBottomWidth: 0 }}
-          >
-            <View style={styles.settingIcon}>
-              <VectorIcon
-                name="plus-circle-outline"
-                type="MaterialCommunityIcons"
-                color="#000"
-                size={24}
-              />
-            </View>
-            <Text style={styles.settingTxt}>Tạo trang cá nhân mới</Text>
+            <Text style={styles.settingTxt}>Tìm kiếm trên trang cá nhân</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.myProfile}>
           <View style={styles.topTitle}>
             <Text style={{ fontSize: 20, fontWeight: "600" }}>
-              Liên kết đến trang cá nhân của bạn
-            </Text>
-            <Text style={{ color: "#666", fontSize: 18 }}>
-              Liên kết của riêng bạn trên Facebook
+              Liên kết đến trang cá nhân của {userXName}
             </Text>
           </View>
           <View>
             <Text style={{ fontSize: 16, fontWeight: "600", marginTop: 12 }}>
-              https://www.facebook.com/profile/{username}
+              https://www.facebook.com/profile/{userXName}
             </Text>
             <TouchableOpacity
               style={styles.btnCopy}
               onPress={() =>
-                copyToClipboard(`https://www.facebook.com/profile/${username}`)
+                copyToClipboard(`https://www.facebook.com/profile/${userXName}`)
               }
             >
               <Text
@@ -144,7 +109,7 @@ const ProfileSetting = () => {
   );
 };
 
-export default ProfileSetting;
+export default UserXProfileSetting;
 
 const styles = StyleSheet.create({
   container: {

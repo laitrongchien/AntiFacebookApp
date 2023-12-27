@@ -7,8 +7,8 @@ const postReducer = (state = initialState, action) => {
       return {
         post: [...state.post, ...post],
         // post: post,
-        last_id: last_id,
-        new_items: new_items,
+        last_id,
+        new_items,
       };
     case "CREATE_POST":
       return {
@@ -19,9 +19,7 @@ const postReducer = (state = initialState, action) => {
     case "EDIT_POST":
       return {
         ...state,
-        post: state.post.map((item) =>
-          item.id === action.payload.id ? action.payload : item
-        ),
+        post: state.post.map((item) => (item.id === action.payload.id ? action.payload : item)),
       };
     case "DELETE_POST":
       return {
@@ -31,20 +29,12 @@ const postReducer = (state = initialState, action) => {
     case "FEEL_POST":
       return {
         ...state,
-        post: state.post.map((item) =>
-          item.id === action.payload
-            ? { ...item, feel: parseInt(item.feel) + 1 }
-            : item
-        ),
+        post: state.post.map((item) => (item.id === action.payload.id ? action.payload : item)),
       };
     case "DELETE_FEEL":
       return {
         ...state,
-        post: state.post.map((item) =>
-          item.id === action.payload
-            ? { ...item, feel: parseInt(item.feel) - 1 }
-            : item
-        ),
+        post: state.post.map((item) => (item.id === action.payload.id ? action.payload : item)),
       };
     case "COMMENT_POST":
       return {
@@ -52,7 +42,7 @@ const postReducer = (state = initialState, action) => {
         post: state.post.map((item) =>
           item.id === action.payload
             ? { ...item, comment_mark: parseInt(item.comment_mark) + 1 }
-            : item
+            : item,
         ),
       };
     case "RESET_LIST_POSTS":

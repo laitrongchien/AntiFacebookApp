@@ -14,7 +14,20 @@ const friendReducer = (state = initialState, action) => {
         },
       };
     case "GET_RECOMMEND_FRIENDS":
-      return { ...state, recommendFriends: action.payload };
+      return {
+        ...state,
+        recommendFriends: action.payload,
+      };
+    case "GET_MORE_RECOMMEND_FRIENDS":
+      return {
+        ...state,
+        recommendFriends: [...state.recommendFriends, ...action.payload],
+      };
+    case "RESET_RECOMMEND_FRIENDS":
+      return {
+        ...state,
+        recommendFriends: [],
+      };
     case "RESET_STATE":
       return initialState;
     default:

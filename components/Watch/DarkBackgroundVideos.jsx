@@ -1,8 +1,9 @@
-import { StyleSheet, RefreshControl, FlatList, View } from "react-native";
-import DarkBackgroundVideoItem from "./DarkBackgroundVideoItem";
-import { useState, useEffect, useRef } from "react";
 import { useScrollToTop } from "@react-navigation/native";
+import { useState, useRef } from "react";
+import { StyleSheet, RefreshControl, FlatList, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+
+import DarkBackgroundVideoItem from "./DarkBackgroundVideoItem";
 import { getListVideos } from "../../redux/actions/watchVideosAction";
 import LoadingVideoSkeleton from "../Loading/LoadingVideoSkeleton";
 
@@ -19,9 +20,7 @@ const DarkBackGroundVideos = () => {
 
   const dispatch = useDispatch();
   const { loadingVideos } = useSelector((state) => state.alert);
-  const { watchVideos, last_id, new_items } = useSelector(
-    (state) => state.watchVideos
-  );
+  const { watchVideos, last_id, new_items } = useSelector((state) => state.watchVideos);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingSkeleton, setLoadingSkeleton] = useState(false);
 
@@ -40,8 +39,8 @@ const DarkBackGroundVideos = () => {
         longitude,
         defaultLastId,
         defaultIndex,
-        defaultCount
-      )
+        defaultCount,
+      ),
     );
     setRefreshing(false);
     setLoadingSkeleton(false);
@@ -52,7 +51,7 @@ const DarkBackGroundVideos = () => {
     const flatListHeight = event.nativeEvent.layoutMeasurement.height;
     const contentHeight = event.nativeEvent.contentSize.height;
     if (contentHeight - scrollY - flatListHeight <= 100) {
-      if (new_items != 0 && !loadingVideos) {
+      if (new_items !== 0 && !loadingVideos) {
         dispatch(
           getListVideos(
             defaultInCampaign,
@@ -61,8 +60,8 @@ const DarkBackGroundVideos = () => {
             longitude,
             last_id,
             defaultIndex,
-            defaultCount
-          )
+            defaultCount,
+          ),
         );
       }
     }
@@ -88,15 +87,14 @@ const DarkBackGroundVideos = () => {
       renderItem={renderItem}
       showsVerticalScrollIndicator={false}
       onScroll={handleScroll}
+      initialNumToRender={5}
       maxToRenderPerBatch={2}
+      windowSize={2}
+      removeClippedSubviews={true}
       bounces={false}
       style={styles.videosWrapper}
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={["#1877f2"]}
-        />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#1877f2"]} />
       }
     />
   );

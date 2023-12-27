@@ -1,8 +1,7 @@
 import { post } from "../../api/post";
 
 export const getListPosts =
-  (inCampaign, campaignId, latitude, longitude, lastId, index, count) =>
-  async (dispatch) => {
+  (inCampaign, campaignId, latitude, longitude, lastId, index, count) => async (dispatch) => {
     try {
       dispatch({
         type: "ALERT",
@@ -15,7 +14,7 @@ export const getListPosts =
         longitude,
         lastId,
         index,
-        count
+        count,
       );
       dispatch({
         type: "GET_LIST_POSTS",
@@ -75,6 +74,10 @@ export const editPost = (formData) => async (dispatch) => {
       type: "EDIT_USER_POST",
       payload: editPost?.data?.data,
     });
+    dispatch({
+      type: "SET_USER_COINS",
+      payload: res?.data?.data,
+    });
   } catch (err) {
     console.log(err.response.data.message);
   }
@@ -112,7 +115,7 @@ export const getListUserPosts =
         longitude,
         lastId,
         index,
-        count
+        count,
       );
       dispatch({
         type: "GET_LIST_USER_POSTS",
@@ -126,10 +129,15 @@ export const getListUserPosts =
 export const feelPost = (postId, type) => async (dispatch) => {
   try {
     const res = await post.feelPost(postId, type);
+    const postRes = await post.getPost(postId);
 
     dispatch({
+      type: "SET_USER_COINS",
+      payload: res?.data,
+    });
+    dispatch({
       type: "FEEL_POST",
-      payload: postId,
+      payload: postRes?.data?.data,
     });
   } catch (err) {
     console.log(err.response.data.message);
@@ -138,11 +146,11 @@ export const feelPost = (postId, type) => async (dispatch) => {
 
 export const deleteFeel = (postId) => async (dispatch) => {
   try {
-    const res = await post.deleteFeel(postId);
-
+    await post.deleteFeel(postId);
+    const postRes = await post.getPost(postId);
     dispatch({
       type: "DELETE_FEEL",
-      payload: postId,
+      payload: postRes?.data?.data,
     });
   } catch (err) {
     console.log(err.response.data.message);

@@ -62,6 +62,12 @@ const getSuggestedFriend = async (index, count) => {
   });
 };
 
+const unFriend = async (userId) => {
+  return await axios.post("/unfriend", {
+    user_id: userId,
+  });
+};
+
 const getUserFriends = async (userId, index, count) => {
   return await axios.post("/get_user_friends", {
     user_id: userId,
@@ -86,5 +92,6 @@ export const user = {
   setAcceptFriend,
   delRequestFriend,
   getUserFriends,
+  unFriend,
   getNotification,
 };

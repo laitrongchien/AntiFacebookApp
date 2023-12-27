@@ -1,19 +1,18 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import VectorIcon from "../../utils/VectorIcon";
-import ExTouchableOpacity from "../ExTouchableOpacity";
-import Reaction from "../Reaction";
-import { useState, memo } from "react";
-import BottomModal from "../BottomModal";
-import PostOptions from "./PostOption";
-import PostImage from "../PostImage";
-import { getTimeFromCreatePost } from "../../utils/helper";
-import { navigation } from "../../rootNavigation";
 import { Video, ResizeMode } from "expo-av";
+import { useState, memo } from "react";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
+
+import PostOptions from "./PostOption";
+import { navigation } from "../../rootNavigation";
+import VectorIcon from "../../utils/VectorIcon";
+import { getTimeFromCreatePost } from "../../utils/helper";
+import BottomModal from "../BottomModal";
+import ExTouchableOpacity from "../ExTouchableOpacity";
+import PostImage from "../PostImage";
+import Reaction from "../Reaction";
 
 const PostItem = ({ postData }) => {
-  const [postOptionVisible, setPostOptionVisible] = useState(false);
-  const [showFullParagraph, setShowFullParagraph] = useState(false);
-
   const {
     id,
     image,
@@ -24,7 +23,13 @@ const PostItem = ({ postData }) => {
     comment_mark,
     is_felt,
     video,
+    disappointed,
+    kudos,
   } = postData;
+  // console.log(postData);
+  const [postOptionVisible, setPostOptionVisible] = useState(false);
+  const [showFullParagraph, setShowFullParagraph] = useState(false);
+  const auth = useSelector((state) => state.auth);
 
   const paragraph = described;
 
@@ -49,16 +54,18 @@ const PostItem = ({ postData }) => {
         activeOpacity={0.6}
         onPress={() =>
           navigation.navigate("PostDetailScreen", {
-            postData: postData,
+            postData,
           })
-        }
-      >
+        }>
         <View style={styles.postHeaderInfo}>
           <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("UserXProfileScreen", { userXId: author.id })
-            }
-          >
+            onPress={() => {
+              if (auth.id === author.id) navigation.navigate("ProfileScreen");
+              else
+                navigation.navigate("UserXProfileScreen", {
+                  userXId: author.id,
+                });
+            }}>
             <Image
               style={styles.avatar}
               source={
@@ -75,32 +82,21 @@ const PostItem = ({ postData }) => {
                   navigation.navigate("UserXProfileScreen", {
                     userXId: author.id,
                   })
-                }
-              >
-                <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                  {author.name || "Username"}
-                </Text>
+                }>
+                <Text style={{ fontSize: 16, fontWeight: "500" }}>{author.name || "Username"}</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.extraInfoWrapper}>
-              <Text style={{ color: "#333", fontSize: 12 }}>
-                {getTimeFromCreatePost(created)}
-              </Text>
+              <Text style={{ color: "#333", fontSize: 12 }}>{getTimeFromCreatePost(created)}</Text>
               <Text style={{ fontSize: 16, marginHorizontal: 5 }}>·</Text>
-              <VectorIcon
-                name="earth"
-                type="MaterialCommunityIcons"
-                size={19}
-                color="#666"
-              />
+              <VectorIcon name="earth" type="MaterialCommunityIcons" size={19} color="#666" />
             </View>
           </View>
         </View>
         <View style={styles.iconWrapper}>
           <ExTouchableOpacity
             style={{ marginRight: 16 }}
-            onPress={() => setPostOptionVisible(true)}
-          >
+            onPress={() => setPostOptionVisible(true)}>
             <VectorIcon
               name="dots-horizontal"
               type="MaterialCommunityIcons"
@@ -109,12 +105,7 @@ const PostItem = ({ postData }) => {
             />
           </ExTouchableOpacity>
           <ExTouchableOpacity>
-            <VectorIcon
-              name="close"
-              type="MaterialCommunityIcons"
-              size={30}
-              color="#666"
-            />
+            <VectorIcon name="close" type="MaterialCommunityIcons" size={30} color="#666" />
           </ExTouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -138,20 +129,17 @@ const PostItem = ({ postData }) => {
           volume={1.0}
           isMuted={false}
           resizeMode={ResizeMode.COVER}
-          useNativeControls={true}
+          useNativeControls
           style={styles.video}
         />
       )}
       <Reaction
-        numFeel={feel}
+        numFeel={parseInt(kudos) + parseInt(disappointed) || feel}
         numMark={comment_mark}
         isFelt={is_felt}
         postId={id}
       />
-      <BottomModal
-        isVisible={postOptionVisible}
-        closeModal={() => setPostOptionVisible(false)}
-      >
+      <BottomModal isVisible={postOptionVisible} closeModal={() => setPostOptionVisible(false)}>
         <PostOptions
           authorId={author.id}
           setPostOptionVisible={setPostOptionVisible}
@@ -216,7 +204,7 @@ const styles = StyleSheet.create({
   },
   video: {
     width: "100%",
-    height: 300,
+    height: 400,
     backgroundColor: "#000",
   },
 });

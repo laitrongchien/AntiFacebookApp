@@ -10,6 +10,7 @@ const notificationReducer = (state = initialState, action) => {
       const { data, last_update, badge } = action.payload;
       return {
         data: [...state.data, ...data],
+        // data: data,
         last_update: last_update,
         badge: badge,
       };

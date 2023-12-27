@@ -18,26 +18,16 @@ const VerifyScreen = () => {
   const route = useRoute();
   const { email, password, device_id } = route.params;
   const dispatch = useDispatch();
-  // console.log(email, codeVerify);
 
   const handlePress = async () => {
     const res = await authApi.checkVerifyCode(email, codeVerify);
     console.log(res);
     if (res.data.code === "1000") {
-      // const res = await authApi.login(email, password, device_id);
-      // navigation.navigate("FullNameScreen", { userData: res.data.data });
       dispatch(login(email, password, device_id));
     }
   };
   return (
     <View style={styles.container}>
-      {/* <VectorIcon
-        name="arrow-left"
-        type="MaterialCommunityIcons"
-        color="#000"
-        size={30}
-        onPress={() => navigation.goBack()}
-      /> */}
       <Text style={{ paddingVertical: 12, fontSize: 22, fontWeight: "500" }}>
         Nhập mã xác nhận
       </Text>
