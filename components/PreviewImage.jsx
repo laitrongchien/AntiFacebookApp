@@ -5,6 +5,7 @@ import VectorIcon from "../utils/VectorIcon";
 
 const PreviewImage = ({ images, setImages }) => {
   const handleRemoveImage = (index) => {
+    console.log(index);
     const updatedImages = [...images];
     updatedImages.splice(index, 1);
     setImages(updatedImages);
@@ -34,7 +35,7 @@ const PreviewImage = ({ images, setImages }) => {
       {images.map((image, index) => (
         <ScaleImage
           key={index}
-          source={image}
+          source={image.uri || image.url}
           style={{ marginBottom: 4 }}
           width={imageWidth}
           height={imageHeight}

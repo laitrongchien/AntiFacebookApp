@@ -1,3 +1,5 @@
+import * as Notifications from "expo-notifications";
+import { doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
 import { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -8,31 +10,25 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { useDispatch } from "react-redux";
-import { login } from "../redux/actions/authAction";
+import { useDispatch, useSelector } from "react-redux";
+
+import { setting } from "../api/setting";
 import Logo from "../assets/images/logo.png";
 import MetaLogo from "../assets/images/meta-logo.png";
-import VectorIcon from "../utils/VectorIcon";
-import { navigation } from "../rootNavigation";
 import { SCREEN_HEIGHT } from "../constants";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/config";
-import { db } from "../firebase/config";
-import { doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
-import { useSelector } from "react-redux";
-
-import {
-  registerForPushNotificationsAsync,
-  sendPushNotification,
-} from "../firebase/notification";
-import * as Notifications from "expo-notifications";
+import { registerForPushNotificationsAsync } from "../firebase/notification";
+import { login } from "../redux/actions/authAction";
+import { navigation } from "../rootNavigation";
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      priority: "high",
+    };
+  },
 });
 
 const LoginScreen = () => {
@@ -43,33 +39,31 @@ const LoginScreen = () => {
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
+  const responseListener = useRef();
   const [loading, setLoading] = useState(false);
   const device_id = "string";
   const dispatch = useDispatch();
   const { error } = useSelector((state) => state.alert);
+  const defaultDevType = "1"; //android
 
   const onCreateAccount = () => {
     navigation.navigate("StartRegisterScreen");
   };
 
-  const associateDeviceTokenWithUser = async (user, deviceToken) => {
-    try {
-      const userDocRef = doc(db, "users", user.uid);
+  // const associateDeviceTokenWithUser = async (user, deviceToken) => {
+  //   try {
+  //     const userDocRef = doc(db, "users", user.uid);
 
-      await setDoc(
-        userDocRef,
-        { deviceTokens: arrayUnion(deviceToken) },
-        { merge: true }
-      );
+  //     await setDoc(userDocRef, { deviceTokens: arrayUnion(deviceToken) }, { merge: true });
 
-      const userDocSnapshot = await getDoc(userDocRef);
-      const devices = userDocSnapshot.data().deviceTokens;
+  //     const userDocSnapshot = await getDoc(userDocRef);
+  //     const devices = userDocSnapshot.data().deviceTokens;
 
-      return devices;
-    } catch (error) {
-      console.error("Error associating device token:", error);
-    }
-  };
+  //     return devices;
+  //   } catch (error) {
+  //     console.error("Error associating device token:", error);
+  //   }
+  // };
 
   const onLoginPress = async () => {
     try {
@@ -83,6 +77,7 @@ const LoginScreen = () => {
       //     .forEach((device) => sendPushNotification(device));
       // }
       await dispatch(login(email, password, device_id));
+      await setting.setDevToken(defaultDevType, expoPushToken);
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -91,25 +86,21 @@ const LoginScreen = () => {
   };
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
+    registerForPushNotificationsAsync().then((token) => setExpoPushToken(token));
 
     // This listener is fired whenever a notification is received while the app is foregrounded
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-      });
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      setNotification(notification);
+    });
 
     // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-    // responseListener.current =
-    //   Notifications.addNotificationResponseReceivedListener((response) => {
-    //     console.log(response);
-    //   });
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log(response);
+    });
 
     return () => {
       Notifications.removeNotificationSubscription(notificationListener);
-      // Notifications.removeNotificationSubscription(responseListener);
+      Notifications.removeNotificationSubscription(responseListener);
     };
   }, []);
 
@@ -129,8 +120,7 @@ const LoginScreen = () => {
             width: "100%",
             height: SCREEN_HEIGHT - 340,
             alignItems: "center",
-          }}
-        >
+          }}>
           <TextInput
             placeholder="Số di động hoặc email"
             value={email}
@@ -157,8 +147,7 @@ const LoginScreen = () => {
           />
           {error && (
             <Text style={{ marginTop: 8, color: "#a81414" }}>
-              {error == "Email or password is not correct" &&
-                "Tài khoản hoặc mật khẩu không đúng"}
+              {error === "Email or password is not correct" && "Tài khoản hoặc mật khẩu không đúng"}
             </Text>
           )}
           <TouchableOpacity style={styles.loginButton} onPress={onLoginPress}>
@@ -170,8 +159,7 @@ const LoginScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={{ alignItems: "center" }}
-            onPress={() => navigation.navigate("EmailResetScreen")}
-          >
+            onPress={() => navigation.navigate("EmailResetScreen")}>
             <Text style={styles.forgotPass}>Bạn quên mật khẩu ư?</Text>
           </TouchableOpacity>
         </View>

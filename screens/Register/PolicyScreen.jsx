@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import VectorIcon from "../../utils/VectorIcon";
@@ -16,15 +17,25 @@ const PolicyScreen = () => {
   const route = useRoute();
   const { email, password } = route.params;
   const device_id = "string";
-  // console.log(email, password);
   const handleRegister = async () => {
     setLoading(true);
     const res = await authApi.signup(email, password, device_id);
     setLoading(false);
     const verifyCode = res.data.data.verify_code;
     console.log(verifyCode);
-    // navigation.navigate("VerifyScreen", { verifyCode });
-    navigation.navigate("VerifyScreen", { email, password, device_id });
+    navigation.navigate("VerifyScreen", {
+      email,
+      password,
+      device_id,
+    });
+    setTimeout(() => {
+      Alert.alert("Mã xác thực của bạn là:", `${verifyCode}`, [
+        {
+          text: "OK",
+          style: "cancel",
+        },
+      ]);
+    }, 1000);
   };
   return (
     <View style={styles.container}>

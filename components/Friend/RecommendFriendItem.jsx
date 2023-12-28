@@ -7,12 +7,32 @@ import {
   ImageBackground,
 } from "react-native";
 import ExTouchableOpacity from "../ExTouchableOpacity";
+import { user as userApi } from "../../api/user";
+import { useState } from "react";
+import { navigation } from "../../rootNavigation";
 
 const RecommendFriendItem = ({ recommendItem }) => {
-  const { username, avatar, same_friends } = recommendItem;
+  const { id, username, avatar, same_friends } = recommendItem;
+  const [isRequested, setIsRequested] = useState(false);
+
+  const handleSetRequest = async () => {
+    setIsRequested(true);
+    await userApi.setRequestFriend(id);
+  };
+
+  const handleDeleteRequest = async () => {
+    setIsRequested(false);
+    await userApi.delRequestFriend(id);
+  };
+
   return (
     <View>
-      <ExTouchableOpacity style={styles.container}>
+      <ExTouchableOpacity
+        style={styles.container}
+        onPress={() =>
+          navigation.navigate("UserXProfileScreen", { userXId: id })
+        }
+      >
         <ImageBackground
           imageStyle={{ borderRadius: 64 }}
           style={styles.avatarView}
@@ -39,18 +59,33 @@ const RecommendFriendItem = ({ recommendItem }) => {
             </View>
           )}
 
-          <View style={styles.optionView_button}>
-            <TouchableOpacity
-              style={{ ...styles.button, backgroundColor: "#1877f2" }}
-            >
-              <Text style={styles.buttonText}>Thêm bạn bè</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ ...styles.button, backgroundColor: "#e8e8e8" }}
-            >
-              <Text style={{ ...styles.buttonText, color: "black" }}>Gỡ</Text>
-            </TouchableOpacity>
-          </View>
+          {isRequested ? (
+            <View>
+              <Text style={{ fontSize: 16 }}>Đã gửi lời mời</Text>
+              <TouchableOpacity
+                style={{ ...styles.button, backgroundColor: "#e8e8e8" }}
+                onPress={handleDeleteRequest}
+              >
+                <Text style={{ ...styles.buttonText, color: "black" }}>
+                  Hủy lời mời kết bạn
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.optionView_button}>
+              <TouchableOpacity
+                style={{ ...styles.button, backgroundColor: "#1877f2" }}
+                onPress={handleSetRequest}
+              >
+                <Text style={styles.buttonText}>Thêm bạn bè</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ ...styles.button, backgroundColor: "#e8e8e8" }}
+              >
+                <Text style={{ ...styles.buttonText, color: "black" }}>Gỡ</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </ExTouchableOpacity>
     </View>

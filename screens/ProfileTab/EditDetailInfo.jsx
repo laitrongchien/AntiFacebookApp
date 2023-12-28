@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { SCREEN_HEIGHT } from "../../constants";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
 import { useState } from "react";
@@ -15,7 +14,6 @@ import { useDispatch } from "react-redux";
 const EditDetailInfo = () => {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
-  //   console.log(city, country);
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
@@ -23,7 +21,7 @@ const EditDetailInfo = () => {
       const formData = new FormData();
       if (city) formData.append("city", city);
       if (country) formData.append("country", country);
-      await dispatch(setUserInfo(formData));
+      dispatch(setUserInfo(formData));
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -44,12 +42,11 @@ const EditDetailInfo = () => {
         </TouchableOpacity>
         <Text style={styles.navigationTitle}>Chỉnh sửa chi tiết</Text>
       </View>
+
       <View style={styles.wrapper}>
-        <Text style={{ fontSize: 18, fontWeight: "600" }}>
-          Thành phố hiện tại
-        </Text>
+        <Text style={{ fontSize: 18, fontWeight: "600" }}>Thành phố</Text>
         <TextInput
-          placeholder="Thành phố hiện tại"
+          placeholder="Đến từ thành phố"
           value={city}
           onChangeText={(value) => setCity(value)}
           style={styles.inputBox}

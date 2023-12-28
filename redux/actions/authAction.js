@@ -20,6 +20,7 @@ export const login = (email, password, device_id) => async (dispatch) => {
 export const changeProfileAfterSignup = (formData) => async (dispatch) => {
   try {
     const res = await auth.changeProfileAfterSignup(formData);
+    console.log(res);
     dispatch({
       type: "CHANGE_PROFILE_AFTER_SIGNUP",
       payload: res.data.data,
@@ -34,12 +35,4 @@ export const logout = () => async (dispatch) => {
   dispatch({
     type: "RESET_STATE",
   });
-  // dispatch({
-  //   type: "GET_USER_INFO",
-  //   payload: {},
-  // });
-  // dispatch({
-  //   type: "REMOVE_LIST_POSTS",
-  //   payload: { post: [], last_id: undefined, new_items: undefined },
-  // });
 };

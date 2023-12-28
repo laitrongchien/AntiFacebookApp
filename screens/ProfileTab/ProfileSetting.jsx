@@ -4,11 +4,20 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Clipboard,
+  // ToastAndroid,
 } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
+import { useSelector } from "react-redux";
 
 const ProfileSetting = () => {
+  const { username } = useSelector((state) => state.auth);
+  const copyToClipboard = (link) => {
+    Clipboard.setString(link);
+    // ToastAndroid.show("Đã sao chép vào bộ nhớ tạm", ToastAndroid.SHORT);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.navigationBar}>
@@ -111,9 +120,14 @@ const ProfileSetting = () => {
           </View>
           <View>
             <Text style={{ fontSize: 16, fontWeight: "600", marginTop: 12 }}>
-              https://www.facebook.com/profile/chienlai
+              https://www.facebook.com/profile/{username}
             </Text>
-            <TouchableOpacity style={styles.btnCopy}>
+            <TouchableOpacity
+              style={styles.btnCopy}
+              onPress={() =>
+                copyToClipboard(`https://www.facebook.com/profile/${username}`)
+              }
+            >
               <Text
                 style={{
                   color: "#000",

@@ -1,6 +1,5 @@
-import React from "react";
-import { TouchableOpacity } from "react-native";
 import debounce from "lodash.debounce";
+import { TouchableOpacity } from "react-native";
 
 const withPreventDoubleClick = (WrappedComponent) => {
   const PreventDoubleClick = (props) => {

@@ -11,46 +11,24 @@ import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
 import { pickOneImage } from "../../utils/PickImage";
 import { useSelector } from "react-redux";
-import { useState } from "react";
 
 const EditProfile = () => {
   const { avatar } = useSelector((state) => state.auth);
-  const { cover_image, city, country } = useSelector((state) => state.user);
-  const [avatarImage, setAvatarImage] = useState(null);
-  const [coverImage, setCoverImage] = useState(null);
+  const { cover_image, city, country, address } = useSelector(
+    (state) => state.user
+  );
 
   const handlePickAvatarImage = async () => {
     const result = await pickOneImage();
     if (!result.canceled) {
-      setAvatarImage(result.assets[0].uri);
+      navigation.navigate("CreateAvatar", { image: result.assets[0] });
     }
   };
 
   const handlePickCoverImage = async () => {
     const result = await pickOneImage();
     if (!result.canceled) {
-      setCoverImage(result.assets[0].uri);
-    }
-  };
-
-  const handleGetFormData = () => {
-    const formData = new FormData();
-
-    if (avatarImage) {
-      const avatarImageFile = {
-        uri: avatarImage,
-        type: "image/jpeg",
-        name: "avatar.jpg",
-      };
-      formData.append("avatar", avatarImageFile);
-    }
-    if (coverImage) {
-      const coverImageFile = {
-        uri: coverImage,
-        type: "image/jpeg",
-        name: "cover.jpg",
-      };
-      formData.append("cover_image", coverImageFile);
+      navigation.navigate("CreateCover", { image: result.assets[0] });
     }
   };
 
@@ -84,12 +62,8 @@ const EditProfile = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity activeOpacity={0.8}>
-            <Image
-              source={{ uri: avatarImage ? avatarImage : avatar }}
-              style={styles.avatar}
-            />
-          </TouchableOpacity>
+
+          <Image source={{ uri: avatar }} style={styles.avatar} />
         </View>
         <View style={styles.detail}>
           <View style={styles.detailTitleWrapper}>
@@ -100,14 +74,15 @@ const EditProfile = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity activeOpacity={0.8}>
-            <Image
-              source={{
-                uri: "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png",
-              }}
-              style={styles.cover}
-            />
-          </TouchableOpacity>
+
+          <Image
+            source={
+              cover_image
+                ? { uri: cover_image }
+                : require("../../assets/images/cover_img.jpg")
+            }
+            style={styles.cover}
+          />
         </View>
         <View style={styles.detail}>
           <View style={styles.detailTitleWrapper}>
@@ -130,23 +105,23 @@ const EditProfile = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.introListWrapper}>
-            <View style={styles.introLine}>
+            {/* <View style={styles.introLine}>
               <VectorIcon
                 name="home"
                 type="MaterialCommunityIcons"
                 color="#333"
                 size={28}
               />
-              {city ? (
+              {address ? (
                 <Text style={styles.introLineText}>
-                  Đến từ <Text style={styles.introHightLight}>{city}</Text>
+                  Sống tại <Text style={styles.introHightLight}>{address}</Text>
                 </Text>
               ) : (
                 <Text style={styles.introLineText}>
-                  Thêm thông tin nơi ở/ thành phố của bạn
+                  Thêm thông tin địa chỉ của bạn
                 </Text>
               )}
-            </View>
+            </View> */}
             <View style={styles.introLine}>
               <VectorIcon
                 name="map-marker"
@@ -154,20 +129,25 @@ const EditProfile = () => {
                 color="#333"
                 size={28}
               />
-              {country ? (
+              {city ? (
                 <Text style={styles.introLineText}>
-                  Quốc gia <Text style={styles.introHightLight}>{country}</Text>
+                  Đến từ <Text style={styles.introHightLight}>{city}</Text>
+                  {country && (
+                    <Text style={styles.introHightLight}>
+                      {"," + " " + country}
+                    </Text>
+                  )}
                 </Text>
               ) : (
                 <Text style={styles.introLineText}>
-                  Thêm thông tin quốc gia của bạn
+                  Thêm thông tin thành phố, quốc gia của bạn
                 </Text>
               )}
             </View>
           </View>
         </View>
 
-        <View
+        {/* <View
           activeOpacity={0.9}
           style={{ ...styles.detail, ...styles.lastDetail }}
         >
@@ -176,7 +156,7 @@ const EditProfile = () => {
               Lưu thông tin
             </Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   );
@@ -252,7 +232,7 @@ const styles = StyleSheet.create({
   introLineText: {
     fontSize: 16,
     fontWeight: "400",
-    marginLeft: 12,
+    marginLeft: 8,
   },
   introHightLight: {
     fontWeight: "bold",

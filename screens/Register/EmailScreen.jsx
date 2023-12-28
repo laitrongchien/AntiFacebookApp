@@ -8,6 +8,7 @@ import {
 import { useState } from "react";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
+import { auth } from "../../api/auth";
 
 const EmailScreen = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -24,11 +25,19 @@ const EmailScreen = () => {
     return emailPattern.test(email);
   };
 
-  const handleValidate = () => {
+  const isEmailExisted = async (email) => {
+    const res = await auth.checkEmail(email);
+    return res.data.data.existed;
+  };
+
+  const handleValidate = async () => {
+    const isExistedEmail = await isEmailExisted(email);
     if (!email) {
       setError("Phải có email");
     } else if (!isEmailValid(email)) {
       setError("Nhập địa chỉ email hợp lệ");
+    } else if (isExistedEmail == 1) {
+      setError("Hiện đã có tài khoản liên kết với địa chỉ email này");
     } else {
       navigation.navigate("PasswordScreen", { email });
     }

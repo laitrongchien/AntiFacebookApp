@@ -82,6 +82,10 @@ const changeProfileAfterSignup = async (formData) => {
   }
 };
 
+const checkEmail = async (email) => {
+  return await axios.post("/check_email", { email });
+};
+
 export const auth = {
   login,
   logout,
@@ -90,4 +94,5 @@ export const auth = {
   checkVerifyCode,
   resetPassword,
   changeProfileAfterSignup,
+  checkEmail,
 };

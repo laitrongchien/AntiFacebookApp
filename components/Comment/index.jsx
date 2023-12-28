@@ -10,7 +10,12 @@ import { memo } from "react";
 import { SCREEN_WIDTH } from "../../constants";
 import { formatTime } from "../../utils/helper";
 
-const Comment = ({ item }) => {
+const Comment = ({ item, commentInputRef, setMarkId }) => {
+  const handleReply = () => {
+    commentInputRef.current && commentInputRef.current.focus();
+    setMarkId(item.id);
+  };
+
   return (
     <View>
       <View style={styles.container}>
@@ -31,7 +36,7 @@ const Comment = ({ item }) => {
           </View>
           <View style={styles.toolContainer}>
             <Text style={styles.createAt}>{formatTime(item.created)}</Text>
-            <TouchableOpacity style={styles.replyBtn}>
+            <TouchableOpacity style={styles.replyBtn} onPress={handleReply}>
               <Text>Phản hồi</Text>
             </TouchableOpacity>
           </View>
@@ -62,7 +67,10 @@ const Comment = ({ item }) => {
                   <Text style={styles.createAt}>
                     {formatTime(repComment.created)}
                   </Text>
-                  <TouchableOpacity style={styles.replyBtn}>
+                  <TouchableOpacity
+                    style={styles.replyBtn}
+                    onPress={handleReply}
+                  >
                     <Text>Phản hồi</Text>
                   </TouchableOpacity>
                 </View>

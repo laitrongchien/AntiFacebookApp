@@ -22,3 +22,13 @@ export const pickOneImage = async () => {
 
   return result;
 };
+
+export const pickVideo = async () => {
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  return result;
+};

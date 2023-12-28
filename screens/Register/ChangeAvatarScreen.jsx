@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { useState } from "react";
 import { SCREEN_WIDTH } from "../../constants";
@@ -15,10 +16,9 @@ import { changeProfileAfterSignup } from "../../redux/actions/authAction";
 import { navigation } from "../../rootNavigation";
 
 const ChangeAvatarScreen = () => {
-  const defaultImage = require("../../assets/images/default-img.png");
   const route = useRoute();
-  const fullName = route.params?.fullName;
-  const [image, setImage] = useState(defaultImage);
+  const fullName = route.params?.fullName || "Username";
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -26,7 +26,6 @@ const ChangeAvatarScreen = () => {
     const result = await pickOneImage();
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      // console.log(result.assets[0]);
     }
   };
 
@@ -35,11 +34,12 @@ const ChangeAvatarScreen = () => {
       setLoading(true);
       // await dispatch(changeProfileAfterSignup(fullName, image));
       const imageFile = {
-        uri: image,
+        uri:
+          image ||
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUzlfySeiXVWcK9aWigruMaOILZBN2YooUMQ&usqp=CAU",
         type: "image/jpeg",
         name: "avatar.jpg",
       };
-      // console.log(typeof imageFile);
       const formData = new FormData();
       formData.append("username", fullName);
       formData.append("avatar", imageFile);
@@ -64,9 +64,11 @@ const ChangeAvatarScreen = () => {
       </Text>
       <Image
         style={styles.avatar}
-        source={{
-          uri: image,
-        }}
+        source={
+          image
+            ? { uri: image }
+            : require("../../assets/images/default-img.png")
+        }
       />
       <TouchableOpacity style={styles.btn} onPress={handlePickImage}>
         <Text style={{ color: "#fff", fontSize: 18 }}>Thêm ảnh</Text>
@@ -79,7 +81,7 @@ const ChangeAvatarScreen = () => {
           <ActivityIndicator color="#333" />
         ) : (
           <Text style={{ color: "#333", fontSize: 18 }}>
-            {image === defaultImage ? "Bỏ qua" : "Tiếp"}
+            {!image ? "Bỏ qua" : "Tiếp"}
           </Text>
         )}
       </TouchableOpacity>

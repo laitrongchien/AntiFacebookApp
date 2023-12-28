@@ -1,52 +1,185 @@
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
-import React from "react";
+import { useScrollToTop, useIsFocused } from "@react-navigation/native";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { View, Text, StyleSheet, FlatList, RefreshControl } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+
 import ExTouchableOpacity from "../../components/ExTouchableOpacity";
-import VectorIcon from "../../utils/VectorIcon";
+import LoadingVideoSkeleton from "../../components/Loading/LoadingVideoSkeleton";
+import WatchItem from "../../components/Watch/WatchItem";
+import { checkNewVideoItems } from "../../redux/actions/notification";
+import { setWatchingVideo } from "../../redux/actions/videoControlAction";
+import { getListVideos } from "../../redux/actions/watchVideosAction";
 import { navigation } from "../../rootNavigation";
-import WatchList from "../../components/Watch";
+import VectorIcon from "../../utils/VectorIcon";
+const ListHeaderComponent = () => {
+  return (
+    <View style={styles.titleWrapper}>
+      <Text style={styles.title}>Video</Text>
+      <View style={styles.iconWrap}>
+        <ExTouchableOpacity
+          onPress={() => navigation.navigate("Search")}
+          style={{ ...styles.btnSearch, marginRight: 8 }}>
+          <VectorIcon name="user-alt" type="FontAwesome5" size={19} color="#000" />
+        </ExTouchableOpacity>
+        <ExTouchableOpacity onPress={() => navigation.navigate("Search")} style={styles.btnSearch}>
+          <VectorIcon name="search" type="FontAwesome5" size={19} color="#000" />
+        </ExTouchableOpacity>
+      </View>
+    </View>
+  );
+};
 
 const WatchScreen = () => {
+  const dispatch = useDispatch();
+  const { watchVideos, last_id, new_items } = useSelector((state) => state.watchVideos);
+  const { loadingVideos } = useSelector((state) => state.alert);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadingSkeleton, setLoadingSkeleton] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [initialLoad, setInitialLoad] = useState(false);
+  const flatListRef = useRef(null);
+  useScrollToTop(flatListRef);
+  const isFocused = useIsFocused();
+
+  const defaultInCampaign = 1;
+  const defaultCampaignId = 1;
+  const latitude = 20.0;
+  const longitude = 105.0;
+  const defaultLastId = 0;
+  const defaultIndex = 0;
+  const defaultCount = 5;
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setLoadingSkeleton(true);
+
+    dispatch({
+      type: "RESET_LIST_VIDEOS",
+    });
+    await dispatch(
+      getListVideos(
+        defaultInCampaign,
+        defaultCampaignId,
+        latitude,
+        longitude,
+        defaultLastId,
+        defaultIndex,
+        defaultCount,
+      ),
+    );
+    setRefreshing(false);
+    setLoadingSkeleton(false);
+  };
+
+  const handleScroll = (event) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    const flatListHeight = event.nativeEvent.layoutMeasurement.height;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    if (contentHeight - scrollY - flatListHeight <= 1000) {
+      if (new_items != 0 && !loadingVideos) {
+        dispatch(
+          getListVideos(
+            defaultInCampaign,
+            defaultCampaignId,
+            latitude,
+            longitude,
+            last_id,
+            defaultIndex,
+            defaultCount,
+          ),
+        );
+      }
+    }
+
+    const index = scrollY - 72 < 0 ? 0 : Math.round((scrollY - 72) / 510);
+    // console.log(index);
+    if (index != currentIndex) {
+      // console.log(watchVideos[index].id);
+      dispatch(setWatchingVideo(watchVideos[index]?.id, true));
+      setCurrentIndex(index);
+    }
+  };
+
+  // const onViewableItemsChanged = useRef(({ viewableItems }) => {
+  //   if (viewableItems.length > 0) {
+  //     const newIndex = viewableItems[0].index;
+  //     setCurrentIndex(newIndex);
+  //     dispatch(setWatchingVideo(watchVideos[newIndex].id, isFocused));
+  //   }
+  // });
+
+  const renderItem = useCallback(({ item }) => <WatchItem watchData={item} />, []);
+
+  useEffect(() => {
+    console.log("mount");
+    const handleGetListVideos = async () => {
+      setLoadingSkeleton(true);
+      dispatch({
+        type: "RESET_LIST_VIDEOS",
+      });
+      await dispatch(
+        getListVideos(
+          defaultInCampaign,
+          defaultCampaignId,
+          latitude,
+          longitude,
+          defaultLastId,
+          defaultIndex,
+          defaultCount,
+        ),
+      );
+      setLoadingSkeleton(false);
+      setInitialLoad(true);
+    };
+    handleGetListVideos();
+  }, []);
+
+  useEffect(() => {
+    dispatch(checkNewVideoItems(0, 2));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (initialLoad) dispatch(setWatchingVideo(watchVideos[currentIndex]?.id, isFocused));
+  }, [initialLoad, isFocused]);
+
+  if (loadingSkeleton)
+    return (
+      <>
+        <ListHeaderComponent />
+        <LoadingVideoSkeleton />
+        <LoadingVideoSkeleton />
+      </>
+    );
+
   return (
-    <ScrollView
-      bounces={false}
+    <FlatList
+      data={watchVideos}
+      ref={flatListRef}
+      keyExtractor={(item) => item.id}
+      renderItem={renderItem}
+      onScroll={handleScroll}
       showsVerticalScrollIndicator={false}
+      initialNumToRender={5}
+      maxToRenderPerBatch={2}
+      windowSize={2}
+      removeClippedSubviews={true}
+      bounces={false}
+      ListHeaderComponent={() => (
+        <>
+          <ListHeaderComponent />
+        </>
+      )}
       style={styles.container}
-    >
-      <View style={styles.titleWrapper}>
-        <Text style={styles.title}>Video</Text>
-        <View style={styles.iconWrap}>
-          <ExTouchableOpacity
-            onPress={() => navigation.navigate("Search")}
-            style={{ ...styles.btnSearch, marginRight: 8 }}
-          >
-            <VectorIcon
-              name="user-alt"
-              type="FontAwesome5"
-              size={19}
-              color="#000"
-            />
-          </ExTouchableOpacity>
-          <ExTouchableOpacity
-            onPress={() => navigation.navigate("Search")}
-            style={styles.btnSearch}
-          >
-            <VectorIcon
-              name="search"
-              type="FontAwesome5"
-              size={19}
-              color="#000"
-            />
-          </ExTouchableOpacity>
-        </View>
-      </View>
-      <WatchList />
-    </ScrollView>
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#1877f2"]} />
+      }
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(0,0,0,0.1)",
     width: "100%",
   },
   titleWrapper: {
@@ -57,6 +190,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBlockColor: "#ddd",
+    backgroundColor: "#fff",
   },
   btnSearch: {
     height: 40,

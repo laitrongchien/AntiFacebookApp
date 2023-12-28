@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { navigation } from "../../rootNavigation";
@@ -13,25 +14,76 @@ import FriendGallery from "../../components/FriendGallery";
 import VectorIcon from "../../utils/VectorIcon";
 import { useRoute } from "@react-navigation/native";
 import { user as userApi } from "../../api/user";
+import { useSelector, useDispatch } from "react-redux";
+import PostItem from "../../components/PostItem";
+import { getListUserPosts } from "../../redux/actions/postAction";
+import { getUserXFriends } from "../../redux/actions/userAction";
 
 const UserXProfileScreen = () => {
   const route = useRoute();
   const { userXId } = route.params;
-  console.log(userXId);
   const [userX, setUserX] = useState({});
+  const [loadingUserX, setLoadingUserX] = useState(false);
+  const { post } = useSelector((state) => state.userPost);
+  const { friends, total } = useSelector((state) => state.userXFriend);
+  const dispatch = useDispatch();
+
+  const defaultInCampaign = 1;
+  const defaultCampaignId = 1;
+  const latitude = 20.0;
+  const longitude = 105.0;
+  const defaultLastId = 0;
+  const defaultIndex = 0;
+  const defaultCount = 6;
+
+  const handlePress = async () => {
+    if (userX.is_friend == 0) {
+      await userApi.setRequestFriend(userXId);
+    } else if (userX.is_friend == 2) {
+      await userApi.delRequestFriend(userXId);
+    } else if (userX.is_friend == 3) {
+      await userApi.setAcceptFriend(userXId, "1");
+    }
+  };
 
   useEffect(() => {
-    console.log("mounted");
     const handleGetUserXInfo = async () => {
       try {
+        setLoadingUserX(true);
         const res = await userApi.getUserInfo(userXId);
         setUserX(res.data.data);
+
+        dispatch({
+          type: "RESET_USER_POSTS",
+        });
+        await dispatch(
+          getListUserPosts(
+            userXId,
+            defaultInCampaign,
+            defaultCampaignId,
+            latitude,
+            longitude,
+            defaultLastId,
+            defaultIndex,
+            defaultCount
+          )
+        );
+        dispatch({
+          type: "RESET_USERX_FRIENDS",
+        });
+        await dispatch(getUserXFriends(userXId, defaultIndex, defaultCount));
+        setLoadingUserX(false);
       } catch (err) {
         console.log(err.response.data.message);
       }
     };
     handleGetUserXInfo();
   }, []);
+
+  if (loadingUserX)
+    return (
+      <ActivityIndicator size="large" color="#000" style={{ marginTop: 300 }} />
+    );
 
   return (
     <View style={{ position: "relative" }}>
@@ -87,7 +139,11 @@ const UserXProfileScreen = () => {
             <Text style={styles.name}>{userX.username || "Username"}</Text>
             <View style={styles.buttonWrapper}>
               <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.btn}
+                  onPress={handlePress}
+                >
                   <Text
                     style={{
                       fontSize: 16,
@@ -96,7 +152,13 @@ const UserXProfileScreen = () => {
                       marginLeft: 5,
                     }}
                   >
-                    Thêm bạn bè
+                    {userX.is_friend == 1
+                      ? "Bạn bè"
+                      : userX.is_friend == 2
+                      ? "Hủy lời mời"
+                      : userX.is_friend == 3
+                      ? "Chấp nhận lời mời"
+                      : "Thêm bạn bè"}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -118,7 +180,16 @@ const UserXProfileScreen = () => {
                     Nhắn tin
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.8} style={styles.btnOption}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.btnOption}
+                  onPress={() =>
+                    navigation.navigate("UserXProfileSetting", {
+                      userXId: userXId,
+                      userXName: userX.username,
+                    })
+                  }
+                >
                   <VectorIcon
                     name="dots-horizontal"
                     type="MaterialCommunityIcons"
@@ -141,14 +212,14 @@ const UserXProfileScreen = () => {
               color="#333"
               size={28}
             />
-            {userX.city ? (
+            {userX.address ? (
               <Text style={styles.introLineText}>
-                Quốc gia{" "}
-                <Text style={styles.introHightLight}>{userX.city}</Text>
+                Sống tại{" "}
+                <Text style={styles.introHightLight}>{userX.address}</Text>
               </Text>
             ) : (
               <Text style={styles.introLineText}>
-                Chưa có thông tin thành phố
+                Chưa có thông tin địa chỉ
               </Text>
             )}
           </View>
@@ -159,14 +230,18 @@ const UserXProfileScreen = () => {
               color="#333"
               size={28}
             />
-            {userX.country ? (
+            {userX.city ? (
               <Text style={styles.introLineText}>
-                Quốc gia{" "}
-                <Text style={styles.introHightLight}>{userX.country}</Text>
+                Đến từ <Text style={styles.introHightLight}>{userX.city}</Text>
+                {userX.country && (
+                  <Text style={styles.introHightLight}>
+                    {"," + " " + userX.country}
+                  </Text>
+                )}
               </Text>
             ) : (
               <Text style={styles.introLineText}>
-                Chưa có thông tin quốc gia
+                Chưa có thông tin thành phố, quốc gia
               </Text>
             )}
           </View>
@@ -179,12 +254,23 @@ const UserXProfileScreen = () => {
             />
             <TouchableOpacity>
               <Text style={styles.introLineText}>
-                Xem thông tin giới thiệu của userX
+                Xem thông tin giới thiệu của {userX.username}
               </Text>
             </TouchableOpacity>
           </View>
-          <FriendGallery />
+          <FriendGallery friends={friends} total={total} userXId={userXId} />
         </View>
+        {post.length == 0 ? (
+          <View style={styles.noPost}>
+            <Text style={{ fontSize: 16 }}>Chưa có bài post nào!</Text>
+          </View>
+        ) : (
+          <View>
+            {post.map((item) => {
+              return <PostItem postData={item} key={item.id} />;
+            })}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -293,5 +379,11 @@ const styles = StyleSheet.create({
   introHightLight: {
     fontWeight: "bold",
     fontSize: 16,
+  },
+  noPost: {
+    height: 100,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

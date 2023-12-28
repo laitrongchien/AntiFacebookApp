@@ -30,8 +30,54 @@ const getRequestedFriend = async (index, count) => {
   });
 };
 
+const setRequestFriend = async (userId) => {
+  return await axios.post("/set_request_friend", {
+    user_id: userId,
+  });
+};
+
+const delRequestFriend = async (userId) => {
+  return await axios.post("/del_request_friend", {
+    user_id: userId,
+  });
+};
+
+const setAcceptFriend = async (userId, isAccept) => {
+  try {
+    const res = await axios.post("/set_accept_friend", {
+      user_id: userId,
+      is_accept: isAccept,
+    });
+    // console.log(res);
+    return res;
+  } catch (err) {
+    console.log(err.response.data.message);
+  }
+};
+
 const getSuggestedFriend = async (index, count) => {
   return await axios.post("/get_suggested_friends", {
+    index,
+    count,
+  });
+};
+
+const unFriend = async (userId) => {
+  return await axios.post("/unfriend", {
+    user_id: userId,
+  });
+};
+
+const getUserFriends = async (userId, index, count) => {
+  return await axios.post("/get_user_friends", {
+    user_id: userId,
+    index,
+    count,
+  });
+};
+
+const getNotification = async (index, count) => {
+  return await axios.post("/get_notification", {
     index,
     count,
   });
@@ -42,4 +88,10 @@ export const user = {
   setUserInfo,
   getRequestedFriend,
   getSuggestedFriend,
+  setRequestFriend,
+  setAcceptFriend,
+  delRequestFriend,
+  getUserFriends,
+  unFriend,
+  getNotification,
 };

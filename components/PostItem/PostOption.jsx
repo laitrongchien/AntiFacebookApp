@@ -4,11 +4,45 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
+  Alert,
   Clipboard,
 } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
+import { useSelector, useDispatch } from "react-redux";
+import { deletePost } from "../../redux/actions/postAction";
+import { navigation } from "../../rootNavigation";
 
-const PostOptions = () => {
+const PostOptions = ({ authorId, setPostOptionVisible, postId, postData }) => {
+  const { id } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const handleDeletePost = () => {
+    setPostOptionVisible(false);
+    Alert.alert(
+      "Xóa bài viết",
+      "Bạn có chắc muốn xóa bài viết này?",
+      [
+        {
+          text: "Hủy",
+          style: "cancel",
+        },
+        {
+          text: "Xóa",
+          onPress: () => {
+            dispatch(deletePost(postId));
+            console.log("Bài viết đã bị xóa");
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const handleEditPost = () => {
+    setPostOptionVisible(false);
+    navigation.navigate("EditPost", { postData: postData });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.postOptionsWrapper}>
@@ -28,35 +62,44 @@ const PostOptions = () => {
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.postOptionItem}>
+        {id == authorId && (
+          <TouchableOpacity
+            style={styles.postOptionItem}
+            onPress={handleDeletePost}
+          >
+            <View style={styles.optionIcon}>
+              <VectorIcon
+                name="close-box"
+                type="MaterialCommunityIcons"
+                size={28}
+                color="#000"
+              />
+            </View>
+            <View>
+              <Text style={styles.postOptionTitle}>Xóa bài viết</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          style={styles.postOptionItem}
+          onPress={handleEditPost}
+        >
           <View style={styles.optionIcon}>
             <VectorIcon
-              name="close-box"
+              name={id == authorId ? "pencil" : "message-alert"}
               type="MaterialCommunityIcons"
               size={28}
               color="#000"
             />
           </View>
           <View>
-            <Text style={styles.postOptionTitle}>Ẩn bài viết</Text>
-            <Text style={styles.postOptionSubtitle}>
-              Ẩn các bài viết tương tự
+            <Text style={styles.postOptionTitle}>
+              {id == authorId ? "Chỉnh sửa bài viết" : "Báo cáo bài viết"}
             </Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.postOptionItem}>
-          <View style={styles.optionIcon}>
-            <VectorIcon
-              name="message-alert"
-              type="MaterialCommunityIcons"
-              size={28}
-              color="#000"
-            />
-          </View>
-          <View>
-            <Text style={styles.postOptionTitle}>Báo cáo bài viết</Text>
             <Text style={styles.postOptionSubtitle}>
-              Chúng tôi sẽ không cho biết ai đã báo cáo
+              {id == authorId
+                ? "Chỉnh sửa bài viết của bạn"
+                : "Chúng tôi sẽ không cho biết ai đã báo cáo"}
             </Text>
           </View>
         </TouchableOpacity>
