@@ -65,30 +65,14 @@ const VideoControl = ({ videoUrl, videoId }) => {
         isMuted={isMuted}
         shouldPlay={playingId === videoId && isPlaying}
         onError={(err) => console.log(err)}
-        onLoad={(status) => console.log(status)}
         style={styles.video}
       />
-      <TouchableOpacity
-        style={styles.btnToggleVolume}
-        onPress={onPressToggleVolume}
-      >
-        <Animated.View
-          style={{ position: "absolute", opacity: muteVolumeIconOpacity }}
-        >
-          <VectorIcon
-            name="volume-mute"
-            type="MaterialCommunityIcons"
-            size={24}
-            color="#fff"
-          />
+      <TouchableOpacity style={styles.btnToggleVolume} onPress={onPressToggleVolume}>
+        <Animated.View style={{ position: "absolute", opacity: muteVolumeIconOpacity }}>
+          <VectorIcon name="volume-mute" type="MaterialCommunityIcons" size={24} color="#fff" />
         </Animated.View>
         <Animated.View style={{ opacity: volumeIconOpacity }}>
-          <VectorIcon
-            name="volume-high"
-            type="MaterialCommunityIcons"
-            size={24}
-            color="#fff"
-          />
+          <VectorIcon name="volume-high" type="MaterialCommunityIcons" size={24} color="#fff" />
         </Animated.View>
       </TouchableOpacity>
     </View>

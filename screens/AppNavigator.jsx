@@ -1,45 +1,46 @@
-import { StatusBar } from "react-native";
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar } from "react-native";
 import { useSelector } from "react-redux";
-import { navigationRef } from "../rootNavigation";
-import LoginScreen from "./LoginScreen";
-import StartRegisterScreen from "./Register/StartRegisterScreen";
-import MainScreen from "./MainScreen";
+
+import AllFeel from "./AllFeel";
 import CreatePost from "./CreatePost";
 import EditPost from "./EditPost";
+import AllFriend from "./FriendTab/AllFriend";
+import AllRecommend from "./FriendTab/AllRecommend";
+import AllRequest from "./FriendTab/AllRequest";
+import AllXFriend from "./FriendTab/AllXFriend";
+import LoginScreen from "./LoginScreen";
+import MainScreen from "./MainScreen";
 import PostDetailScreen from "./PostDetailScreen";
 import PostListViewScreen from "./PostListViewScreen";
-import Search from "./Search";
 import ProfileScreen from "./ProfileTab";
-import UserXProfileScreen from "./ProfileTab/UserXProfile";
-import ProfileSetting from "./ProfileTab/ProfileSetting";
-import UserXProfileSetting from "./ProfileTab/UserXProfileSetting";
-import EditProfile from "./ProfileTab/EditProfile";
-import EditDetailInfo from "./ProfileTab/EditDetailInfo";
+import AvatarOptions from "./ProfileTab/AvartarOptions";
 import CreateAvatar from "./ProfileTab/CreateAvatar";
 import CreateCover from "./ProfileTab/CreateCover";
-import FullNameScreen from "./Register/FullNameScreen";
+import EditDetailInfo from "./ProfileTab/EditDetailInfo";
+import EditProfile from "./ProfileTab/EditProfile";
+import ProfileSetting from "./ProfileTab/ProfileSetting";
+import UserXProfileScreen from "./ProfileTab/UserXProfile";
+import UserXProfileSetting from "./ProfileTab/UserXProfileSetting";
 import ChangeAvatarScreen from "./Register/ChangeAvatarScreen";
 import DateOfBirthScreen from "./Register/DateOfBirthScreen";
-import GenderScreen from "./Register/GenderScreen";
 import EmailScreen from "./Register/EmailScreen";
+import FullNameScreen from "./Register/FullNameScreen";
+import GenderScreen from "./Register/GenderScreen";
 import PasswordScreen from "./Register/PasswordScreen";
 import PolicyScreen from "./Register/PolicyScreen";
-import AvatarOptions from "./ProfileTab/AvartarOptions";
-// import { onAuthStateChanged } from "firebase/auth";
-// import { auth } from "./firebase/config";
-import AllRequest from "./FriendTab/AllRequest";
-import AllRecommend from "./FriendTab/AllRecommend";
-import AllFriend from "./FriendTab/AllFriend";
-import AllXFriend from "./FriendTab/AllXFriend";
-import AddFriendRequest from "../components/Friend/AddFriendRequest";
-import WatchDetailList from "./WatchTab/WatchDetailList";
-import AllFeel from "./AllFeel";
+import StartRegisterScreen from "./Register/StartRegisterScreen";
 import VerifyScreen from "./Register/VerifyScreen";
 import EmailResetScreen from "./ResetPassword/EmailResetScreen";
-import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
 import NewPasswordScreen from "./ResetPassword/NewPasswordScreen";
+import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
+import Search from "./Search";
+// import { onAuthStateChanged } from "firebase/auth";
+// import { auth } from "./firebase/config";
+import WatchDetailList from "./WatchTab/WatchDetailList";
+import AddFriendRequest from "../components/Friend/AddFriendRequest";
+import { navigationRef } from "../rootNavigation";
 
 const Stack = createStackNavigator();
 
@@ -73,38 +74,19 @@ const AppNavigator = () => {
       <Stack.Navigator screenOptions={navigationOptions}>
         {token ? (
           <>
-            {!username && (
-              <Stack.Screen name="FullNameScreen" component={FullNameScreen} />
-            )}
-            {!avatar && (
-              <Stack.Screen
-                name="ChangeAvatarScreen"
-                component={ChangeAvatarScreen}
-              />
-            )}
+            {!username && <Stack.Screen name="FullNameScreen" component={FullNameScreen} />}
+            {!avatar && <Stack.Screen name="ChangeAvatarScreen" component={ChangeAvatarScreen} />}
 
             <Stack.Screen name="MainScreen" component={MainScreen} />
             <Stack.Screen name="CreatePost" component={CreatePost} />
             <Stack.Screen name="EditPost" component={EditPost} />
-            <Stack.Screen
-              name="PostDetailScreen"
-              component={PostDetailScreen}
-            />
-            <Stack.Screen
-              name="PostListViewScreen"
-              component={PostListViewScreen}
-            />
+            <Stack.Screen name="PostDetailScreen" component={PostDetailScreen} />
+            <Stack.Screen name="PostListViewScreen" component={PostListViewScreen} />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-            <Stack.Screen
-              name="UserXProfileScreen"
-              component={UserXProfileScreen}
-            />
+            <Stack.Screen name="UserXProfileScreen" component={UserXProfileScreen} />
             <Stack.Screen name="ProfileSetting" component={ProfileSetting} />
-            <Stack.Screen
-              name="UserXProfileSetting"
-              component={UserXProfileSetting}
-            />
+            <Stack.Screen name="UserXProfileSetting" component={UserXProfileSetting} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="EditDetailInfo" component={EditDetailInfo} />
             <Stack.Screen name="CreateAvatar" component={CreateAvatar} />
@@ -114,10 +96,7 @@ const AppNavigator = () => {
               name="AvatarOptions"
               component={AvatarOptions}
             />
-            <Stack.Screen
-              name="AddFriendRequest"
-              component={AddFriendRequest}
-            />
+            <Stack.Screen name="AddFriendRequest" component={AddFriendRequest} />
             <Stack.Screen name="AllRequest" component={AllRequest} />
             <Stack.Screen name="AllRecommend" component={AllRecommend} />
             <Stack.Screen name="AllFriend" component={AllFriend} />
@@ -128,31 +107,16 @@ const AppNavigator = () => {
         ) : (
           <>
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
-            <Stack.Screen
-              name="StartRegisterScreen"
-              component={StartRegisterScreen}
-            />
-            <Stack.Screen
-              name="DateOfBirthScreen"
-              component={DateOfBirthScreen}
-            />
+            <Stack.Screen name="StartRegisterScreen" component={StartRegisterScreen} />
+            <Stack.Screen name="DateOfBirthScreen" component={DateOfBirthScreen} />
             <Stack.Screen name="GenderScreen" component={GenderScreen} />
             <Stack.Screen name="EmailScreen" component={EmailScreen} />
             <Stack.Screen name="PasswordScreen" component={PasswordScreen} />
             <Stack.Screen name="PolicyScreen" component={PolicyScreen} />
             <Stack.Screen name="VerifyScreen" component={VerifyScreen} />
-            <Stack.Screen
-              name="EmailResetScreen"
-              component={EmailResetScreen}
-            />
-            <Stack.Screen
-              name="VerifyCodeResetScreen"
-              component={VerifyCodeResetScreen}
-            />
-            <Stack.Screen
-              name="NewPasswordScreen"
-              component={NewPasswordScreen}
-            />
+            <Stack.Screen name="EmailResetScreen" component={EmailResetScreen} />
+            <Stack.Screen name="VerifyCodeResetScreen" component={VerifyCodeResetScreen} />
+            <Stack.Screen name="NewPasswordScreen" component={NewPasswordScreen} />
           </>
         )}
       </Stack.Navigator>

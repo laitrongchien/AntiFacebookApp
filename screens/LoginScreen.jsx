@@ -21,12 +21,14 @@ import { login } from "../redux/actions/authAction";
 import { navigation } from "../rootNavigation";
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    priority: "MAX",
-  }),
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      priority: "high",
+    };
+  },
 });
 
 const LoginScreen = () => {
@@ -36,9 +38,8 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
-  const [notificationTitle, setNotificationTitle] = useState("");
-  const [notificationBody, setNotificationBody] = useState("");
   const notificationListener = useRef();
+  const responseListener = useRef();
   const [loading, setLoading] = useState(false);
   const device_id = "string";
   const dispatch = useDispatch();
@@ -75,7 +76,6 @@ const LoginScreen = () => {
       //     .slice(0, devices.length - 1)
       //     .forEach((device) => sendPushNotification(device));
       // }
-      console.log(expoPushToken);
       await dispatch(login(email, password, device_id));
       await setting.setDevToken(defaultDevType, expoPushToken);
       setLoading(false);
@@ -90,24 +90,17 @@ const LoginScreen = () => {
 
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-      // setNotification(notification);
-      setNotificationTitle(notification.request.content.data.title || "");
-      setNotificationBody(notification.request.content.data.body || "");
-
-      // Log to console
-      console.log("Notification Title:", notificationTitle);
-      console.log("Notification Body:", notificationBody);
+      setNotification(notification);
     });
 
     // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-    // responseListener.current =
-    //   Notifications.addNotificationResponseReceivedListener((response) => {
-    //     console.log(response);
-    //   });
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log(response);
+    });
 
     return () => {
       Notifications.removeNotificationSubscription(notificationListener);
-      // Notifications.removeNotificationSubscription(responseListener);
+      Notifications.removeNotificationSubscription(responseListener);
     };
   }, []);
 
@@ -154,7 +147,7 @@ const LoginScreen = () => {
           />
           {error && (
             <Text style={{ marginTop: 8, color: "#a81414" }}>
-              {error == "Email or password is not correct" && "Tài khoản hoặc mật khẩu không đúng"}
+              {error === "Email or password is not correct" && "Tài khoản hoặc mật khẩu không đúng"}
             </Text>
           )}
           <TouchableOpacity style={styles.loginButton} onPress={onLoginPress}>

@@ -1,3 +1,5 @@
+import { Video, ResizeMode } from "expo-av";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,15 +16,14 @@ import {
   Platform,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
-import VectorIcon from "../utils/VectorIcon";
-import { pickImage, pickVideo } from "../utils/PickImage";
-import * as navigation from "../rootNavigation";
+
 import BottomModal from "../components/BottomModal";
 import DiscardPostOption from "../components/DiscardPostOption";
 import PreviewImage from "../components/PreviewImage";
-import { Video, ResizeMode } from "expo-av";
 import { createPost } from "../redux/actions/postAction";
+import * as navigation from "../rootNavigation";
+import { pickImage, pickVideo } from "../utils/PickImage";
+import VectorIcon from "../utils/VectorIcon";
 
 const CreatePost = () => {
   const [showDefaultOptions, setShowDefaultOptions] = useState(true);
@@ -35,20 +36,14 @@ const CreatePost = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setShowDefaultOptions(false);
-        setKeyboardIsOpen(true);
-      }
-    );
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+      setShowDefaultOptions(false);
+      setKeyboardIsOpen(true);
+    });
 
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardIsOpen(false);
-      }
-    );
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardIsOpen(false);
+    });
 
     return () => {
       keyboardDidShowListener.remove();
@@ -94,10 +89,7 @@ const CreatePost = () => {
         console.log(fileName, fileType);
 
         const imageData = {
-          uri:
-            Platform.OS === "android"
-              ? image.uri
-              : image.uri.replace("file://", ""),
+          uri: Platform.OS === "android" ? image.uri : image.uri.replace("file://", ""),
           type: "image/" + fileType,
           name: fileName,
         };
@@ -107,7 +99,7 @@ const CreatePost = () => {
 
     // Append video if available
     if (video) {
-      videoUri = video.uri.split("/");
+      const videoUri = video.uri.split("/");
       const fileNameWithType = videoUri[videoUri.length - 1];
       const [fileName, fileType] = fileNameWithType.split(".");
       formData.append("video", {
@@ -124,11 +116,7 @@ const CreatePost = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.parentContainer}
-      enabled
-      behavior="height"
-    >
+    <KeyboardAvoidingView style={styles.parentContainer} enabled behavior="height">
       <SafeAreaView style={styles.container}>
         <View style={styles.navigationBar}>
           <VectorIcon
@@ -141,26 +129,24 @@ const CreatePost = () => {
           <Text style={styles.navigationTitle}>Tạo bài viết</Text>
           <TouchableOpacity
             style={
-              text || images.length > 0
+              text.trim() !== "" || images.length > 0 || video
                 ? { ...styles.btnPost, backgroundColor: "#1877f2" }
                 : styles.btnPost
             }
-            disabled={!(text || images.length > 0 || video)}
-            onPress={handleCreatePost}
-          >
+            disabled={!(text.trim() !== "" || images.length > 0 || video)}
+            onPress={handleCreatePost}>
             <Text
               style={{
                 fontSize: 16,
-                color: text || images.length > 0 ? "#fff" : "#333",
-              }}
-            >
+                color: text.trim() !== "" || images.length > 0 || video ? "#fff" : "#333",
+              }}>
               ĐĂNG
             </Text>
           </TouchableOpacity>
         </View>
         <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
           <View style={styles.infoWrapper}>
-            <Image style={styles.avatar} source={{ uri: avatar }}></Image>
+            <Image style={styles.avatar} source={{ uri: avatar }} />
             <View>
               <Text style={styles.name}>{username}</Text>
               <View style={styles.postOption}>
@@ -200,7 +186,7 @@ const CreatePost = () => {
               setShowDefaultOptions(false);
             }}
             onChangeText={(text) => setText(text)}
-          ></TextInput>
+          />
           <PreviewImage images={images} setImages={setImages} />
           {video && (
             <View>
@@ -223,13 +209,11 @@ const CreatePost = () => {
               style={{
                 ...styles.optionsWrapper,
                 bottom: keyboardIsOpen ? 40 : 0,
-              }}
-            >
+              }}>
               <View style={styles.optionWrapper}>
                 <TouchableOpacity
                   style={{ alignItems: "center", flexBasis: "32%" }}
-                  onPress={handlePickImage}
-                >
+                  onPress={handlePickImage}>
                   <Image
                     style={styles.optionImage}
                     source={require("../assets/icons/cameraroll.png")}
@@ -238,21 +222,15 @@ const CreatePost = () => {
 
                 <TouchableOpacity
                   style={{ alignItems: "center", flexBasis: "32%" }}
-                  onPress={handlePickVideo}
-                >
+                  onPress={handlePickVideo}>
                   <Image
                     style={{ ...styles.optionImage, height: 40 }}
                     source={require("../assets/icons/video.png")}
                   />
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{ alignItems: "center", flexBasis: "32%" }}
-                >
-                  <Image
-                    style={styles.optionImage}
-                    source={require("../assets/icons/emoji.png")}
-                  />
+                <TouchableOpacity style={{ alignItems: "center", flexBasis: "32%" }}>
+                  <Image style={styles.optionImage} source={require("../assets/icons/emoji.png")} />
                 </TouchableOpacity>
               </View>
             </Animated.View>
@@ -263,8 +241,7 @@ const CreatePost = () => {
                   style={{
                     ...styles.optionWrapper,
                     justifyContent: "flex-start",
-                  }}
-                >
+                  }}>
                   <Image
                     style={{
                       ...styles.optionImage,
@@ -272,7 +249,7 @@ const CreatePost = () => {
                       marginRight: 15,
                     }}
                     source={require("../assets/icons/cameraroll.png")}
-                  ></Image>
+                  />
                   <Text style={{ fontSize: 16 }}>Ảnh</Text>
                 </View>
               </TouchableOpacity>
@@ -281,8 +258,7 @@ const CreatePost = () => {
                   style={{
                     ...styles.optionWrapper,
                     justifyContent: "flex-start",
-                  }}
-                >
+                  }}>
                   <Image
                     style={{
                       ...styles.optionImage,
@@ -292,7 +268,7 @@ const CreatePost = () => {
                       marginLeft: -4,
                     }}
                     source={require("../assets/icons/video.png")}
-                  ></Image>
+                  />
                   <Text style={{ fontSize: 16 }}>Video</Text>
                 </View>
               </TouchableOpacity>
@@ -301,8 +277,7 @@ const CreatePost = () => {
                   style={{
                     ...styles.optionWrapper,
                     justifyContent: "flex-start",
-                  }}
-                >
+                  }}>
                   <Image
                     style={{
                       ...styles.optionImage,
@@ -310,17 +285,14 @@ const CreatePost = () => {
                       marginRight: 15,
                     }}
                     source={require("../assets/icons/emoji.png")}
-                  ></Image>
+                  />
                   <Text style={{ fontSize: 16 }}>Cảm xúc/Hoạt động</Text>
                 </View>
               </TouchableOpacity>
             </Animated.View>
           )}
         </Animated.View>
-        <BottomModal
-          isVisible={showModal}
-          closeModal={() => setShowModal(false)}
-        >
+        <BottomModal isVisible={showModal} closeModal={() => setShowModal(false)}>
           <DiscardPostOption setShowModal={setShowModal} />
         </BottomModal>
       </SafeAreaView>
