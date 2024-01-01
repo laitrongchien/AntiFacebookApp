@@ -3,20 +3,17 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from "r
 
 import SearchApi from "../../api/search";
 import ExTouchableOpacity from "../../components/ExTouchableOpacity";
-// import { SCREEN_WIDTH } from "../../constants";
 import { navigation } from "../../rootNavigation";
 import VectorIcon from "../../utils/VectorIcon";
 
 const Search = () => {
   const [savedSearchList, setSavedSearchList] = useState([]);
+  const [inputText, setInputText] = useState("");
 
   useEffect(() => {
     const fetchSavedSearches = async () => {
       try {
-        console.log("Fetching saved searches...");
         const res = await SearchApi.get_saved_search(0, 10);
-        console.log("API response:", res.data);
-        console.log(res.data.length);
         setSavedSearchList(res.data);
       } catch (error) {
         console.error("Error fetching saved searches:", error);
@@ -28,22 +25,21 @@ const Search = () => {
 
   const handleDeleteSearch = async (id) => {
     try {
-      console.log("Deleting saved search with id:", id);
-      const res = await SearchApi.del_saved_search(id, 0);
-      console.log("API response:", res.data);
-
-      // Update the saved search list after deletion
-      setSavedSearchList((prevList) => {
-        const updatedList = prevList.filter((item) => item.id !== id);
-        return updatedList.slice(0, 10); // Take the first 10 elements
-      });
+      await SearchApi.del_saved_search(id, 0);
+      setSavedSearchList((prevList) => prevList.filter((item) => item.id !== id));
     } catch (error) {
       console.error("Error deleting saved search:", error);
     }
   };
 
+  const handleNavigateToSearchResult = (keyword) => {
+    navigation.navigate("SearchResult", { searchQuery: keyword });
+  };
+
   const renderItem = ({ item }) => (
-    <ExTouchableOpacity style={styles.recentSearchItem}>
+    <ExTouchableOpacity
+      style={styles.recentSearchItem}
+      onPress={() => handleNavigateToSearchResult(item.keyword)}>
       <Text style={styles.resultSearch}>{item.keyword}</Text>
       <TouchableOpacity onPress={() => handleDeleteSearch(item.id)}>
         <VectorIcon name="close" type="MaterialCommunityIcons" color="#666" size={16} />
@@ -69,22 +65,28 @@ const Search = () => {
           placeholderTextColor="#333"
           selectionColor="#333"
           underlineColorAndroid="transparent"
+          value={inputText}
+          onChangeText={(text) => setInputText(text)}
+          onSubmitEditing={() => navigation.navigate("SearchResult", { searchQuery: inputText })}
         />
       </View>
       <View style={styles.titleWrapper}>
         <Text style={styles.titleText}>Gần đây</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("AllSavedSearch", { savedSearchList })}>
           <Text style={styles.viewAllText}>Xem tất cả</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.recentSearchWrapper}>
-        <FlatList data={savedSearchList} keyExtractor={(item) => item.id} renderItem={renderItem} />
+        <FlatList
+          data={savedSearchList}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+        />
       </View>
     </View>
   );
 };
-
-export default Search;
 
 const styles = StyleSheet.create({
   container: {
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
     color: "#1877f2",
   },
   recentSearchWrapper: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    flex: 1,
   },
   recentSearchItem: {
     paddingHorizontal: 16,
@@ -144,3 +146,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default Search;

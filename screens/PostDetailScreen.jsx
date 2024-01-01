@@ -239,8 +239,7 @@ const PostDetailScreen = () => {
             }}
           />
           <Text style={{ color: "#666" }}>
-            {/* {numReact !== undefined ? numReact : parseInt(kudos) + parseInt(disappointed)} */}
-            {numReact}
+            {numReact !== undefined ? numReact : parseInt(kudos) + parseInt(disappointed)}
           </Text>
         </TouchableOpacity>
         {!loadingComments ? (

@@ -11,6 +11,9 @@ import EditPost from "./EditPost";
 import PostDetailScreen from "./PostDetailScreen";
 import PostListViewScreen from "./PostListViewScreen";
 import Search from "./Search";
+import SearchResult from "./Search/SearchResult";
+import ViewAllUserItem from "./Search/ViewAllUserItem";
+import AllSavedSearch from "./Search/AllSavedSearch";
 import ProfileScreen from "./ProfileTab";
 import UserXProfileScreen from "./ProfileTab/UserXProfile";
 import ProfileSetting from "./ProfileTab/ProfileSetting";
@@ -73,38 +76,22 @@ const AppNavigator = () => {
       <Stack.Navigator screenOptions={navigationOptions}>
         {token ? (
           <>
-            {!username && (
-              <Stack.Screen name="FullNameScreen" component={FullNameScreen} />
-            )}
-            {!avatar && (
-              <Stack.Screen
-                name="ChangeAvatarScreen"
-                component={ChangeAvatarScreen}
-              />
-            )}
+            {!username && <Stack.Screen name="FullNameScreen" component={FullNameScreen} />}
+            {!avatar && <Stack.Screen name="ChangeAvatarScreen" component={ChangeAvatarScreen} />}
 
             <Stack.Screen name="MainScreen" component={MainScreen} />
             <Stack.Screen name="CreatePost" component={CreatePost} />
             <Stack.Screen name="EditPost" component={EditPost} />
-            <Stack.Screen
-              name="PostDetailScreen"
-              component={PostDetailScreen}
-            />
-            <Stack.Screen
-              name="PostListViewScreen"
-              component={PostListViewScreen}
-            />
+            <Stack.Screen name="PostDetailScreen" component={PostDetailScreen} />
+            <Stack.Screen name="PostListViewScreen" component={PostListViewScreen} />
             <Stack.Screen name="Search" component={Search} />
+            <Stack.Screen name="SearchResult" component={SearchResult} />
+            <Stack.Screen name="ViewAllUserItem" component={ViewAllUserItem} />
+            <Stack.Screen name="AllSavedSearch" component={AllSavedSearch} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-            <Stack.Screen
-              name="UserXProfileScreen"
-              component={UserXProfileScreen}
-            />
+            <Stack.Screen name="UserXProfileScreen" component={UserXProfileScreen} />
             <Stack.Screen name="ProfileSetting" component={ProfileSetting} />
-            <Stack.Screen
-              name="UserXProfileSetting"
-              component={UserXProfileSetting}
-            />
+            <Stack.Screen name="UserXProfileSetting" component={UserXProfileSetting} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="EditDetailInfo" component={EditDetailInfo} />
             <Stack.Screen name="CreateAvatar" component={CreateAvatar} />
@@ -114,10 +101,7 @@ const AppNavigator = () => {
               name="AvatarOptions"
               component={AvatarOptions}
             />
-            <Stack.Screen
-              name="AddFriendRequest"
-              component={AddFriendRequest}
-            />
+            <Stack.Screen name="AddFriendRequest" component={AddFriendRequest} />
             <Stack.Screen name="AllRequest" component={AllRequest} />
             <Stack.Screen name="AllRecommend" component={AllRecommend} />
             <Stack.Screen name="AllFriend" component={AllFriend} />
@@ -128,31 +112,16 @@ const AppNavigator = () => {
         ) : (
           <>
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
-            <Stack.Screen
-              name="StartRegisterScreen"
-              component={StartRegisterScreen}
-            />
-            <Stack.Screen
-              name="DateOfBirthScreen"
-              component={DateOfBirthScreen}
-            />
+            <Stack.Screen name="StartRegisterScreen" component={StartRegisterScreen} />
+            <Stack.Screen name="DateOfBirthScreen" component={DateOfBirthScreen} />
             <Stack.Screen name="GenderScreen" component={GenderScreen} />
             <Stack.Screen name="EmailScreen" component={EmailScreen} />
             <Stack.Screen name="PasswordScreen" component={PasswordScreen} />
             <Stack.Screen name="PolicyScreen" component={PolicyScreen} />
             <Stack.Screen name="VerifyScreen" component={VerifyScreen} />
-            <Stack.Screen
-              name="EmailResetScreen"
-              component={EmailResetScreen}
-            />
-            <Stack.Screen
-              name="VerifyCodeResetScreen"
-              component={VerifyCodeResetScreen}
-            />
-            <Stack.Screen
-              name="NewPasswordScreen"
-              component={NewPasswordScreen}
-            />
+            <Stack.Screen name="EmailResetScreen" component={EmailResetScreen} />
+            <Stack.Screen name="VerifyCodeResetScreen" component={VerifyCodeResetScreen} />
+            <Stack.Screen name="NewPasswordScreen" component={NewPasswordScreen} />
           </>
         )}
       </Stack.Navigator>
