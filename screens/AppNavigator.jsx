@@ -14,13 +14,6 @@ import LoginScreen from "./LoginScreen";
 import MainScreen from "./MainScreen";
 import PostDetailScreen from "./PostDetailScreen";
 import PostListViewScreen from "./PostListViewScreen";
-<<<<<<< HEAD
-import Search from "./Search";
-import SearchResult from "./Search/SearchResult";
-import ViewAllUserItem from "./Search/ViewAllUserItem";
-import AllSavedSearch from "./Search/AllSavedSearch";
-=======
->>>>>>> ba2717fb6055bbcd79a5d9b09a4a78757af50482
 import ProfileScreen from "./ProfileTab";
 import AvatarOptions from "./ProfileTab/AvartarOptions";
 import CreateAvatar from "./ProfileTab/CreateAvatar";
@@ -43,6 +36,9 @@ import EmailResetScreen from "./ResetPassword/EmailResetScreen";
 import NewPasswordScreen from "./ResetPassword/NewPasswordScreen";
 import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
 import Search from "./Search";
+import AllSavedSearch from "./Search/AllSavedSearch";
+import SearchResult from "./Search/SearchResult";
+import ViewAllUserItem from "./Search/ViewAllUserItem";
 // import { onAuthStateChanged } from "firebase/auth";
 // import { auth } from "./firebase/config";
 import WatchDetailList from "./WatchTab/WatchDetailList";
