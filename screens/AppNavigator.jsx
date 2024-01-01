@@ -1,48 +1,53 @@
-import { StatusBar } from "react-native";
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar } from "react-native";
 import { useSelector } from "react-redux";
-import { navigationRef } from "../rootNavigation";
-import LoginScreen from "./LoginScreen";
-import StartRegisterScreen from "./Register/StartRegisterScreen";
-import MainScreen from "./MainScreen";
+
+import AllFeel from "./AllFeel";
 import CreatePost from "./CreatePost";
 import EditPost from "./EditPost";
+import AllFriend from "./FriendTab/AllFriend";
+import AllRecommend from "./FriendTab/AllRecommend";
+import AllRequest from "./FriendTab/AllRequest";
+import AllXFriend from "./FriendTab/AllXFriend";
+import LoginScreen from "./LoginScreen";
+import MainScreen from "./MainScreen";
 import PostDetailScreen from "./PostDetailScreen";
 import PostListViewScreen from "./PostListViewScreen";
+<<<<<<< HEAD
 import Search from "./Search";
 import SearchResult from "./Search/SearchResult";
 import ViewAllUserItem from "./Search/ViewAllUserItem";
 import AllSavedSearch from "./Search/AllSavedSearch";
+=======
+>>>>>>> ba2717fb6055bbcd79a5d9b09a4a78757af50482
 import ProfileScreen from "./ProfileTab";
-import UserXProfileScreen from "./ProfileTab/UserXProfile";
-import ProfileSetting from "./ProfileTab/ProfileSetting";
-import UserXProfileSetting from "./ProfileTab/UserXProfileSetting";
-import EditProfile from "./ProfileTab/EditProfile";
-import EditDetailInfo from "./ProfileTab/EditDetailInfo";
+import AvatarOptions from "./ProfileTab/AvartarOptions";
 import CreateAvatar from "./ProfileTab/CreateAvatar";
 import CreateCover from "./ProfileTab/CreateCover";
-import FullNameScreen from "./Register/FullNameScreen";
+import EditDetailInfo from "./ProfileTab/EditDetailInfo";
+import EditProfile from "./ProfileTab/EditProfile";
+import ProfileSetting from "./ProfileTab/ProfileSetting";
+import UserXProfileScreen from "./ProfileTab/UserXProfile";
+import UserXProfileSetting from "./ProfileTab/UserXProfileSetting";
 import ChangeAvatarScreen from "./Register/ChangeAvatarScreen";
 import DateOfBirthScreen from "./Register/DateOfBirthScreen";
-import GenderScreen from "./Register/GenderScreen";
 import EmailScreen from "./Register/EmailScreen";
+import FullNameScreen from "./Register/FullNameScreen";
+import GenderScreen from "./Register/GenderScreen";
 import PasswordScreen from "./Register/PasswordScreen";
 import PolicyScreen from "./Register/PolicyScreen";
-import AvatarOptions from "./ProfileTab/AvartarOptions";
-// import { onAuthStateChanged } from "firebase/auth";
-// import { auth } from "./firebase/config";
-import AllRequest from "./FriendTab/AllRequest";
-import AllRecommend from "./FriendTab/AllRecommend";
-import AllFriend from "./FriendTab/AllFriend";
-import AllXFriend from "./FriendTab/AllXFriend";
-import AddFriendRequest from "../components/Friend/AddFriendRequest";
-import WatchDetailList from "./WatchTab/WatchDetailList";
-import AllFeel from "./AllFeel";
+import StartRegisterScreen from "./Register/StartRegisterScreen";
 import VerifyScreen from "./Register/VerifyScreen";
 import EmailResetScreen from "./ResetPassword/EmailResetScreen";
-import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
 import NewPasswordScreen from "./ResetPassword/NewPasswordScreen";
+import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
+import Search from "./Search";
+// import { onAuthStateChanged } from "firebase/auth";
+// import { auth } from "./firebase/config";
+import WatchDetailList from "./WatchTab/WatchDetailList";
+import AddFriendRequest from "../components/Friend/AddFriendRequest";
+import { navigationRef } from "../rootNavigation";
 
 const Stack = createStackNavigator();
 

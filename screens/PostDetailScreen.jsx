@@ -33,7 +33,9 @@ const PostDetailScreen = () => {
   const [markId, setMarkId] = useState();
   const [isReact, setIsReact] = useState(is_felt);
   const [numReact, setNumReact] = useState(
-    parseInt(feel, 10) || parseInt(kudos, 10) + parseInt(disappointed, 10),
+    parseInt(feel, 10) === 0
+      ? 0
+      : parseInt(feel, 10) || parseInt(kudos, 10) + parseInt(disappointed, 10),
   );
   const [reactionBarVisible, setReactionBarVisible] = useState(false);
   const comments = useSelector((state) => state.comments);
@@ -45,7 +47,6 @@ const PostDetailScreen = () => {
 
   const createComment = () => {
     if (markId) {
-      // console.log(markId);
       dispatch(createCommentMark(postData.id, content, defaultIndex, defaultCount, markId));
     } else {
       dispatch(createMark(postData.id, content, defaultIndex, defaultCount, defaultMarkType));
@@ -238,9 +239,7 @@ const PostDetailScreen = () => {
               marginLeft: -4,
             }}
           />
-          <Text style={{ color: "#666" }}>
-            {numReact !== undefined ? numReact : parseInt(kudos) + parseInt(disappointed)}
-          </Text>
+          <Text style={{ color: "#666" }}>{isNaN(numReact) ? 0 : numReact}</Text>
         </TouchableOpacity>
         {!loadingComments ? (
           comments?.length !== 0 ? (
