@@ -6,24 +6,44 @@ import SearchApi from "../../api/search";
 import PostItem from "../../components/PostItem";
 import { navigation } from "../../rootNavigation";
 import VectorIcon from "../../utils/VectorIcon";
+import blockApi from "../../api/block";
 
 const SearchResult = ({ route }) => {
+  const [blockList, setBlockList] = useState([]);
   const [inputText, setInputText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [userResults, setUserResults] = useState([]);
+  const [id_Block, setId_Block] = useState([]);
 
   useEffect(() => {
-    const { searchQuery } = route.params;
-    setInputText(searchQuery);
-    performSearch(searchQuery);
+    fetchBlockList();
   }, []);
 
-  const performSearch = async (query) => {
+  const fetchBlockList = async () => {
     try {
+      const response = await blockApi.get_list_blocks(0, 20);
+      const newId_Block = response.data.map((item) => item.id);
+      setId_Block(newId_Block);
+      if (route.params?.searchQuery) {
+        performSearch(route.params.searchQuery, newId_Block);
+      }
+    } catch (error) {
+      console.error("Error fetching block list:", error);
+    }
+  };
+
+  const performSearch = async (query, id_Block) => {
+    try {
+      // Fetch search results
       const searchRes = await SearchApi.search(query, null, 0, 10);
-      const userRes = await SearchApi.search_user(query, 0, 10);
       setSearchResults(searchRes.data);
-      setUserResults(userRes.data);
+
+      // Fetch user results
+      const userRes = await SearchApi.search_user(query, 0, 10);
+      const newResults = userRes.data;
+      // Lọc ngay lập tức kết quả người dùng dựa trên id_Block
+      const filteredUserResults = newResults.filter((user) => !id_Block.includes(user.id));
+      setUserResults(filteredUserResults);
     } catch (error) {
       console.error("Error performing search:", error);
     }
@@ -47,12 +67,12 @@ const SearchResult = ({ route }) => {
           underlineColorAndroid="transparent"
           value={inputText}
           onChangeText={setInputText}
-          onSubmitEditing={() => performSearch(inputText)}
+          onSubmitEditing={() => performSearch(inputText, id_Block)}
         />
       </View>
       <FlatList
         ListHeaderComponent={() =>
-          userResults.length > 0 && ( // Conditional rendering based on userResults
+          userResults.length > 0 && (
             <View style={styles.userResultsList}>
               <Text style={styles.heading}>Mọi người</Text>
               {userResults.slice(0, 3).map((item) => (
@@ -66,9 +86,17 @@ const SearchResult = ({ route }) => {
             </View>
           )
         }
-        data={searchResults}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PostItem postData={item} />}
+        data={searchResults}
+        renderItem={({ item }) => {
+          // Check if item.id is in the id_Block array
+          if (id_Block.includes(item.id)) {
+            return null; // Do not render the item
+          }
+
+          // Render the item
+          return <PostItem postData={item} />;
+        }}
       />
     </View>
   );

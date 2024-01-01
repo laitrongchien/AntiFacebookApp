@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Clipboard,
-  //   ToastAndroid,
+  ToastAndroid,
 } from "react-native";
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
@@ -23,9 +23,12 @@ const UserXProfileSetting = () => {
   const blockUser = async () => {
     try {
       await blockApi.set_block(userXId);
-      // Optionally, you can perform additional actions after blocking
+      // Hiển thị Toast khi block thành công
+      ToastAndroid.show("Bạn chặn người dùng thành công", ToastAndroid.SHORT);
       console.log("User blocked successfully");
     } catch (error) {
+      // Hiển thị Toast khi xảy ra lỗi
+      ToastAndroid.show("Bạn đã chặn người dùng này rồi", ToastAndroid.SHORT);
       console.error("Error blocking user:", error);
     }
   };
