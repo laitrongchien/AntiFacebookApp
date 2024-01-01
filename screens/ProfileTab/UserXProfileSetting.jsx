@@ -10,6 +10,7 @@ import {
 import VectorIcon from "../../utils/VectorIcon";
 import { navigation } from "../../rootNavigation";
 import { useRoute } from "@react-navigation/native";
+import blockApi from "../../api/block";
 
 const UserXProfileSetting = () => {
   const route = useRoute();
@@ -19,24 +20,24 @@ const UserXProfileSetting = () => {
     // ToastAndroid.show("Đã sao chép vào bộ nhớ tạm", ToastAndroid.SHORT);
   };
 
+  const blockUser = async () => {
+    try {
+      await blockApi.set_block(userXId);
+      // Optionally, you can perform additional actions after blocking
+      console.log("User blocked successfully");
+    } catch (error) {
+      console.error("Error blocking user:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.navigationBar}>
-        <TouchableOpacity
-          style={styles.btnBack}
-          onPress={() => navigation.goBack()}
-        >
-          <VectorIcon
-            name="arrow-left"
-            type="MaterialCommunityIcons"
-            color="#000"
-            size={32}
-          />
+        <TouchableOpacity style={styles.btnBack} onPress={() => navigation.goBack()}>
+          <VectorIcon name="arrow-left" type="MaterialCommunityIcons" color="#000" size={32} />
         </TouchableOpacity>
         <View style={styles.navigationTitle}>
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            Cài đặt trang cá nhân
-          </Text>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Cài đặt trang cá nhân</Text>
         </View>
       </View>
       <ScrollView>
@@ -52,7 +53,7 @@ const UserXProfileSetting = () => {
             </View>
             <Text style={styles.settingTxt}>Trạng thái trang cá nhân</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingCategory}>
+          <TouchableOpacity style={styles.settingCategory} onPress={blockUser}>
             <View style={styles.settingIcon}>
               <VectorIcon
                 name="account-cancel-outline"
@@ -63,16 +64,9 @@ const UserXProfileSetting = () => {
             </View>
             <Text style={styles.settingTxt}>Chặn</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{ ...styles.settingCategory, borderBottomWidth: 0 }}
-          >
+          <TouchableOpacity style={{ ...styles.settingCategory, borderBottomWidth: 0 }}>
             <View style={styles.settingIcon}>
-              <VectorIcon
-                name="magnify"
-                type="MaterialCommunityIcons"
-                color="#000"
-                size={24}
-              />
+              <VectorIcon name="magnify" type="MaterialCommunityIcons" color="#000" size={24} />
             </View>
             <Text style={styles.settingTxt}>Tìm kiếm trên trang cá nhân</Text>
           </TouchableOpacity>
@@ -89,16 +83,12 @@ const UserXProfileSetting = () => {
             </Text>
             <TouchableOpacity
               style={styles.btnCopy}
-              onPress={() =>
-                copyToClipboard(`https://www.facebook.com/profile/${userXName}`)
-              }
-            >
+              onPress={() => copyToClipboard(`https://www.facebook.com/profile/${userXName}`)}>
               <Text
                 style={{
                   color: "#000",
                   fontSize: 16,
-                }}
-              >
+                }}>
                 Sao chép liên kết
               </Text>
             </TouchableOpacity>

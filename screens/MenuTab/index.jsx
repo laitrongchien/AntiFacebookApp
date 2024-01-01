@@ -102,10 +102,13 @@ const MenuScreen = () => {
           <Image source={require("../../assets/images/memories.png")} style={styles.iconImage} />
           <Text style={{ fontWeight: "500", fontSize: 16 }}>Kỷ niệm</Text>
         </ExTouchableOpacity>
-        <ExTouchableOpacity style={styles.shortcut}>
-          <Image source={require("../../assets/images/video-game.png")} style={styles.iconImage} />
-          <Text style={{ fontWeight: "500", fontSize: 16 }}>Trò chơi</Text>
+        <ExTouchableOpacity
+          onPress={() => navigation.navigate("BlockList")}
+          style={styles.shortcut}>
+          <Image source={require("../../assets/images/block.png")} style={styles.iconImage} />
+          <Text style={{ fontWeight: "500", fontSize: 16 }}>Danh sách chặn</Text>
         </ExTouchableOpacity>
+
         <ExTouchableOpacity style={styles.shortcut}>
           <Image
             source={require("../../assets/images/messenger.png")}

@@ -12,6 +12,7 @@ import AllRequest from "./FriendTab/AllRequest";
 import AllXFriend from "./FriendTab/AllXFriend";
 import LoginScreen from "./LoginScreen";
 import MainScreen from "./MainScreen";
+import BlockList from "./MenuTab/BlockList";
 import PostDetailScreen from "./PostDetailScreen";
 import PostListViewScreen from "./PostListViewScreen";
 import ProfileScreen from "./ProfileTab";
@@ -109,6 +110,7 @@ const AppNavigator = () => {
             <Stack.Screen name="AllXFriend" component={AllXFriend} />
             <Stack.Screen name="AllFeel" component={AllFeel} />
             <Stack.Screen name="WatchDetailList" component={WatchDetailList} />
+            <Stack.Screen name="BlockList" component={BlockList} />
           </>
         ) : (
           <>
