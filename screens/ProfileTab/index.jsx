@@ -1,32 +1,24 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-import { navigation } from "../../rootNavigation";
-import { SCREEN_WIDTH } from "../../constants";
-import FriendGallery from "../../components/FriendGallery";
-import VectorIcon from "../../utils/VectorIcon";
 import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+
 import AvatarOptions from "./AvartarOptions";
 import CoverOptions from "./CoverOptions";
 import BottomModal from "../../components/BottomModal";
-import PostTool from "../../components/PostTool";
+import FriendGallery from "../../components/FriendGallery";
 import PostItem from "../../components/PostItem";
-import { useSelector, useDispatch } from "react-redux";
+import PostTool from "../../components/PostTool";
+import { SCREEN_WIDTH } from "../../constants";
 import { getListUserPosts } from "../../redux/actions/postAction";
 import { getUserFriends } from "../../redux/actions/userAction";
+import { navigation } from "../../rootNavigation";
+import VectorIcon from "../../utils/VectorIcon";
 
 const ProfileScreen = () => {
   const [isAvatarOptionsVisible, setIsAvatarOptionsVisible] = useState("false");
   const [isCoverOptionsVisible, setIsCoverOptionsVisible] = useState("false");
   const { username, avatar, id } = useSelector((state) => state.auth);
-  const { cover_image, city, country, address } = useSelector(
-    (state) => state.user
-  );
+  const { cover_image, city, country, address } = useSelector((state) => state.user);
   const { post } = useSelector((state) => state.userPost);
   const { friends, total } = useSelector((state) => state.userFriend);
   const dispatch = useDispatch();
@@ -49,8 +41,8 @@ const ProfileScreen = () => {
         longitude,
         defaultLastId,
         defaultIndex,
-        defaultCount
-      )
+        defaultCount,
+      ),
     );
     dispatch(getUserFriends(id, defaultIndex, defaultCount));
   }, []);
@@ -59,71 +51,37 @@ const ProfileScreen = () => {
     <View style={{ position: "relative" }}>
       <View style={styles.navigationBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <VectorIcon
-            name="arrow-left"
-            type="MaterialCommunityIcons"
-            color="#000"
-            size={32}
-          />
+          <VectorIcon name="arrow-left" type="MaterialCommunityIcons" color="#000" size={32} />
         </TouchableOpacity>
         <Text style={{ fontSize: 16, fontWeight: "500" }}>{username}</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-          <VectorIcon
-            name="magnify"
-            type="MaterialCommunityIcons"
-            color="#000"
-            size={32}
-          />
+          <VectorIcon name="magnify" type="MaterialCommunityIcons" color="#000" size={32} />
         </TouchableOpacity>
       </View>
-      <ScrollView
-        bounces={false}
-        showsVerticalScrollIndicator={false}
-        style={styles.container}
-      >
+      <ScrollView bounces={false} showsVerticalScrollIndicator={false} style={styles.container}>
         <View style={styles.infoWrapper}>
           <View style={styles.avatarCoverWrapper}>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => setIsCoverOptionsVisible(true)}
-            >
+            <TouchableOpacity activeOpacity={0.8} onPress={() => setIsCoverOptionsVisible(true)}>
               <Image
                 style={styles.cover}
                 source={
-                  cover_image
-                    ? { uri: cover_image }
-                    : require("../../assets/images/cover_img.jpg")
+                  cover_image ? { uri: cover_image } : require("../../assets/images/cover_img.jpg")
                 }
               />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.btnChangeCover}
-              onPress={() => setIsCoverOptionsVisible(true)}
-            >
-              <VectorIcon
-                name="camera"
-                type="FontAwesome5"
-                size={18}
-                color="#3a3a3a"
-              />
+              onPress={() => setIsCoverOptionsVisible(true)}>
+              <VectorIcon name="camera" type="FontAwesome5" size={18} color="#3a3a3a" />
             </TouchableOpacity>
             <View style={styles.avatarWrapper}>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => setIsAvatarOptionsVisible(true)}
-              >
+              <TouchableOpacity activeOpacity={0.9} onPress={() => setIsAvatarOptionsVisible(true)}>
                 <Image style={styles.avatar} source={{ uri: avatar }} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.btnChangeAvatar}
-                onPress={() => setIsAvatarOptionsVisible(true)}
-              >
-                <VectorIcon
-                  name="camera"
-                  type="FontAwesome5"
-                  size={18}
-                  color="#3a3a3a"
-                />
+                onPress={() => setIsAvatarOptionsVisible(true)}>
+                <VectorIcon name="camera" type="FontAwesome5" size={18} color="#3a3a3a" />
               </TouchableOpacity>
             </View>
           </View>
@@ -131,20 +89,14 @@ const ProfileScreen = () => {
             <Text style={styles.name}>{username}</Text>
             <View style={styles.buttonWrapper}>
               <TouchableOpacity activeOpacity={0.8} style={styles.btnAddStory}>
-                <VectorIcon
-                  name="plus"
-                  type="MaterialCommunityIcons"
-                  size={18}
-                  color="#fff"
-                />
+                <VectorIcon name="plus" type="MaterialCommunityIcons" size={18} color="#fff" />
                 <Text
                   style={{
                     fontSize: 16,
                     fontWeight: "500",
                     color: "#fff",
                     marginLeft: 5,
-                  }}
-                >
+                  }}>
                   Thêm vào tin
                 </Text>
               </TouchableOpacity>
@@ -156,30 +108,22 @@ const ProfileScreen = () => {
                     width: SCREEN_WIDTH - 90,
                     backgroundColor: "#ddd",
                   }}
-                  onPress={() => navigation.navigate("EditProfile")}
-                >
-                  <VectorIcon
-                    name="pencil"
-                    type="MaterialCommunityIcons"
-                    size={22}
-                    color="#000"
-                  />
+                  onPress={() => navigation.navigate("EditProfile")}>
+                  <VectorIcon name="pencil" type="MaterialCommunityIcons" size={22} color="#000" />
                   <Text
                     style={{
                       fontSize: 16,
                       fontWeight: "500",
                       color: "#000",
                       marginLeft: 5,
-                    }}
-                  >
+                    }}>
                     Chỉnh sửa trang cá nhân
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={0.8}
                   style={styles.btnOption}
-                  onPress={() => navigation.navigate("ProfileSetting")}
-                >
+                  onPress={() => navigation.navigate("ProfileSetting")}>
                   <VectorIcon
                     name="dots-horizontal"
                     type="MaterialCommunityIcons"
@@ -192,9 +136,7 @@ const ProfileScreen = () => {
           </View>
         </View>
         <View style={styles.introListWrapper}>
-          <Text style={{ fontSize: 20, fontWeight: "500", marginBottom: 12 }}>
-            Chi tiết
-          </Text>
+          <Text style={{ fontSize: 20, fontWeight: "500", marginBottom: 12 }}>Chi tiết</Text>
           {/* <View style={styles.introLine}>
             <VectorIcon
               name="home"
@@ -211,25 +153,14 @@ const ProfileScreen = () => {
             )}
           </View> */}
           <View style={styles.introLine}>
-            <VectorIcon
-              name="map-marker"
-              type="MaterialCommunityIcons"
-              color="#333"
-              size={28}
-            />
+            <VectorIcon name="map-marker" type="MaterialCommunityIcons" color="#333" size={28} />
             {city ? (
               <Text style={styles.introLineText}>
                 Đến từ <Text style={styles.introHightLight}>{city}</Text>
-                {country && (
-                  <Text style={styles.introHightLight}>
-                    {"," + " " + country}
-                  </Text>
-                )}
+                {country && <Text style={styles.introHightLight}>{"," + " " + country}</Text>}
               </Text>
             ) : (
-              <Text style={styles.introLineText}>
-                Thêm thông tin thành phố, quốc gia
-              </Text>
+              <Text style={styles.introLineText}>Thêm thông tin thành phố, quốc gia</Text>
             )}
           </View>
           <View style={styles.introLine}>
@@ -240,17 +171,14 @@ const ProfileScreen = () => {
               size={28}
             />
             <TouchableOpacity>
-              <Text style={styles.introLineText}>
-                Xem thông tin giới thiệu của bạn
-              </Text>
+              <Text style={styles.introLineText}>Xem thông tin giới thiệu của bạn</Text>
             </TouchableOpacity>
           </View>
           <View style={{ paddingVertical: 20 }}>
             <TouchableOpacity
               activeOpacity={0.8}
               style={styles.btnEditPublicInfo}
-              onPress={() => navigation.navigate("EditProfile")}
-            >
+              onPress={() => navigation.navigate("EditProfile")}>
               <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
                 Chỉnh sửa chi tiết công khai
               </Text>
@@ -265,8 +193,7 @@ const ProfileScreen = () => {
               fontWeight: "500",
               paddingLeft: 15,
               paddingVertical: 8,
-            }}
-          >
+            }}>
             Bài viết
           </Text>
           <PostTool />
@@ -285,14 +212,12 @@ const ProfileScreen = () => {
       </ScrollView>
       <BottomModal
         isVisible={isCoverOptionsVisible}
-        closeModal={() => setIsCoverOptionsVisible(false)}
-      >
+        closeModal={() => setIsCoverOptionsVisible(false)}>
         <CoverOptions />
       </BottomModal>
       <BottomModal
         isVisible={isAvatarOptionsVisible}
-        closeModal={() => setIsAvatarOptionsVisible(false)}
-      >
+        closeModal={() => setIsAvatarOptionsVisible(false)}>
         <AvatarOptions />
       </BottomModal>
     </View>

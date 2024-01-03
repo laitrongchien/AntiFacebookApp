@@ -56,6 +56,18 @@ const checkVerifyCode = async (email, verifyCode) => {
   }
 };
 
+const changePassword = async (pass, newPass) => {
+  try {
+    const res = await axios.post("/change_password", {
+      password: pass,
+      new_password: newPass,
+    });
+    return res;
+  } catch (err) {
+    console.log(err.response.data.message);
+  }
+};
+
 const resetPassword = async (email, verifyCode, newPass) => {
   try {
     const res = await axios.post("/reset_password", {
@@ -92,6 +104,7 @@ export const auth = {
   signup,
   getVerifyCode,
   checkVerifyCode,
+  changePassword,
   resetPassword,
   changeProfileAfterSignup,
   checkEmail,
