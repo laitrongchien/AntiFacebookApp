@@ -12,6 +12,7 @@ import AllRequest from "./FriendTab/AllRequest";
 import AllXFriend from "./FriendTab/AllXFriend";
 import LoginScreen from "./LoginScreen";
 import MainScreen from "./MainScreen";
+import BlockList from "./MenuTab/BlockList";
 import PostDetailScreen from "./PostDetailScreen";
 import PostListViewScreen from "./PostListViewScreen";
 import ProfileScreen from "./ProfileTab";
@@ -32,10 +33,17 @@ import PasswordScreen from "./Register/PasswordScreen";
 import PolicyScreen from "./Register/PolicyScreen";
 import StartRegisterScreen from "./Register/StartRegisterScreen";
 import VerifyScreen from "./Register/VerifyScreen";
+import ReportConfirmScreen from "./ReportPost/ReportConfirmScreen";
+import ReportDetailScreen from "./ReportPost/ReportDetailScreen";
+import ReportPostScreen from "./ReportPost/ReportPostScreen";
+import ReportResultScreen from "./ReportPost/ReportResultScreen";
 import EmailResetScreen from "./ResetPassword/EmailResetScreen";
 import NewPasswordScreen from "./ResetPassword/NewPasswordScreen";
 import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
 import Search from "./Search";
+import AllSavedSearch from "./Search/AllSavedSearch";
+import SearchResult from "./Search/SearchResult";
+import ViewAllUserItem from "./Search/ViewAllUserItem";
 // import { onAuthStateChanged } from "firebase/auth";
 // import { auth } from "./firebase/config";
 import WatchDetailList from "./WatchTab/WatchDetailList";
@@ -83,6 +91,9 @@ const AppNavigator = () => {
             <Stack.Screen name="PostDetailScreen" component={PostDetailScreen} />
             <Stack.Screen name="PostListViewScreen" component={PostListViewScreen} />
             <Stack.Screen name="Search" component={Search} />
+            <Stack.Screen name="SearchResult" component={SearchResult} />
+            <Stack.Screen name="ViewAllUserItem" component={ViewAllUserItem} />
+            <Stack.Screen name="AllSavedSearch" component={AllSavedSearch} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <Stack.Screen name="UserXProfileScreen" component={UserXProfileScreen} />
             <Stack.Screen name="ProfileSetting" component={ProfileSetting} />
@@ -91,6 +102,10 @@ const AppNavigator = () => {
             <Stack.Screen name="EditDetailInfo" component={EditDetailInfo} />
             <Stack.Screen name="CreateAvatar" component={CreateAvatar} />
             <Stack.Screen name="CreateCover" component={CreateCover} />
+            <Stack.Screen name="ReportPostScreen" component={ReportPostScreen} />
+            <Stack.Screen name="ReportDetailScreen" component={ReportDetailScreen} />
+            <Stack.Screen name="ReportConfirmScreen" component={ReportConfirmScreen} />
+            <Stack.Screen name="ReportResultScreen" component={ReportResultScreen} />
             <Stack.Screen
               options={{ cardStyle: { backgroundColor: "transparent" } }}
               name="AvatarOptions"
@@ -103,6 +118,7 @@ const AppNavigator = () => {
             <Stack.Screen name="AllXFriend" component={AllXFriend} />
             <Stack.Screen name="AllFeel" component={AllFeel} />
             <Stack.Screen name="WatchDetailList" component={WatchDetailList} />
+            <Stack.Screen name="BlockList" component={BlockList} />
           </>
         ) : (
           <>

@@ -1,16 +1,10 @@
 import React, { useState } from "react";
-import {
-  Text,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Alert,
-  Clipboard,
-} from "react-native";
-import VectorIcon from "../../utils/VectorIcon";
+import { Text, StyleSheet, View, TouchableOpacity, Alert, Clipboard } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
+
 import { deletePost } from "../../redux/actions/postAction";
 import { navigation } from "../../rootNavigation";
+import VectorIcon from "../../utils/VectorIcon";
 
 const PostOptions = ({ authorId, setPostOptionVisible, postId, postData }) => {
   const { id } = useSelector((state) => state.auth);
@@ -34,13 +28,14 @@ const PostOptions = ({ authorId, setPostOptionVisible, postId, postData }) => {
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
   const handleEditPost = () => {
     setPostOptionVisible(false);
-    navigation.navigate("EditPost", { postData: postData });
+    if (id === authorId) navigation.navigate("EditPost", { postData });
+    else navigation.navigate("ReportPostScreen", { postId });
   };
 
   return (
@@ -48,42 +43,24 @@ const PostOptions = ({ authorId, setPostOptionVisible, postId, postData }) => {
       <View style={styles.postOptionsWrapper}>
         <TouchableOpacity style={styles.postOptionItem}>
           <View style={styles.optionIcon}>
-            <VectorIcon
-              name="bookmark"
-              type="MaterialCommunityIcons"
-              size={28}
-              color="#000"
-            />
+            <VectorIcon name="bookmark" type="MaterialCommunityIcons" size={28} color="#000" />
           </View>
           <View>
             <Text style={styles.postOptionTitle}>Lưu bài viết</Text>
-            <Text style={styles.postOptionSubtitle}>
-              Thêm vào danh sách các mục đã lưu
-            </Text>
+            <Text style={styles.postOptionSubtitle}>Thêm vào danh sách các mục đã lưu</Text>
           </View>
         </TouchableOpacity>
         {id == authorId && (
-          <TouchableOpacity
-            style={styles.postOptionItem}
-            onPress={handleDeletePost}
-          >
+          <TouchableOpacity style={styles.postOptionItem} onPress={handleDeletePost}>
             <View style={styles.optionIcon}>
-              <VectorIcon
-                name="close-box"
-                type="MaterialCommunityIcons"
-                size={28}
-                color="#000"
-              />
+              <VectorIcon name="close-box" type="MaterialCommunityIcons" size={28} color="#000" />
             </View>
             <View>
               <Text style={styles.postOptionTitle}>Xóa bài viết</Text>
             </View>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          style={styles.postOptionItem}
-          onPress={handleEditPost}
-        >
+        <TouchableOpacity style={styles.postOptionItem} onPress={handleEditPost}>
           <View style={styles.optionIcon}>
             <VectorIcon
               name={id == authorId ? "pencil" : "message-alert"}
@@ -105,27 +82,15 @@ const PostOptions = ({ authorId, setPostOptionVisible, postId, postData }) => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.postOptionItem}>
           <View style={styles.optionIcon}>
-            <VectorIcon
-              name="bell"
-              type="MaterialCommunityIcons"
-              size={28}
-              color="#000"
-            />
+            <VectorIcon name="bell" type="MaterialCommunityIcons" size={28} color="#000" />
           </View>
           <View>
-            <Text style={styles.postOptionTitle}>
-              Bật thông báo về bài viết này
-            </Text>
+            <Text style={styles.postOptionTitle}>Bật thông báo về bài viết này</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.postOptionItem}>
           <View style={styles.optionIcon}>
-            <VectorIcon
-              name="link-variant"
-              type="MaterialCommunityIcons"
-              size={28}
-              color="#000"
-            />
+            <VectorIcon name="link-variant" type="MaterialCommunityIcons" size={28} color="#000" />
           </View>
           <View>
             <Text style={styles.postOptionTitle}>Sao chép liên kết</Text>

@@ -103,6 +103,18 @@ export const deletePost = (postId) => async (dispatch) => {
   }
 };
 
+export const reportPost = (postId, reportSubject, reportDetail) => async (dispatch) => {
+  try {
+    await post.reportPost(postId, reportSubject, reportDetail);
+    dispatch({
+      type: "DELETE_POST",
+      payload: postId,
+    });
+  } catch (err) {
+    console.log(err.response.data.message);
+  }
+};
+
 export const getListUserPosts =
   (userId, inCampaign, campaignId, latitude, longitude, lastId, index, count) =>
   async (dispatch) => {

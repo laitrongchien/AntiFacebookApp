@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Alert } from "react-native";
 import { useEffect, useState } from "react";
 import VectorIcon from "../../utils/VectorIcon";
 import BottomModal from "../../components/BottomModal";
@@ -14,6 +6,7 @@ import { navigation } from "../../rootNavigation";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserFriends } from "../../redux/actions/userAction";
 import { user } from "../../api/user";
+import blockApi from "../../api/block";
 
 const AllFriend = () => {
   const dispatch = useDispatch();
@@ -22,21 +15,42 @@ const AllFriend = () => {
   const [friendOptionVisible, setFriendOptionVisible] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [unfriendedIds, setUnfriendedIds] = useState([]);
+  const [blockedIds, setBlockedIds] = useState([]);
   const [loadingFriends, setLoadingFriends] = useState();
 
   const defaultIndex = 0;
   const defaultCount = 20;
 
   useEffect(() => {
-    console.log("mount friends");
     const handleGetFriendList = async () => {
       setLoadingFriends(true);
       await dispatch(getUserFriends(id, defaultIndex, defaultCount));
-
       setLoadingFriends(false);
     };
     handleGetFriendList();
-  }, []);
+  }, [id, dispatch]);
+
+  const handleBlock = () => {
+    setFriendOptionVisible(false);
+    Alert.alert("Xác nhận chặn người dùng", `Bạn có chắc muốn chặn ${selectedFriend?.username}?`, [
+      {
+        text: "Hủy",
+        style: "cancel",
+      },
+      {
+        text: "Xác nhận",
+        onPress: async () => {
+          try {
+            await blockApi.set_block(selectedFriend.id);
+            setBlockedIds((prevIds) => [...prevIds, selectedFriend.id]);
+            console.log("User blocked successfully");
+          } catch (error) {
+            console.error("Error blocking user:", error);
+          }
+        },
+      },
+    ]);
+  };
 
   const handleUnFriend = () => {
     setFriendOptionVisible(false);
@@ -55,62 +69,45 @@ const AllFriend = () => {
             await user.unFriend(selectedFriend.id);
           },
         },
-      ]
+      ],
     );
   };
 
   const renderItem = ({ item }) => {
     const isUnfriended = unfriendedIds.includes(item.id);
+    const isBlocked = blockedIds.includes(item.id);
+    if (isUnfriended || isBlocked) return null;
+
     return (
       <View style={styles.friendWrapper}>
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
-          }}
-        >
+          }}>
           <Image
             source={
-              item.avatar
-                ? { uri: item.avatar }
-                : require("../../assets/images/default-img.png")
+              item.avatar ? { uri: item.avatar } : require("../../assets/images/default-img.png")
             }
             style={styles.avatar}
           />
           <View style={{ marginLeft: 16 }}>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("UserXProfileScreen", { userXId: item.id })
-              }
-            >
-              <Text style={{ fontSize: 18, fontWeight: 500 }}>
-                {item.username}
-              </Text>
+              onPress={() => navigation.navigate("UserXProfileScreen", { userXId: item.id })}>
+              <Text style={{ fontSize: 18, fontWeight: "500" }}>{item.username}</Text>
             </TouchableOpacity>
             {item.same_friends != 0 && (
-              <Text style={{ fontSize: 16, color: "#666" }}>
-                {item.same_friends} bạn chung
-              </Text>
+              <Text style={{ fontSize: 16, color: "#666" }}>{item.same_friends} bạn chung</Text>
             )}
-            {isUnfriended && (
-              <Text style={{ fontSize: 16, color: "#666" }}>
-                Đã hủy kết bạn
-              </Text>
-            )}
+            {isUnfriended && <Text style={{ fontSize: 16, color: "#666" }}>Đã hủy kết bạn</Text>}
           </View>
         </View>
         <TouchableOpacity
           onPress={() => {
             setSelectedFriend(item);
             setFriendOptionVisible(true);
-          }}
-        >
-          <VectorIcon
-            name="dots-horizontal"
-            type="MaterialCommunityIcons"
-            color="#666"
-            size={32}
-          />
+          }}>
+          <VectorIcon name="dots-horizontal" type="MaterialCommunityIcons" color="#666" size={32} />
         </TouchableOpacity>
       </View>
     );
@@ -120,16 +117,8 @@ const AllFriend = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.leftItem}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={{ marginLeft: 3 }}
-          >
-            <VectorIcon
-              name="arrow-left"
-              type="MaterialCommunityIcons"
-              color="#000"
-              size={32}
-            />
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: 3 }}>
+            <VectorIcon name="arrow-left" type="MaterialCommunityIcons" color="#000" size={32} />
           </TouchableOpacity>
           <Text style={{ marginLeft: 8, fontSize: 18 }}>Bạn bè</Text>
         </View>
@@ -149,8 +138,7 @@ const AllFriend = () => {
               justifyContent: "space-between",
               alignItems: "center",
               paddingVertical: 12,
-            }}
-          >
+            }}>
             <Text style={styles.titleText}>{total} người bạn</Text>
             <TouchableOpacity>
               <Text
@@ -158,26 +146,22 @@ const AllFriend = () => {
                   color: "#0a7bff",
                   marginRight: 10,
                   fontSize: 16,
-                }}
-              >
+                }}>
                 Sắp xếp
               </Text>
             </TouchableOpacity>
           </View>
           <FlatList
             data={friends}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={renderItem}
           />
         </>
       )}
 
-      <BottomModal
-        isVisible={friendOptionVisible}
-        closeModal={() => setFriendOptionVisible(false)}
-      >
+      <BottomModal isVisible={friendOptionVisible} closeModal={() => setFriendOptionVisible(false)}>
         <View style={{ backgroundColor: "#fff" }}>
-          <TouchableOpacity style={styles.optionBtn}>
+          <TouchableOpacity style={styles.optionBtn} onPress={handleBlock}>
             <VectorIcon
               name="account-cancel-outline"
               type="MaterialCommunityIcons"
@@ -223,28 +207,31 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     height: "100%",
   },
-
   titleText: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginLeft: 16,
-  },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 50,
+    fontSize: 18,
+    marginLeft: 10,
   },
   friendWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
   },
   optionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
 });
 
