@@ -33,6 +33,10 @@ import PasswordScreen from "./Register/PasswordScreen";
 import PolicyScreen from "./Register/PolicyScreen";
 import StartRegisterScreen from "./Register/StartRegisterScreen";
 import VerifyScreen from "./Register/VerifyScreen";
+import ReportConfirmScreen from "./ReportPost/ReportConfirmScreen";
+import ReportDetailScreen from "./ReportPost/ReportDetailScreen";
+import ReportPostScreen from "./ReportPost/ReportPostScreen";
+import ReportResultScreen from "./ReportPost/ReportResultScreen";
 import EmailResetScreen from "./ResetPassword/EmailResetScreen";
 import NewPasswordScreen from "./ResetPassword/NewPasswordScreen";
 import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
@@ -98,6 +102,10 @@ const AppNavigator = () => {
             <Stack.Screen name="EditDetailInfo" component={EditDetailInfo} />
             <Stack.Screen name="CreateAvatar" component={CreateAvatar} />
             <Stack.Screen name="CreateCover" component={CreateCover} />
+            <Stack.Screen name="ReportPostScreen" component={ReportPostScreen} />
+            <Stack.Screen name="ReportDetailScreen" component={ReportDetailScreen} />
+            <Stack.Screen name="ReportConfirmScreen" component={ReportConfirmScreen} />
+            <Stack.Screen name="ReportResultScreen" component={ReportResultScreen} />
             <Stack.Screen
               options={{ cardStyle: { backgroundColor: "transparent" } }}
               name="AvatarOptions"

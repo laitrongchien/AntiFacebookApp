@@ -1,14 +1,6 @@
 import axios from "./axios";
 
-const getListPosts = async (
-  inCampaign,
-  campaignId,
-  latitude,
-  longitude,
-  lastId,
-  index,
-  count
-) => {
+const getListPosts = async (inCampaign, campaignId, latitude, longitude, lastId, index, count) => {
   try {
     const res = await axios.post("/get_list_posts", {
       in_campaign: inCampaign,
@@ -34,7 +26,7 @@ const getListUserPosts = async (
   longitude,
   lastId,
   index,
-  count
+  count,
 ) => {
   return await axios.post("/get_list_posts", {
     user_id: userId,
@@ -75,6 +67,14 @@ const deletePost = async (id) => {
   return await axios.post("/delete_post", { id });
 };
 
+const reportPost = async (postId, reportSubject, reportDetail) => {
+  return await axios.post("/report_post", {
+    id: postId,
+    subject: reportSubject,
+    details: reportDetail,
+  });
+};
+
 const feelPost = async (postId, type) => {
   return await axios.post("/feel", {
     id: postId,
@@ -101,6 +101,7 @@ export const post = {
   getPost,
   createPost,
   deletePost,
+  reportPost,
   getListUserPosts,
   editPost,
   feelPost,
