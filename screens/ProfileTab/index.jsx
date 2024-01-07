@@ -18,7 +18,7 @@ const ProfileScreen = () => {
   const [isAvatarOptionsVisible, setIsAvatarOptionsVisible] = useState("false");
   const [isCoverOptionsVisible, setIsCoverOptionsVisible] = useState("false");
   const { username, avatar, id } = useSelector((state) => state.auth);
-  const { cover_image, city, country, address } = useSelector((state) => state.user);
+  const { cover_image, city, country } = useSelector((state) => state.user);
   const { post } = useSelector((state) => state.userPost);
   const { friends, total } = useSelector((state) => state.userFriend);
   const dispatch = useDispatch();
@@ -137,21 +137,6 @@ const ProfileScreen = () => {
         </View>
         <View style={styles.introListWrapper}>
           <Text style={{ fontSize: 20, fontWeight: "500", marginBottom: 12 }}>Chi tiết</Text>
-          {/* <View style={styles.introLine}>
-            <VectorIcon
-              name="home"
-              type="MaterialCommunityIcons"
-              color="#333"
-              size={28}
-            />
-            {address ? (
-              <Text style={styles.introLineText}>
-                Sống tại <Text style={styles.introHightLight}>{address}</Text>
-              </Text>
-            ) : (
-              <Text style={styles.introLineText}>Thêm thông tin địa chỉ</Text>
-            )}
-          </View> */}
           <View style={styles.introLine}>
             <VectorIcon name="map-marker" type="MaterialCommunityIcons" color="#333" size={28} />
             {city ? (
