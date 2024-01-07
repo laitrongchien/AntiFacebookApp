@@ -57,15 +57,11 @@ const checkVerifyCode = async (email, verifyCode) => {
 };
 
 const changePassword = async (pass, newPass) => {
-  try {
-    const res = await axios.post("/change_password", {
-      password: pass,
-      new_password: newPass,
-    });
-    return res;
-  } catch (err) {
-    console.log(err.response.data.message);
-  }
+  const res = await axios.post("/change_password", {
+    password: pass,
+    new_password: newPass,
+  });
+  return res;
 };
 
 const resetPassword = async (email, verifyCode, newPass) => {

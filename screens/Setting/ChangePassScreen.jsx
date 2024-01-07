@@ -1,51 +1,51 @@
 import { useState } from "react";
-import { Text, StyleSheet, View, TouchableOpacity, TextInput } from "react-native";
-import { useDispatch } from "react-redux";
+import { Text, StyleSheet, View, TouchableOpacity, TextInput, Alert } from "react-native";
 
-import { setUserInfo } from "../../redux/actions/userAction";
+import { auth } from "../../api/auth";
 import { navigation } from "../../rootNavigation";
 import VectorIcon from "../../utils/VectorIcon";
 
-const EditDetailInfo = () => {
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const dispatch = useDispatch();
+const ChangePassScreen = () => {
+  const [pass, setPass] = useState("");
+  const [newPass, setNewPass] = useState("");
 
   const handleSubmit = async () => {
     try {
-      const formData = new FormData();
-      if (city) formData.append("city", city);
-      if (country) formData.append("country", country);
-      dispatch(setUserInfo(formData));
-    } catch (err) {
-      console.log(err.response.data.message);
+      await auth.changePassword(pass, newPass);
+      Alert.alert("Thông báo", "Mật khẩu đã được thay đổi thành công", [{ text: "OK" }]);
+    } catch (error) {
+      //   console.log(error.reponse.data.code == 9990);
+      if (error.response.data.code == 9990) {
+        Alert.alert("Thông báo", "Mật khẩu hiện tại không đúng", [{ text: "OK" }]);
+      } else {
+        Alert.alert("Thông báo", "Mật khẩu phải có ít nhất 6 ký tự", [{ text: "OK" }]);
+      }
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.navigationBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.btnBack}>
           <VectorIcon name="arrow-left" type="MaterialCommunityIcons" color="#000" size={30} />
         </TouchableOpacity>
-        <Text style={styles.navigationTitle}>Chỉnh sửa chi tiết</Text>
+        <Text style={styles.navigationTitle}>Đổi mật khẩu</Text>
       </View>
 
       <View style={styles.wrapper}>
-        <Text style={{ fontSize: 18, fontWeight: "600" }}>Thành phố</Text>
         <TextInput
-          placeholder="Đến từ thành phố"
-          value={city}
-          onChangeText={(value) => setCity(value)}
+          placeholder="Nhập mật khẩu hiện tại"
+          value={pass}
+          onChangeText={(value) => setPass(value)}
           style={styles.inputBox}
           selectionColor="#333"
         />
       </View>
       <View style={styles.wrapper}>
-        <Text style={{ fontSize: 18, fontWeight: "600" }}>Quốc gia</Text>
         <TextInput
-          placeholder="Quốc gia"
-          value={country}
-          onChangeText={(value) => setCountry(value)}
+          placeholder="Nhập mật khẩu mới"
+          value={newPass}
+          onChangeText={(value) => setNewPass(value)}
           style={styles.inputBox}
           selectionColor="#333"
         />
@@ -59,7 +59,7 @@ const EditDetailInfo = () => {
   );
 };
 
-export default EditDetailInfo;
+export default ChangePassScreen;
 
 const styles = StyleSheet.create({
   container: {

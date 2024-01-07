@@ -41,6 +41,7 @@ import EmailResetScreen from "./ResetPassword/EmailResetScreen";
 import NewPasswordScreen from "./ResetPassword/NewPasswordScreen";
 import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
 import SettingScreen from "./Setting/SettingScreen";
+import ChangePassScreen from "./Setting/ChangePassScreen";
 import Search from "./Search";
 import AllSavedSearch from "./Search/AllSavedSearch";
 import SearchResult from "./Search/SearchResult";
@@ -108,6 +109,7 @@ const AppNavigator = () => {
             <Stack.Screen name="ReportConfirmScreen" component={ReportConfirmScreen} />
             <Stack.Screen name="ReportResultScreen" component={ReportResultScreen} />
             <Stack.Screen name="SettingScreen" component={SettingScreen} />
+            <Stack.Screen name="ChangePassScreen" component={ChangePassScreen} />
             <Stack.Screen
               options={{ cardStyle: { backgroundColor: "transparent" } }}
               name="AvatarOptions"

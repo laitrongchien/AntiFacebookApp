@@ -18,7 +18,9 @@ const SettingScreen = () => {
       <View style={{ padding: 12 }}>
         <View>
           <Text style={{ fontSize: 18, fontWeight: 500, marginBottom: 12 }}>Cài đặt tài khoản</Text>
-          <TouchableOpacity style={styles.btnOption}>
+          <TouchableOpacity
+            style={styles.btnOption}
+            onPress={() => navigation.navigate("ChangePassScreen")}>
             <VectorIcon
               name="shield-check-outline"
               type="MaterialCommunityIcons"
