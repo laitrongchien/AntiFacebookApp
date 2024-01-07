@@ -59,7 +59,6 @@ const HomeScreen = () => {
     const scrollY = event.nativeEvent.contentOffset.y;
     const flatListHeight = event.nativeEvent.layoutMeasurement.height;
     const contentHeight = event.nativeEvent.contentSize.height;
-    // console.log(contentHeight - scrollY - flatListHeight);
     if (contentHeight - scrollY - flatListHeight <= 1000) {
       if (new_items !== 0 && !loadingPosts) {
         dispatch(
@@ -113,13 +112,6 @@ const HomeScreen = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   console.log(
-  //     "Expected indices:",
-  //     Array.from({ length: post.length }, (_, i) => i + 1)
-  //   );
-  // }, [post]);
-
   if (loadingSkeleton)
     return (
       <>
@@ -138,9 +130,6 @@ const HomeScreen = () => {
       renderItem={renderItem}
       onScroll={handleScroll}
       bounces={false}
-      initialNumToRender={5}
-      maxToRenderPerBatch={2}
-      removeClippedSubviews={true}
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={() => (
         <>

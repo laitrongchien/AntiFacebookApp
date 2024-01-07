@@ -1,3 +1,5 @@
+import { useRoute } from "@react-navigation/native";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,23 +9,23 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { useState, useEffect } from "react";
-import { navigation } from "../../rootNavigation";
-import { SCREEN_WIDTH } from "../../constants";
-import FriendGallery from "../../components/FriendGallery";
-import VectorIcon from "../../utils/VectorIcon";
-import { useRoute } from "@react-navigation/native";
-import { user as userApi } from "../../api/user";
 import { useSelector, useDispatch } from "react-redux";
+
+import { user as userApi } from "../../api/user";
+import FriendGallery from "../../components/FriendGallery";
 import PostItem from "../../components/PostItem";
+import { SCREEN_WIDTH } from "../../constants";
 import { getListUserPosts } from "../../redux/actions/postAction";
 import { getUserXFriends } from "../../redux/actions/userAction";
+import { navigation } from "../../rootNavigation";
+import VectorIcon from "../../utils/VectorIcon";
 
 const UserXProfileScreen = () => {
   const route = useRoute();
   const { userXId } = route.params;
   const [userX, setUserX] = useState({});
   const [loadingUserX, setLoadingUserX] = useState(false);
+  const [isFriend, setIsFriend] = useState();
   const { post } = useSelector((state) => state.userPost);
   const { friends, total } = useSelector((state) => state.userXFriend);
   const dispatch = useDispatch();
@@ -37,12 +39,15 @@ const UserXProfileScreen = () => {
   const defaultCount = 6;
 
   const handlePress = async () => {
-    if (userX.is_friend == 0) {
+    if (isFriend == 0) {
       await userApi.setRequestFriend(userXId);
-    } else if (userX.is_friend == 2) {
+      setIsFriend(2);
+    } else if (isFriend == 2) {
       await userApi.delRequestFriend(userXId);
-    } else if (userX.is_friend == 3) {
+      setIsFriend(0);
+    } else if (isFriend == 3) {
       await userApi.setAcceptFriend(userXId, "1");
+      setIsFriend(1);
     }
   };
 
@@ -52,7 +57,7 @@ const UserXProfileScreen = () => {
         setLoadingUserX(true);
         const res = await userApi.getUserInfo(userXId);
         setUserX(res.data.data);
-
+        setIsFriend(res.data.data.is_friend);
         dispatch({
           type: "RESET_USER_POSTS",
         });
@@ -65,8 +70,8 @@ const UserXProfileScreen = () => {
             longitude,
             defaultLastId,
             defaultIndex,
-            defaultCount
-          )
+            defaultCount,
+          ),
         );
         dispatch({
           type: "RESET_USERX_FRIENDS",
@@ -81,35 +86,19 @@ const UserXProfileScreen = () => {
   }, []);
 
   if (loadingUserX)
-    return (
-      <ActivityIndicator size="large" color="#000" style={{ marginTop: 300 }} />
-    );
+    return <ActivityIndicator size="large" color="#000" style={{ marginTop: 300 }} />;
 
   return (
     <View style={{ position: "relative" }}>
       <View style={styles.navigationBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <VectorIcon
-            name="arrow-left"
-            type="MaterialCommunityIcons"
-            color="#000"
-            size={32}
-          />
+          <VectorIcon name="arrow-left" type="MaterialCommunityIcons" color="#000" size={32} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-          <VectorIcon
-            name="magnify"
-            type="MaterialCommunityIcons"
-            color="#000"
-            size={32}
-          />
+          <VectorIcon name="magnify" type="MaterialCommunityIcons" color="#000" size={32} />
         </TouchableOpacity>
       </View>
-      <ScrollView
-        bounces={false}
-        showsVerticalScrollIndicator={false}
-        style={styles.container}
-      >
+      <ScrollView bounces={false} showsVerticalScrollIndicator={false} style={styles.container}>
         <View style={styles.infoWrapper}>
           <View style={styles.avatarCoverWrapper}>
             <View>
@@ -139,26 +128,21 @@ const UserXProfileScreen = () => {
             <Text style={styles.name}>{userX.username || "Username"}</Text>
             <View style={styles.buttonWrapper}>
               <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.btn}
-                  onPress={handlePress}
-                >
+                <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={handlePress}>
                   <Text
                     style={{
                       fontSize: 16,
                       fontWeight: "500",
                       color: "#000",
                       marginLeft: 5,
-                    }}
-                  >
-                    {userX.is_friend == 1
+                    }}>
+                    {isFriend == 1
                       ? "Bạn bè"
-                      : userX.is_friend == 2
-                      ? "Hủy lời mời"
-                      : userX.is_friend == 3
-                      ? "Chấp nhận lời mời"
-                      : "Thêm bạn bè"}
+                      : isFriend == 2
+                        ? "Hủy lời mời"
+                        : isFriend == 3
+                          ? "Chấp nhận lời mời"
+                          : "Thêm bạn bè"}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -167,16 +151,14 @@ const UserXProfileScreen = () => {
                     ...styles.btn,
                     marginLeft: 8,
                     backgroundColor: "#1877f2",
-                  }}
-                >
+                  }}>
                   <Text
                     style={{
                       fontSize: 16,
                       fontWeight: "500",
                       color: "#fff",
                       marginLeft: 5,
-                    }}
-                  >
+                    }}>
                     Nhắn tin
                   </Text>
                 </TouchableOpacity>
@@ -185,11 +167,10 @@ const UserXProfileScreen = () => {
                   style={styles.btnOption}
                   onPress={() =>
                     navigation.navigate("UserXProfileSetting", {
-                      userXId: userXId,
+                      userXId,
                       userXName: userX.username,
                     })
-                  }
-                >
+                  }>
                   <VectorIcon
                     name="dots-horizontal"
                     type="MaterialCommunityIcons"
@@ -202,47 +183,28 @@ const UserXProfileScreen = () => {
           </View>
         </View>
         <View style={styles.introListWrapper}>
-          <Text style={{ fontSize: 20, fontWeight: "500", marginBottom: 12 }}>
-            Chi tiết
-          </Text>
+          <Text style={{ fontSize: 20, fontWeight: "500", marginBottom: 12 }}>Chi tiết</Text>
           <View style={styles.introLine}>
-            <VectorIcon
-              name="home"
-              type="MaterialCommunityIcons"
-              color="#333"
-              size={28}
-            />
+            <VectorIcon name="home" type="MaterialCommunityIcons" color="#333" size={28} />
             {userX.address ? (
               <Text style={styles.introLineText}>
-                Sống tại{" "}
-                <Text style={styles.introHightLight}>{userX.address}</Text>
+                Sống tại <Text style={styles.introHightLight}>{userX.address}</Text>
               </Text>
             ) : (
-              <Text style={styles.introLineText}>
-                Chưa có thông tin địa chỉ
-              </Text>
+              <Text style={styles.introLineText}>Chưa có thông tin địa chỉ</Text>
             )}
           </View>
           <View style={styles.introLine}>
-            <VectorIcon
-              name="map-marker"
-              type="MaterialCommunityIcons"
-              color="#333"
-              size={28}
-            />
+            <VectorIcon name="map-marker" type="MaterialCommunityIcons" color="#333" size={28} />
             {userX.city ? (
               <Text style={styles.introLineText}>
                 Đến từ <Text style={styles.introHightLight}>{userX.city}</Text>
                 {userX.country && (
-                  <Text style={styles.introHightLight}>
-                    {"," + " " + userX.country}
-                  </Text>
+                  <Text style={styles.introHightLight}>{"," + " " + userX.country}</Text>
                 )}
               </Text>
             ) : (
-              <Text style={styles.introLineText}>
-                Chưa có thông tin thành phố, quốc gia
-              </Text>
+              <Text style={styles.introLineText}>Chưa có thông tin thành phố, quốc gia</Text>
             )}
           </View>
           <View style={styles.introLine}>

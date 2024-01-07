@@ -58,7 +58,7 @@ const MenuScreen = () => {
             <VectorIcon name="search" type="FontAwesome5" size={19} color="#000" />
           </ExTouchableOpacity>
           <ExTouchableOpacity
-            onPress={() => navigation.navigate("Search")}
+            onPress={() => navigation.navigate("SettingScreen")}
             style={styles.btnSearch}>
             <VectorIcon name="cog" type="FontAwesome5" size={19} color="#000" />
           </ExTouchableOpacity>
@@ -121,10 +121,12 @@ const MenuScreen = () => {
         <VectorIcon name="help-circle" type="MaterialCommunityIcons" size={24} color="#666" />
         <Text style={{ fontWeight: "500", fontSize: 16, marginLeft: 8 }}>Trợ giúp & Hỗ trợ</Text>
       </ExTouchableOpacity>
-      <ExTouchableOpacity style={styles.btnOption}>
+      <ExTouchableOpacity
+        style={styles.btnOption}
+        onPress={() => navigation.navigate("SettingScreen")}>
         <VectorIcon name="cog" type="MaterialCommunityIcons" size={24} color="#666" />
         <Text style={{ fontWeight: "500", fontSize: 16, marginLeft: 8 }}>
-          Cài đặt thông báo đẩy
+          Cài đặt và Quyền riêng tư
         </Text>
       </ExTouchableOpacity>
       <ExTouchableOpacity
