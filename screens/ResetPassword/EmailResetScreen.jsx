@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   View,
   Text,
@@ -6,10 +7,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { useState } from "react";
-import VectorIcon from "../../utils/VectorIcon";
-import { navigation } from "../../rootNavigation";
+
 import { auth } from "../../api/auth";
+import { navigation } from "../../rootNavigation";
+import VectorIcon from "../../utils/VectorIcon";
 
 const EmailResetScreen = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -53,9 +54,7 @@ const EmailResetScreen = () => {
         size={30}
         onPress={() => navigation.goBack()}
       />
-      <Text style={{ paddingTop: 12, fontSize: 22, fontWeight: "500" }}>
-        Lấy lại mật khẩu
-      </Text>
+      <Text style={{ paddingTop: 12, fontSize: 22, fontWeight: "500" }}>Lấy lại mật khẩu</Text>
       <Text style={{ paddingVertical: 12, fontSize: 16, fontWeight: "400" }}>
         Nhập email để lấy lại mật khẩu
       </Text>
@@ -66,9 +65,7 @@ const EmailResetScreen = () => {
           onChangeText={handleChangeEmail}
           style={[
             styles.inputBox,
-            isEmailFocused
-              ? { borderColor: "#000" }
-              : { borderColor: "#bebebe" },
+            isEmailFocused ? { borderColor: "#000" } : { borderColor: "#bebebe" },
             error ? { borderColor: "#a81414" } : null,
           ]}
           selectionColor="#333"
@@ -76,16 +73,8 @@ const EmailResetScreen = () => {
           onBlur={() => setIsEmailFocused(false)}
         />
         {email && (
-          <TouchableOpacity
-            style={styles.closeBtn}
-            onPress={() => setEmail("")}
-          >
-            <VectorIcon
-              name="close"
-              type="MaterialCommunityIcons"
-              size={26}
-              color="#666"
-            />
+          <TouchableOpacity style={styles.closeBtn} onPress={() => setEmail("")}>
+            <VectorIcon name="close" type="MaterialCommunityIcons" size={26} color="#666" />
           </TouchableOpacity>
         )}
       </View>

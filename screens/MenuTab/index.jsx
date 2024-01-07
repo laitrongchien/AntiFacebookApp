@@ -94,7 +94,9 @@ const MenuScreen = () => {
           <Image source={require("../../assets/images/friend.png")} style={styles.iconImage} />
           <Text style={{ fontWeight: "500", fontSize: 16 }}>Bạn bè</Text>
         </ExTouchableOpacity>
-        <ExTouchableOpacity style={styles.shortcut} onPress={() => setIsModalVisible(true)}>
+        <ExTouchableOpacity
+          style={styles.shortcut}
+          onPress={() => navigation.navigate("BuyCoinScreen")}>
           <Image source={require("../../assets/images/coin.png")} style={styles.iconImage} />
           <Text style={{ fontWeight: "500", fontSize: 16 }}>Mua coin</Text>
         </ExTouchableOpacity>
@@ -142,7 +144,7 @@ const MenuScreen = () => {
           <Text style={{ fontWeight: "500", fontSize: 16 }}>Đăng xuất</Text>
         )}
       </ExTouchableOpacity>
-      <Modal transparent visible={isModalVisible} onRequestClose={closeModal}>
+      {/* <Modal transparent visible={isModalVisible} onRequestClose={closeModal}>
         <TouchableWithoutFeedback onPress={closeModal}>
           <View style={styles.modalContainer}>
             <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
@@ -185,7 +187,7 @@ const MenuScreen = () => {
             </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
-      </Modal>
+      </Modal> */}
     </ScrollView>
   );
 };

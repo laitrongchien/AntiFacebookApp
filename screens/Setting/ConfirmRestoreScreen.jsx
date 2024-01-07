@@ -1,23 +1,23 @@
 import { useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from "react-native";
 
 import { auth as authApi } from "../../api/auth";
 import { navigation } from "../../rootNavigation";
 import VectorIcon from "../../utils/VectorIcon";
 
-const NewPasswordScreen = () => {
-  const [newPass, setNewPass] = useState("");
+const ConfirmRestoreScreen = () => {
+  const [codeVerify, setCodeVerify] = useState("");
   const route = useRoute();
 
-  const { email, codeVerify } = route.params;
+  const { email } = route.params;
 
   const handlePress = async () => {
-    const res = await authApi.resetPassword(email, codeVerify, newPass);
-    // console.log(email, codeVerify, newPass);
-    // console.log(res);
+    const res = await authApi.restore(email, codeVerify);
     if (res.data.code === "1000") {
-      navigation.navigate("LoginScreen");
+      Alert.alert("Thông báo", "Khôi phục tài khoản thành công, xin hãy đăng nhập lại", [
+        { text: "OK" },
+      ]);
     }
   };
   return (
@@ -29,25 +29,26 @@ const NewPasswordScreen = () => {
         size={30}
         onPress={() => navigation.goBack()}
       />
-      <Text style={{ paddingVertical: 12, fontSize: 22, fontWeight: "500" }}>
-        Điền mật khẩu mới
+      <Text style={{ paddingVertical: 12, fontSize: 22, fontWeight: "500" }}>Nhập mã xác nhận</Text>
+      <Text style={{ paddingVertical: 12, fontSize: 18, fontWeight: "400" }}>
+        Để khôi phục tài khoản, hãy nhập mã gồm 6 chữ số được gửi đến email của bạn
       </Text>
       <View style={{ position: "relative" }}>
         <TextInput
-          placeholder="Mật khẩu"
-          value={newPass}
-          onChangeText={(value) => setNewPass(value)}
+          placeholder="Mã xác nhận"
+          value={codeVerify}
+          onChangeText={(value) => setCodeVerify(value)}
           style={styles.inputBox}
           selectionColor="#333"
         />
-        {newPass && (
-          <TouchableOpacity style={styles.closeBtn} onPress={() => setNewPass("")}>
+        {codeVerify && (
+          <TouchableOpacity style={styles.closeBtn} onPress={() => setCodeVerify("")}>
             <VectorIcon name="close" type="MaterialCommunityIcons" size={26} color="#666" />
           </TouchableOpacity>
         )}
       </View>
       <TouchableOpacity style={styles.btn} onPress={handlePress}>
-        <Text style={{ color: "#fff", fontSize: 16 }}>Hoàn thành</Text>
+        <Text style={{ color: "#fff", fontSize: 16 }}>Khôi phục tài khoản</Text>
       </TouchableOpacity>
     </View>
   );
@@ -83,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewPasswordScreen;
+export default ConfirmRestoreScreen;

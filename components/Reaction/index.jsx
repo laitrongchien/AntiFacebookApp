@@ -30,9 +30,7 @@ const Reaction = ({ isDark, numFeel, numMark, isFelt, postId }) => {
   const [reactionBarVisible, setReactionBarVisible] = useState(false);
   const [loadingComments, setLoadingComments] = useState(false);
   const [isReact, setIsReact] = useState();
-  // console.log("Feel", isFelt);
   const [numReact, setNumReact] = useState();
-  // console.log("React", isReact);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comments);
   const defaultIndex = 0;

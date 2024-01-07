@@ -1,16 +1,9 @@
-import {
-  Text,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Clipboard,
-  ToastAndroid,
-} from "react-native";
-import VectorIcon from "../../utils/VectorIcon";
-import { navigation } from "../../rootNavigation";
 import { useRoute } from "@react-navigation/native";
+import { Text, StyleSheet, View, TouchableOpacity, ScrollView, Clipboard } from "react-native";
+
 import blockApi from "../../api/block";
+import { navigation } from "../../rootNavigation";
+import VectorIcon from "../../utils/VectorIcon";
 
 const UserXProfileSetting = () => {
   const route = useRoute();
@@ -24,11 +17,11 @@ const UserXProfileSetting = () => {
     try {
       await blockApi.set_block(userXId);
       // Hiển thị Toast khi block thành công
-      ToastAndroid.show("Bạn chặn người dùng thành công", ToastAndroid.SHORT);
+      // ToastAndroid.show("Bạn chặn người dùng thành công", ToastAndroid.SHORT);
       console.log("User blocked successfully");
     } catch (error) {
       // Hiển thị Toast khi xảy ra lỗi
-      ToastAndroid.show("Bạn đã chặn người dùng này rồi", ToastAndroid.SHORT);
+      // ToastAndroid.show("Bạn đã chặn người dùng này rồi", ToastAndroid.SHORT);
       console.error("Error blocking user:", error);
     }
   };
