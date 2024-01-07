@@ -1,14 +1,23 @@
 import { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 
 import { auth } from "../../api/auth";
 import { navigation } from "../../rootNavigation";
 import VectorIcon from "../../utils/VectorIcon";
 
-const EmailScreen = () => {
+const RestoreEmailScreen = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChangeEmail = (value) => {
     setEmail(value);
@@ -20,21 +29,27 @@ const EmailScreen = () => {
     return emailPattern.test(email);
   };
 
-  const isEmailExisted = async (email) => {
-    const res = await auth.checkEmail(email);
-    return res.data.data.existed;
-  };
-
   const handleValidate = async () => {
-    const isExistedEmail = await isEmailExisted(email);
     if (!email) {
       setError("Phải có email");
     } else if (!isEmailValid(email)) {
       setError("Nhập địa chỉ email hợp lệ");
-    } else if (isExistedEmail == 1) {
-      setError("Hiện đã có tài khoản liên kết với địa chỉ email này");
     } else {
-      navigation.navigate("PasswordScreen", { email });
+      setLoading(true);
+      const res = await auth.getVerifyCode(email);
+      setLoading(false);
+      const verifyCode = res.data.data.verify_code;
+      setTimeout(() => {
+        Alert.alert("Mã xác thực của bạn là:", `${verifyCode}`, [
+          {
+            text: "OK",
+            style: "cancel",
+          },
+        ]);
+      }, 1000);
+      if (res.data.code === "1000") {
+        navigation.navigate("ConfirmRestoreScreen", { email });
+      }
     }
   };
 
@@ -47,10 +62,9 @@ const EmailScreen = () => {
         size={30}
         onPress={() => navigation.goBack()}
       />
-      <Text style={{ paddingTop: 12, fontSize: 22, fontWeight: "500" }}>Email của bạn là gì?</Text>
+      <Text style={{ paddingTop: 12, fontSize: 22, fontWeight: "500" }}>Khôi phục tài khoản</Text>
       <Text style={{ paddingVertical: 12, fontSize: 16, fontWeight: "400" }}>
-        Nhập email có thể dùng để liên hệ với bạn. Thông tin này sẽ không hiển thị với ai khác trên
-        trang cá nhân của bạn.
+        Nhập email để khôi phục tài khoản
       </Text>
       <View style={{ position: "relative" }}>
         <TextInput
@@ -74,7 +88,11 @@ const EmailScreen = () => {
       </View>
       {error && <Text style={{ marginTop: 8, color: "#a81414" }}>{error}</Text>}
       <TouchableOpacity style={styles.btn} onPress={handleValidate}>
-        <Text style={{ color: "#fff", fontSize: 16 }}>Tiếp</Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={{ color: "#fff", fontSize: 16 }}>Tiếp</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -110,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EmailScreen;
+export default RestoreEmailScreen;

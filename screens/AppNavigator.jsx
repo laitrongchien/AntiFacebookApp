@@ -40,13 +40,15 @@ import ReportResultScreen from "./ReportPost/ReportResultScreen";
 import EmailResetScreen from "./ResetPassword/EmailResetScreen";
 import NewPasswordScreen from "./ResetPassword/NewPasswordScreen";
 import VerifyCodeResetScreen from "./ResetPassword/VerifyCodeResetScreen";
-import SettingScreen from "./Setting/SettingScreen";
-import ChangePassScreen from "./Setting/ChangePassScreen";
-import BuyCoinScreen from "./Setting/BuyCoinScreen";
 import Search from "./Search";
 import AllSavedSearch from "./Search/AllSavedSearch";
 import SearchResult from "./Search/SearchResult";
 import ViewAllUserItem from "./Search/ViewAllUserItem";
+import BuyCoinScreen from "./Setting/BuyCoinScreen";
+import ChangePassScreen from "./Setting/ChangePassScreen";
+import ConfirmRestoreScreen from "./Setting/ConfirmRestoreScreen";
+import RestoreEmailScreen from "./Setting/RestoreEmailScreen";
+import SettingScreen from "./Setting/SettingScreen";
 // import { onAuthStateChanged } from "firebase/auth";
 // import { auth } from "./firebase/config";
 import WatchDetailList from "./WatchTab/WatchDetailList";
@@ -112,6 +114,8 @@ const AppNavigator = () => {
             <Stack.Screen name="SettingScreen" component={SettingScreen} />
             <Stack.Screen name="ChangePassScreen" component={ChangePassScreen} />
             <Stack.Screen name="BuyCoinScreen" component={BuyCoinScreen} />
+            <Stack.Screen name="RestoreEmailScreen" component={RestoreEmailScreen} />
+            <Stack.Screen name="ConfirmRestoreScreen" component={ConfirmRestoreScreen} />
             <Stack.Screen
               options={{ cardStyle: { backgroundColor: "transparent" } }}
               name="AvatarOptions"

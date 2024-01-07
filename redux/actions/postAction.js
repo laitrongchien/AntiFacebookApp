@@ -57,6 +57,10 @@ export const createPost = (formData) => async (dispatch) => {
       payload: { loadingPostCreated: false },
     });
   } catch (err) {
+    dispatch({
+      type: "ALERT",
+      payload: { loadingPostCreated: false },
+    });
     console.log(err.response.data.message);
   }
 };

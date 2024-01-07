@@ -64,6 +64,19 @@ const changePassword = async (pass, newPass) => {
   return res;
 };
 
+const deactive = async () => {
+  const res = await axios.post("/deactive_user");
+  return res;
+};
+
+const restore = async (email, verifyCode) => {
+  const res = await axios.post("/restore_user", {
+    email,
+    code_verify: verifyCode,
+  });
+  return res;
+};
+
 const resetPassword = async (email, verifyCode, newPass) => {
   try {
     const res = await axios.post("/reset_password", {
@@ -104,4 +117,6 @@ export const auth = {
   resetPassword,
   changeProfileAfterSignup,
   checkEmail,
+  deactive,
+  restore,
 };

@@ -1,9 +1,24 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 
+import { auth } from "../../api/auth";
 import { navigation } from "../../rootNavigation";
 import VectorIcon from "../../utils/VectorIcon";
 
 const SettingScreen = () => {
+  const handleDeactivate = () => {
+    Alert.alert("Thông báo", "Bạn có chắc chắn muốn vô hiệu hóa tài khoản", [
+      {
+        text: "OK",
+        onPress: async () => {
+          await auth.deactive();
+        },
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
+  };
+
   return (
     <View style={{ backgroundColor: "#fff", height: "100%" }}>
       <View style={styles.navigationBar}>
@@ -38,11 +53,13 @@ const SettingScreen = () => {
             />
             <Text style={{ fontSize: 16, marginLeft: 16 }}>Đổi tên hiển thị</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnOption}>
+          <TouchableOpacity style={styles.btnOption} onPress={handleDeactivate}>
             <VectorIcon name="lock" type="MaterialCommunityIcons" size={24} color="#333" />
             <Text style={{ fontSize: 16, marginLeft: 16 }}>Vô hiệu hóa tài khoản</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnOption}>
+          <TouchableOpacity
+            style={styles.btnOption}
+            onPress={() => navigation.navigate("RestoreEmailScreen")}>
             <VectorIcon name="lock-open" type="MaterialCommunityIcons" size={24} color="#333" />
             <Text style={{ fontSize: 16, marginLeft: 16 }}>Khôi phục tài khoản</Text>
           </TouchableOpacity>

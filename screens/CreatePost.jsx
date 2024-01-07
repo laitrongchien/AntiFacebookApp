@@ -14,6 +14,7 @@ import {
   Animated,
   ScrollView,
   Platform,
+  Alert,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -32,7 +33,7 @@ const CreatePost = () => {
   const [showModal, setShowModal] = useState(false);
   const [images, setImages] = useState([]);
   const [video, setVideo] = useState(null);
-  const { username, avatar } = useSelector((state) => state.auth);
+  const { username, avatar, coins } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -109,10 +110,22 @@ const CreatePost = () => {
       });
     }
 
-    console.log(formData);
-
-    dispatch(createPost(formData));
-    navigation.navigate("Home");
+    if (coins >= 10) {
+      dispatch(createPost(formData));
+      navigation.navigate("Home");
+    } else {
+      Alert.alert("Số coins không đủ", "Bạn không còn đủ coins để có thể tạo bài viết", [
+        {
+          text: "Mua Coins",
+          onPress: () => {
+            navigation.navigate("BuyCoinScreen");
+          },
+        },
+        {
+          text: "OK",
+        },
+      ]);
+    }
   };
 
   return (
